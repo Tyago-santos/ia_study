@@ -1,0 +1,22 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+
+# O client do Prisma é regerado dentro do build para não entrar stale na imagem
+src/generated
+
+# Ferramentas de agentes/IDE não fazem parte da imagem
+.claude
+.agents
+.windsurf
+.cursor
+.codex
+.gemini
+.qoder
+.impeccable
+skills-lock.json
+
+*.log
+npm-debug.log*

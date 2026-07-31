@@ -1,0 +1,9 @@
+.env
+node_modules
+dist
+
+# Versionado em repositório próprio (github.com/Tyago-santos/study-ia)
+frontend/
+
+# Artefato de cache solto, sem código-fonte
+studyhub-ai/

@@ -1,0 +1,49 @@
+name: estudy-ia
+
+services:
+  postgres:
+    image: postgres:18-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-estudy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-estudy}
+      POSTGRES_DB: ${POSTGRES_DB:-estudy_ia}
+    ports:
+      # Exposto no host para o `prisma migrate dev` / `prisma studio` rodarem
+      # localmente contra o mesmo banco.
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Postgres 18+ espera um único mount em /var/lib/postgresql (os dados vão
+      # para um subdiretório por major version). Montar em .../data falha.
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-estudy} -d ${POSTGRES_DB:-estudy_ia}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # `postgres` é o hostname do serviço na rede do compose.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-estudy}:${POSTGRES_PASSWORD:-estudy}@postgres:5432/${POSTGRES_DB:-estudy_ia}?schema=public
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no arquivo .env da raiz}
+      COOKIE_SECRET: ${COOKIE_SECRET:?defina COOKIE_SECRET no arquivo .env da raiz}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+
+volumes:
+  postgres-data:
