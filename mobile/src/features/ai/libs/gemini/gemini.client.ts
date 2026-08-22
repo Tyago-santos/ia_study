@@ -1,4 +1,5 @@
-import { ApiError, OfflineError, api } from '@/shared/services/api'
+import { api } from '@/shared/services/api'
+import { ApiError, OfflineError } from '@/shared/services/apiErrors'
 import type {
   FunctionDeclaration,
   GeminiContent,

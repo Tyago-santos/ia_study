@@ -114,6 +114,20 @@ export function weeklySeries(sessions: StudySession[]): DailyStats[] {
   return series(totalsByDay(sessions), 7);
 }
 
+const CALENDAR_WEEKS = 20;
+
+/** Serie diaria comecando num domingo, terminando hoje — cada coluna de 7 no
+ * app vira uma semana inteira (ver `toWeeks` no cliente). */
+export function contributionsSeries(sessions: StudySession[]): DailyStats[] {
+  const totals = totalsByDay(sessions);
+  const daysIntoWeek = new Date().getDay();
+  return series(totals, (CALENDAR_WEEKS - 1) * 7 + daysIntoWeek + 1);
+}
+
+export function pomodoroStats(sessions: StudySession[]): { totalPomodoros: number } {
+  return { totalPomodoros: sessions.filter((s) => s.type === "pomodoro").length };
+}
+
 export function subjectStats(sessions: StudySession[]): SubjectStats[] {
   const totals = new Map<string, SubjectStats>();
 

@@ -1,3 +1,5 @@
+import { ApiError, OfflineError } from '@/shared/services/apiErrors'
+import { resetLocalData } from '@/shared/services/resetLocalData'
 import { useAuthStore } from '@/shared/store/auth'
 
 // EXPO_PUBLIC_* vars are inlined at build time by Expo — see mobile/.env.
@@ -20,25 +22,6 @@ function mergeSignals(a: AbortSignal, b?: AbortSignal | null): AbortSignal {
   a.addEventListener('abort', abort)
   b.addEventListener('abort', abort)
   return controller.signal
-}
-
-class ApiError extends Error {
-  status: number
-  data: unknown
-
-  constructor(status: number, message: string, data?: unknown) {
-    super(message)
-    this.name = 'ApiError'
-    this.status = status
-    this.data = data
-  }
-}
-
-class OfflineError extends Error {
-  constructor() {
-    super('Servidor indisponível')
-    this.name = 'OfflineError'
-  }
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -73,6 +56,16 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     } catch {
       data = null
     }
+
+    // Token existia e foi recusado (expirado, de outro backend, usuario
+    // apagado...): a sessao morreu do lado do servidor. Sem isto o app fica
+    // preso numa tela quebrada, tentando de novo com o mesmo token invalido —
+    // aqui ele volta sozinho pro login em vez de exigir Perfil > Sair.
+    if (response.status === 401 && token) {
+      resetLocalData().catch(() => {})
+      useAuthStore.getState().logout()
+    }
+
     throw new ApiError(response.status, `Erro ${response.status}`, data)
   }
 
@@ -100,4 +93,5 @@ export const api = {
     request<T>(endpoint, { ...options, method: 'DELETE' }),
 }
 
+// Reexportados para quem ja importava daqui; a definicao vive em apiErrors.ts.
 export { ApiError, OfflineError }

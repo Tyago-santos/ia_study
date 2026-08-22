@@ -1,16 +1,23 @@
 /**
  * Camada de dados do app mobile.
  *
- * O backend ainda nao tem rotas para a maior parte das telas (hoje existem
- * apenas auth, usuarios e o comeco de mapas mentais e resumos), entao tudo e
- * lido e gravado no banco local. As funcoes sao assincronas de proposito:
- * quando o backend existir, basta trocar o corpo delas por chamadas ao `api`
- * sem mexer nas telas nem nos hooks.
+ * Biblioteca (materias/assuntos), flashcards e quizzes vivem no backend com o
+ * banco local como espelho: le' do servidor quando da', do disco quando ele
+ * nao responde, e o que for escrito offline entra numa fila reenviada depois
+ * (ver `offlineFirst.ts`). As versoes `local*` sao a metade de disco disso,
+ * exportadas para quem precisar so' do que ja esta no aparelho.
+ *
+ * Resumos, mapas mentais, cronograma, chat e configuracoes ainda sao so'
+ * locais — o backend nao tem rota para eles.
  *
  * Nada aqui vem semeado: o app abre vazio e cresce com o uso.
  */
 import { createId } from '@/shared/lib/id'
 import { read, write } from '@/shared/services/db'
+import { flashcardsApi } from '@/shared/services/flashcardsApi'
+import { subjectsApi, topicsApi } from '@/shared/services/libraryApi'
+import { createThrough, listThrough, mutateThrough } from '@/shared/services/offlineFirst'
+import { quizzesApi } from '@/shared/services/quizzesApi'
 import { studySessionsApi } from '@/shared/services/studySessionsApi'
 import type {
   ChatMessage,
@@ -48,7 +55,8 @@ function pushActivity(db: Database, activity: Omit<StoredActivity, 'id' | 'creat
 
 // ------------------------------------------------------ materias e topicos
 
-export const subjectsService = {
+// Versoes locais (SQLite): ficam como fallback quando o servidor esta fora.
+export const localSubjectsService = {
   list: () => read((db) => db.subjects),
   create: (input: { name: string; color: string; icon?: string }) =>
     write((db) => {
@@ -64,7 +72,7 @@ export const subjectsService = {
     }),
 }
 
-export const topicsService = {
+export const localTopicsService = {
   list: () => read((db) => db.topics),
   create: (input: { subjectId: string; name: string }) =>
     write((db) => {
@@ -84,9 +92,85 @@ export const topicsService = {
     }),
 }
 
+/**
+ * Versoes usadas pelas telas: servidor com o banco local por tras.
+ *
+ * Sao os mesmos nomes e assinaturas de quando tudo era local — quem chama nao
+ * precisa saber de onde o dado veio. A mecanica esta em `offlineFirst.ts`.
+ */
+export const subjectsService = {
+  list: () => listThrough('subjects', subjectsApi.list),
+
+  create: (input: { name: string; color: string; icon?: string }) =>
+    createThrough<Subject, 'subjects'>({
+      key: 'subjects',
+      draft: { id: createId('s'), createdAt: now(), ...input },
+      remote: () => subjectsApi.create(input),
+      payload: input,
+      position: 'end',
+    }),
+
+  remove: async (id: string) => {
+    await mutateThrough({
+      key: 'subjects',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.subjects = db.subjects.filter((s) => s.id !== id)
+        // Os assuntos morrem junto com a materia (o servidor faz o mesmo em cascata).
+        db.topics = db.topics.filter((t) => t.subjectId !== id)
+      },
+      remote: () => subjectsApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+}
+
+export const topicsService = {
+  list: () => listThrough('topics', topicsApi.list),
+
+  create: (input: { subjectId: string; name: string }) =>
+    createThrough<Topic, 'topics'>({
+      key: 'topics',
+      draft: { id: createId('t'), completed: false, createdAt: now(), ...input },
+      remote: () => topicsApi.create(input),
+      payload: input,
+      position: 'end',
+    }),
+
+  toggle: async (id: string) => {
+    await mutateThrough({
+      key: 'topics',
+      id,
+      action: 'toggle',
+      applyLocal: (db) => {
+        db.topics = db.topics.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+      },
+      remote: () => topicsApi.toggle(id),
+      payload: id,
+    })
+    return read((db) => db.topics.find((t) => t.id === id)!)
+  },
+
+  remove: async (id: string) => {
+    await mutateThrough({
+      key: 'topics',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.topics = db.topics.filter((t) => t.id !== id)
+      },
+      remote: () => topicsApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+}
+
 // -------------------------------------------------------------- flashcards
 
-export const flashcardsService = {
+export const localFlashcardsService = {
   list: (subjectId?: string) =>
     read((db) => (subjectId ? db.flashcards.filter((f) => f.subjectId === subjectId) : db.flashcards)),
   create: (input: {
@@ -122,9 +206,58 @@ export const flashcardsService = {
     }),
 }
 
+export const flashcardsService = {
+  list: (subjectId?: string) =>
+    subjectId
+      ? listThrough('flashcards', () => flashcardsApi.list(subjectId))
+      : listThrough('flashcards', flashcardsApi.list),
+
+  create: (input: {
+    subjectId: string
+    front: string
+    back: string
+    difficulty: Flashcard['difficulty']
+  }) =>
+    createThrough<Flashcard, 'flashcards'>({
+      key: 'flashcards',
+      draft: {
+        id: createId('fc'),
+        nextReview: now(),
+        reviewCount: 0,
+        createdAt: now(),
+        ...input,
+      },
+      remote: () => flashcardsApi.create(input),
+      payload: input,
+      onLocalWrite: (db) => {
+        const subjectName = db.subjects.find((s) => s.id === input.subjectId)?.name ?? 'Estudo'
+        pushActivity(db, {
+          type: 'flashcard',
+          title: 'Novo flashcard',
+          description: `${subjectName} - ${input.front}`,
+          subjectId: input.subjectId,
+        })
+      },
+    }),
+
+  remove: async (id: string) => {
+    await mutateThrough({
+      key: 'flashcards',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.flashcards = db.flashcards.filter((f) => f.id !== id)
+      },
+      remote: () => flashcardsApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+}
+
 // -------------------------------------------------------------------- quiz
 
-export const quizService = {
+export const localQuizService = {
   list: (subjectId?: string) =>
     read((db) => (subjectId ? db.quizzes.filter((q) => q.subjectId === subjectId) : db.quizzes)),
   create: (input: { subjectId: string; title: string; questions: Quiz['questions'] }) =>
@@ -159,6 +292,76 @@ export const quizService = {
 
       return { score, correct, total: questions.length }
     }),
+}
+
+export const quizService = {
+  list: (subjectId?: string) =>
+    subjectId
+      ? listThrough('quizzes', () => quizzesApi.list(subjectId))
+      : listThrough('quizzes', quizzesApi.list),
+
+  create: (input: { subjectId: string; title: string; questions: Quiz['questions'] }) =>
+    createThrough<Quiz, 'quizzes'>({
+      key: 'quizzes',
+      draft: { id: createId('q'), createdAt: now(), ...input },
+      remote: () => quizzesApi.create(input),
+      payload: input,
+    }),
+
+  remove: async (id: string) => {
+    await mutateThrough({
+      key: 'quizzes',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.quizzes = db.quizzes.filter((q) => q.id !== id)
+      },
+      remote: () => quizzesApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+
+  /**
+   * A nota sai da correcao local para a tela nao ficar esperando a rede — o
+   * gabarito ja esta no aparelho, entao o resultado e' o mesmo que o servidor
+   * calcularia. A ida ao servidor serve para gravar a nota (e entra na fila se
+   * ele estiver fora).
+   */
+  submit: async (input: { quizId: string; answers: Record<string, number> }) => {
+    let result: { score: number; correct: number; total: number } | null = null
+
+    await mutateThrough({
+      key: 'quizzes',
+      id: input.quizId,
+      action: 'submit',
+      applyLocal: (db) => {
+        const quiz = db.quizzes.find((q) => q.id === input.quizId)
+        if (!quiz) throw new Error('Quiz não encontrado')
+
+        const questions = quiz.questions.map((q) => ({ ...q, userAnswer: input.answers[q.id] }))
+        const correct = questions.filter((q) => q.userAnswer === q.correctAnswer).length
+        const score = Math.round((correct / questions.length) * 100)
+
+        db.quizzes = db.quizzes.map((q) =>
+          q.id === quiz.id ? { ...quiz, questions, score, completedAt: now() } : q,
+        )
+
+        pushActivity(db, {
+          type: 'quiz',
+          title: quiz.title,
+          description: `Score: ${score}%`,
+          subjectId: quiz.subjectId,
+        })
+
+        result = { score, correct, total: questions.length }
+      },
+      remote: () => quizzesApi.submit(input),
+      payload: input,
+    })
+
+    return result!
+  },
 }
 
 // ----------------------------------------------------------------- resumos

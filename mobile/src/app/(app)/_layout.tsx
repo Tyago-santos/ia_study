@@ -2,6 +2,7 @@ import { Redirect } from 'expo-router'
 import { Drawer } from 'expo-router/drawer'
 import { useReminders } from '@/features/notifications/hooks/useReminders'
 import { DrawerContent } from '@/shared/components/layout/DrawerContent'
+import { useSyncPending } from '@/shared/hooks/useSyncPending'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { useAuthStore } from '@/shared/store/auth'
 
@@ -26,6 +27,9 @@ export default function AppLayout() {
 
   // Mantem os lembretes do sistema em dia enquanto o app estiver autenticado.
   useReminders()
+
+  // Sobe pro servidor o que tiver sido escrito enquanto ele estava fora.
+  useSyncPending()
 
   if (!token) {
     return <Redirect href="/(auth)/login" />

@@ -16,35 +16,57 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  schoolSubjects SchoolSubject[]
-  resumes        Resume[]
-  mindMaps       MindMap[]
-  studySessions  StudySession[]
+  subjects      Subject[]
+  resumes       Resume[]
+  mindMaps      MindMap[]
+  studySessions StudySession[]
+  flashcards    Flashcard[]
+  quizzes       Quiz[]
 
   @@map("users")
 }
 
-model SchoolSubject {
-  id     String @id @default(uuid())
-  name   String @db.VarChar(100)
+/** Materia da Biblioteca do usuario — pai de assuntos, mapas mentais, flashcards e quizzes. */
+model Subject {
+  id     String  @id @default(uuid())
   userId String
-  answer String
-  response String
-  user   User   @relation(fields: [userId], references: [id])
+  name   String  @db.VarChar(100)
+  color  String
+  icon   String?
 
-  mindMaps MindMap[]
+  createdAt DateTime @default(now())
 
-  @@map("schoolsubjects")
+  user   User    @relation(fields: [userId], references: [id])
+  topics Topic[]
+
+  mindMaps   MindMap[]
+  flashcards Flashcard[]
+  quizzes    Quiz[]
+
+  @@map("subjects")
 }
 
+/** Assunto dentro de uma materia, com estado de conclusao. */
+model Topic {
+  id        String  @id @default(uuid())
+  subjectId String
+  name      String
+  completed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("topics")
+}
 
 model Resume {
-  id     String @id @default(uuid())
-  name   String @db.VarChar(100)
-  userId String
+  id      String @id @default(uuid())
+  name    String @db.VarChar(100)
+  userId  String
   content String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@map("resumes")
 }
@@ -57,7 +79,7 @@ model MindMap {
   subjectId   String
 
   user    User          @relation(fields: [userId], references: [id])
-  subject SchoolSubject @relation(fields: [subjectId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
   nodes   MindMapNode[]
 
   createdAt DateTime @default(now())
@@ -87,9 +109,9 @@ model MindMapNode {
 
 /**
  * Uma sessao de estudo concluida (pomodoro ou avulsa), a base do dashboard e
- * da sequencia de dias. `subjectId`/`subjectName` sao um rotulo livre — nao
- * ha' FK pra SchoolSubject porque as materias do app ainda vivem so' no
- * aparelho, sem sincronizar com o backend.
+ * da sequencia de dias. `subjectId`/`subjectName` continuam um rotulo livre
+ * (sem FK): mantido assim para nao quebrar sessoes ja gravadas em producao
+ * antes da Biblioteca existir no backend.
  */
 model StudySession {
   id          String   @id @default(uuid())
@@ -106,4 +128,35 @@ model StudySession {
   @@map("study_sessions")
 }
 
+model Flashcard {
+  id          String   @id @default(uuid())
+  userId      String
+  subjectId   String
+  front       String
+  back        String
+  difficulty  String
+  nextReview  DateTime @default(now())
+  reviewCount Int      @default(0)
+  createdAt   DateTime @default(now())
 
+  user    User    @relation(fields: [userId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("flashcards")
+}
+
+model Quiz {
+  id          String    @id @default(uuid())
+  userId      String
+  subjectId   String
+  title       String
+  questions   Json
+  score       Int?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("quizzes")
+}

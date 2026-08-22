@@ -1,5 +1,11 @@
 import { StudySessionsRepository } from "../repository/index.js";
-import { dashboardStats, subjectStats, weeklySeries } from "./stats.lib.js";
+import {
+  contributionsSeries,
+  dashboardStats,
+  pomodoroStats,
+  subjectStats,
+  weeklySeries,
+} from "./stats.lib.js";
 
 import type { Prisma } from "@/generated/prisma/client.js";
 import { AppError } from "@/shared/error/app-error.js";
@@ -43,5 +49,15 @@ export class StudySessionsService {
   async subjects(userId: string) {
     const sessions = await this.repository.findAllByUserId(userId);
     return subjectStats(sessions);
+  }
+
+  async contributions(userId: string) {
+    const sessions = await this.repository.findAllByUserId(userId);
+    return contributionsSeries(sessions);
+  }
+
+  async pomodoro(userId: string) {
+    const sessions = await this.repository.findAllByUserId(userId);
+    return pomodoroStats(sessions);
   }
 }

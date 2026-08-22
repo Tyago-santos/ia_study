@@ -32,4 +32,14 @@ export class StudySessionsController {
     const subjects = await this.service.subjects(req.user!.id);
     return res.status(200).json(subjects);
   }
+
+  async contributions(req: Request, res: Response) {
+    const contributions = await this.service.contributions(req.user!.id);
+    return res.status(200).json(contributions);
+  }
+
+  async pomodoro(req: Request, res: Response) {
+    const pomodoro = await this.service.pomodoro(req.user!.id);
+    return res.status(200).json(pomodoro);
+  }
 }

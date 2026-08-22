@@ -220,6 +220,7 @@ export const GenerateButton = styled.Pressable<{ $disabled: boolean }>`
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm}px;
+  margin-top: ${({ theme }) => theme.spacing.md}px;
   margin-bottom: ${({ theme }) => theme.spacing.md}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;
   padding-vertical: ${({ theme }) => theme.spacing.sm + 2}px;

@@ -1,3 +1,4 @@
+import { api } from '@/shared/services/api'
 import type { User } from '@/shared/types'
 import type { LoginFormData, RegisterFormData } from '../schemas/auth.schema'
 
@@ -6,35 +7,15 @@ export interface AuthSession {
   token: string
 }
 
-/**
- * Regra de autenticacao da feature.
- *
- * O backend ainda nao expoe /auth, entao a sessao e montada localmente. Quando
- * a API entrar, so o corpo destas funcoes muda: hooks e telas ja consomem
- * `AuthSession` e nao sabem de onde ela vem.
- */
+/** Regra de autenticacao da feature — fala com /auth/login e /auth/register no backend. */
 export const authService = {
   async login(data: LoginFormData): Promise<AuthSession> {
-    return {
-      user: {
-        id: 'mock-user-id',
-        // Sem perfil vindo do servidor, o trecho antes do @ e o melhor nome
-        // disponivel para saudar o usuario ja na primeira tela.
-        name: data.email.split('@')[0],
-        email: data.email,
-      },
-      token: 'mock-token',
-    }
+    return api.post<AuthSession>('/auth/login', data)
   },
 
   async register(data: RegisterFormData): Promise<AuthSession> {
-    return {
-      user: {
-        id: 'mock-user-id',
-        name: data.name,
-        email: data.email,
-      },
-      token: 'mock-token',
-    }
+    // confirmPassword e' so' validacao do formulario; o backend nao conhece esse campo.
+    const { confirmPassword: _confirmPassword, ...payload } = data
+    return api.post<AuthSession>('/auth/register', payload)
   },
 }

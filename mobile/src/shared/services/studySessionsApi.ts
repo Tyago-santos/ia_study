@@ -26,5 +26,8 @@ export const studySessionsApi = {
   dashboard: () => api.get<DashboardStats>('/study-sessions/dashboard'),
   weekly: () => api.get<DailyStats[]>('/study-sessions/weekly'),
   subjects: () => api.get<SubjectStats[]>('/study-sessions/subjects'),
+  /** Serie de 20 semanas (140 dias) pro calendario de estudos da tela de Estatisticas. */
+  contributions: () => api.get<DailyStats[]>('/study-sessions/contributions'),
+  pomodoro: () => api.get<{ totalPomodoros: number }>('/study-sessions/pomodoro'),
   create: (input: CreateStudySessionInput) => api.post('/study-sessions', input),
 }

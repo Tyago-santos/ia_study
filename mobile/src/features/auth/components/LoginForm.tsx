@@ -32,6 +32,7 @@ export function LoginForm() {
             onChangeText={field.onChange}
             onBlur={field.onBlur}
             error={errors.email?.message}
+            style={{ borderBottomWidth: 0 }}
           />
         )}
       />

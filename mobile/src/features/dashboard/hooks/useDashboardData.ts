@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/shared/constants/queryKeys'
 import { statsService, subjectsService } from '@/shared/services/dataStore'
+import { valueThrough } from '@/shared/services/offlineFirst'
 import { studySessionsApi } from '@/shared/services/studySessionsApi'
 import { useAuthStore } from '@/shared/store/auth'
 import {
@@ -14,17 +15,19 @@ export function useDashboardData() {
   const user = useAuthStore((s) => s.user)
   const weeklyGoalMinutes = useWeeklyPlannerStore((s) => s.weeklyGoalMinutes)
 
+  // Servidor primeiro; sem ele, o dashboard ainda abre com o que o aparelho
+  // tem gravado das sessoes locais, em vez de ficar vazio.
   const { data: stats, isLoading: loadingStats } = useQuery({
     queryKey: queryKeys.stats.dashboard(),
-    queryFn: studySessionsApi.dashboard,
+    queryFn: () => valueThrough(studySessionsApi.dashboard, statsService.dashboard),
   })
   const { data: weekly, isLoading: loadingWeekly } = useQuery({
     queryKey: [...queryKeys.stats.all, 'weekly'],
-    queryFn: studySessionsApi.weekly,
+    queryFn: () => valueThrough(studySessionsApi.weekly, statsService.weekly),
   })
   const { data: subjectStats, isLoading: loadingSubjectStats } = useQuery({
     queryKey: queryKeys.stats.subjects(),
-    queryFn: studySessionsApi.subjects,
+    queryFn: () => valueThrough(studySessionsApi.subjects, statsService.subjects),
   })
   const { data: activities, isLoading: loadingActivities } = useQuery({
     queryKey: [...queryKeys.stats.all, 'activities'],
