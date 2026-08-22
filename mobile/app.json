@@ -18,7 +18,20 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.thiago321.mobile"
+      "package": "com.thiago321.mobile",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "web": {
       "output": "static",
@@ -67,6 +80,9 @@
         "projectId": "f3b74a05-1f98-40b9-b270-0e63df416828"
       }
     },
-    "owner": "thiago321"
+    "owner": "thiago321",
+    "updates": {
+      "url": "https://u.expo.dev/f3b74a05-1f98-40b9-b270-0e63df416828"
+    }
   }
 }
