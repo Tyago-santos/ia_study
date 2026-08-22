@@ -59,16 +59,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl \
 ENV NODE_ENV=production \
     PORT=3000
 
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+# --chown=node:node porque o CMD roda `prisma migrate deploy` como usuario
+# `node` (nao-root) — sem isto os arquivos ficam de root e o Prisma nao
+# consegue escrever em node_modules/@prisma/engines em tempo de execucao.
+COPY --chown=node:node --from=prod-deps /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node package.json ./
 
 # Schema e config do Prisma: necessários para rodar `prisma migrate deploy`
 # a partir do container. `prisma.config.ts` importa `src/config/env.ts`,
 # por isso `src` também precisa estar presente.
-COPY --from=build /app/prisma.config.ts ./prisma.config.ts
-COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/src ./src
+COPY --chown=node:node --from=build /app/prisma.config.ts ./prisma.config.ts
+COPY --chown=node:node --from=build /app/prisma ./prisma
+COPY --chown=node:node --from=build /app/src ./src
 
 USER node
 
