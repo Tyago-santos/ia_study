@@ -60,6 +60,7 @@ export function LibraryPage() {
       <S.SearchBox>
         <Ionicons name="search" size={18} color={colors.textSecondary} />
         <S.SearchInput
+          underlineColorAndroid="transparent"
           value={search}
           onChangeText={setSearch}
           placeholder="Buscar matérias..."

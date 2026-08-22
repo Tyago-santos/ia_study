@@ -313,6 +313,7 @@ export const TimeRow = styled.View`
 `
 
 export const TimeInput = styled.TextInput`
+  outline-style: none;
   width: 78px;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;

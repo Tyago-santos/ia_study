@@ -169,6 +169,7 @@ export function SchedulePage() {
           <S.TimeField>
             <S.FieldLabel>Horário</S.FieldLabel>
             <S.TimeInput
+              underlineColorAndroid="transparent"
               value={time}
               onChangeText={(value) => setTime(maskTime(value))}
               placeholder="--:--"

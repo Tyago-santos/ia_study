@@ -14,6 +14,7 @@ export const SearchBox = styled.View`
 `
 
 export const SearchInput = styled.TextInput`
+  outline-style: none;
   flex: 1;
   padding-vertical: ${({ theme }) => theme.spacing.sm + 4}px;
   font-size: 15px;

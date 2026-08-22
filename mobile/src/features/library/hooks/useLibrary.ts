@@ -20,9 +20,17 @@ export function useLibrary() {
 
   const { days: plannerDays } = usePlannerWeek()
 
-  const invalidateSubjects = () =>
+  // `stats` junto nas duas: criar materia, criar assunto e concluir assunto
+  // entram na timeline de atividade do dashboard, que fica montado em outra
+  // aba e nao refaz a busca por conta propria.
+  const invalidateSubjects = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.subjects.all })
-  const invalidateTopics = () => queryClient.invalidateQueries({ queryKey: queryKeys.topics.all })
+    queryClient.invalidateQueries({ queryKey: queryKeys.stats.all })
+  }
+  const invalidateTopics = () => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.topics.all })
+    queryClient.invalidateQueries({ queryKey: queryKeys.stats.all })
+  }
 
   const createSubject = useMutation({ mutationFn: subjectsService.create, onSuccess: invalidateSubjects })
   const removeSubject = useMutation({

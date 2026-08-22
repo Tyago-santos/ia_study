@@ -49,6 +49,7 @@
         }
       ],
       "./plugins/withExactAlarms",
+      "./plugins/withNoEditTextUnderline",
       [
         "expo-audio",
         {

@@ -12,6 +12,7 @@ export const Row = styled(ScrollView).attrs(({ theme }) => ({
 }))``
 
 export const Chip = styled.Pressable<{ $tint: string; $active: boolean }>`
+  outline-style: none;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.full}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;

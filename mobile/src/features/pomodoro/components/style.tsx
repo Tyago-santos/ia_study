@@ -92,6 +92,7 @@ export const ModeLabel = styled.Text<{ $color: string; $active: boolean }>`
 `
 
 export const PhraseInput = styled.TextInput`
+  outline-style: none;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;

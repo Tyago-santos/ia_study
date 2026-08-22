@@ -30,7 +30,7 @@ export function useDashboardData() {
     queryFn: () => valueThrough(studySessionsApi.subjects, statsService.subjects),
   })
   const { data: activities, isLoading: loadingActivities } = useQuery({
-    queryKey: [...queryKeys.stats.all, 'activities'],
+    queryKey: queryKeys.stats.activities(),
     queryFn: statsService.activities,
   })
   const { data: subjects, isLoading: loadingSubjects } = useQuery({

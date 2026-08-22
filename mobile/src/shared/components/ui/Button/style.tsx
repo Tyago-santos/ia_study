@@ -3,6 +3,7 @@ import { styled } from '@/shared/styles'
 export type ButtonVariant = 'primary' | 'secondary'
 
 export const Container = styled.Pressable<{ $variant: ButtonVariant; $disabled?: boolean }>`
+  outline-style: none;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;
   padding-vertical: ${({ theme }) => theme.spacing.md}px;

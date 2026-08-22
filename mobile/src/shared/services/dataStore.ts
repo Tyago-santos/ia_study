@@ -114,6 +114,14 @@ export const subjectsService = {
       remote: () => subjectsApi.create(input),
       payload: input,
       position: 'end',
+      onLocalWrite: (db, subject) => {
+        pushActivity(db, {
+          type: 'subject',
+          title: `Nova matéria: ${input.name}`,
+          description: 'Matéria criada na biblioteca',
+          subjectId: subject.id,
+        })
+      },
     }),
 
   remove: async (id: string) => {
@@ -143,6 +151,15 @@ export const topicsService = {
       remote: () => topicsApi.create(input),
       payload: input,
       position: 'end',
+      onLocalWrite: (db) => {
+        const subjectName = db.subjects.find((s) => s.id === input.subjectId)?.name ?? 'Estudo'
+        pushActivity(db, {
+          type: 'topic',
+          title: `Novo assunto: ${input.name}`,
+          description: subjectName,
+          subjectId: input.subjectId,
+        })
+      },
     }),
 
   toggle: async (id: string) => {
@@ -152,6 +169,18 @@ export const topicsService = {
       action: 'toggle',
       applyLocal: (db) => {
         db.topics = db.topics.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+
+        // So concluir vale linha na timeline; desmarcar nao e' progresso.
+        const topic = db.topics.find((t) => t.id === id)
+        if (!topic?.completed) return
+
+        const subjectName = db.subjects.find((s) => s.id === topic.subjectId)?.name ?? 'Estudo'
+        pushActivity(db, {
+          type: 'topic',
+          title: `Assunto concluído: ${topic.name}`,
+          description: subjectName,
+          subjectId: topic.subjectId,
+        })
       },
       remote: () => topicsApi.toggle(id),
       payload: id,

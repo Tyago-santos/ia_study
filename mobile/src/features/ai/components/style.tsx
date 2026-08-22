@@ -159,6 +159,7 @@ export const Composer = styled.View`
    Sem borda/fundo proprios: quem desenha o contorno agora e' o Composer, o
    input vive "dentro" dele junto do toggle e do botao de enviar. */
 export const ComposerInput = styled.TextInput`
+  outline-style: none;
   flex: 1;
   max-height: 110px;
   padding-horizontal: ${({ theme }) => theme.spacing.xs}px;

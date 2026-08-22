@@ -115,6 +115,7 @@ export function PomodoroWidget() {
 
           <S.PanelLabel>Aviso ao terminar</S.PanelLabel>
           <S.PhraseInput
+            underlineColorAndroid="transparent"
             value={settings.endPhrase}
             onChangeText={(endPhrase) => setSettings({ endPhrase })}
             placeholder="Tempo acabou"

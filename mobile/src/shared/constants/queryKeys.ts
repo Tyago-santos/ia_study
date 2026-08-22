@@ -60,6 +60,7 @@ export const queryKeys = {
   stats: {
     all: ['stats'] as const,
     dashboard: () => [...queryKeys.stats.all, 'dashboard'] as const,
+    activities: () => [...queryKeys.stats.all, 'activities'] as const,
     subjects: () => [...queryKeys.stats.all, 'subjects'] as const,
     contributions: () => [...queryKeys.stats.all, 'contributions'] as const,
     pomodoro: () => [...queryKeys.stats.all, 'pomodoro'] as const,

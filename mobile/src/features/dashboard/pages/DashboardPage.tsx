@@ -20,6 +20,8 @@ const ACTIVITY_ICONS: Record<Activity['type'], keyof typeof Ionicons.glyphMap> =
   quiz: 'help-circle',
   flashcard: 'layers',
   summary: 'document-text',
+  subject: 'book',
+  topic: 'checkmark-circle',
 }
 
 const WEEKDAY_LABELS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']

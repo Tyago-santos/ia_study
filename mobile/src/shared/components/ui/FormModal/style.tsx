@@ -8,6 +8,7 @@ export const Backdrop = styled.KeyboardAvoidingView`
 
 /** Cobre o backdrop inteiro so para capturar o toque que fecha o modal. */
 export const BackdropFill = styled.Pressable`
+  outline-style: none;
   position: absolute;
   top: 0px;
   left: 0px;

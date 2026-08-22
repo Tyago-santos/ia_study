@@ -15,7 +15,12 @@ export function useSummaries() {
     queryFn: summariesService.list,
   })
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: queryKeys.summaries.all })
+  // `stats` junto: um resumo novo entra na timeline de atividade do dashboard,
+  // que fica montado em outra aba e nao refaz a busca por conta propria.
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.summaries.all })
+    queryClient.invalidateQueries({ queryKey: queryKeys.stats.all })
+  }
 
   const createSummary = useMutation({ mutationFn: summariesService.create, onSuccess: invalidate })
   const removeSummary = useMutation({ mutationFn: summariesService.remove, onSuccess: invalidate })

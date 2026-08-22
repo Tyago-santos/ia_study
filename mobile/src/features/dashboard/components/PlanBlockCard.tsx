@@ -91,6 +91,7 @@ export function PlanBlockCard({
           <S.TopicPickerLabel>Começa às</S.TopicPickerLabel>
           <S.TimeRow>
             <S.TimeInput
+              underlineColorAndroid="transparent"
               value={block.startTime ?? ''}
               onChangeText={(value) => onChangeStartTime(maskTime(value) || undefined)}
               placeholder="--:--"

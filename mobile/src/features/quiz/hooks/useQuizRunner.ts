@@ -24,6 +24,8 @@ export function useQuizRunner() {
     onSuccess: (data) => {
       setResult(data)
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.all })
+      // O resultado tambem vira atividade no dashboard.
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats.all })
     },
   })
 

@@ -36,7 +36,7 @@ export function FormModal({
         <S.Sheet>
           <S.Header>
             <S.Title>{title}</S.Title>
-            <Pressable onPress={onClose} hitSlop={8}>
+            <Pressable onPress={onClose} hitSlop={8} style={{ outlineStyle: 'none' } as never}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
           </S.Header>

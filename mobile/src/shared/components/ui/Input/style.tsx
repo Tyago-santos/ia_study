@@ -11,6 +11,7 @@ export const Label = styled.Text`
 `
 
 export const Field = styled.TextInput<{ $hasError?: boolean }>`
+  outline-style: none;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;

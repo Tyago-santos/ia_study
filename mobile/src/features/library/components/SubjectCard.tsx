@@ -112,6 +112,7 @@ export function SubjectCard({
 
             <S.AddTopicRow>
               <S.AddTopicInput
+                underlineColorAndroid="transparent"
                 value={newTopic}
                 onChangeText={setNewTopic}
                 placeholder="Novo assunto"

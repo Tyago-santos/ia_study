@@ -11,9 +11,9 @@ import { toWeeks, totalSubjectMinutes } from '../services/statistics.service'
 /**
  * Todas as series que a tela de estatisticas desenha.
  *
- * Tempo/materia, calendario e pomodoros vem do backend (sessoes de estudo,
- * ver studySessionsApi). Quiz e flashcards continuam locais: ainda nao existe
- * modulo de quiz/flashcard no backend.
+ * Tudo vem do backend: tempo/materia, calendario e pomodoros das sessoes de
+ * estudo, mais as agregacoes de quiz e flashcard dos modulos deles. O banco
+ * local so entra como espelho quando o servidor nao responde (`valueThrough`).
  */
 export function useStatistics() {
   const { data: dashboard, isLoading: loadingDashboard } = useQuery({

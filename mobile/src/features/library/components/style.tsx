@@ -97,6 +97,7 @@ export const AddTopicRow = styled.View`
 `
 
 export const AddTopicInput = styled.TextInput`
+  outline-style: none;
   flex: 1;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;

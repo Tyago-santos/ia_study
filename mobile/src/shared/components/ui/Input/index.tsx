@@ -19,6 +19,7 @@ export const Input = forwardRef<TextInput, InputProps>(({ label, error, ...rest 
         $hasError={Boolean(error)}
         placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
+        underlineColorAndroid="transparent"
         {...rest}
       />
       {error ? <S.ErrorText>{error}</S.ErrorText> : null}

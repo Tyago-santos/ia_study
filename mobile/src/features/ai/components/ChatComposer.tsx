@@ -104,6 +104,7 @@ export function ChatComposer({ disabled, onSend, onCancel }: ChatComposerProps) 
         </S.ComposerMenuButton>
 
         <S.ComposerInput
+          underlineColorAndroid="transparent"
           value={draft}
           onChangeText={setDraft}
           placeholder="Pergunte alguma coisa..."

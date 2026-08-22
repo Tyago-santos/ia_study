@@ -26,6 +26,7 @@ export const TimeField = styled.View`
 `
 
 export const TimeInput = styled.TextInput`
+  outline-style: none;
   width: 90px;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.md}px;

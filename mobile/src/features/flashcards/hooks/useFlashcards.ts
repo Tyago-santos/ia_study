@@ -15,7 +15,12 @@ export function useFlashcards() {
     queryFn: () => flashcardsService.list(),
   })
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: queryKeys.flashcards.all })
+  // `stats` junto: criar um cartao entra na timeline de atividade do dashboard,
+  // que fica montado em outra aba e nao refaz a busca por conta propria.
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.flashcards.all })
+    queryClient.invalidateQueries({ queryKey: queryKeys.stats.all })
+  }
 
   const createFlashcard = useMutation({
     mutationFn: flashcardsService.create,

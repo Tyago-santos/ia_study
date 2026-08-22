@@ -162,7 +162,7 @@ export interface ScheduleEvent {
 
 export interface Activity {
   id: string
-  type: 'pomodoro' | 'quiz' | 'flashcard' | 'summary'
+  type: 'pomodoro' | 'quiz' | 'flashcard' | 'summary' | 'subject' | 'topic'
   title: string
   description: string
   createdAt: string
