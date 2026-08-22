@@ -8,12 +8,12 @@ import {
   goalProgressPercent,
   totalSubjectMinutes,
 } from '../services/dashboard.service'
-import { useWeeklyPlannerStore } from '../store/weeklyPlanner'
+import { usePlannerWeek } from './usePlannerWeek'
 
 /** Reune tudo que a tela do dashboard le, para a pagina so montar o layout. */
 export function useDashboardData() {
   const user = useAuthStore((s) => s.user)
-  const weeklyGoalMinutes = useWeeklyPlannerStore((s) => s.weeklyGoalMinutes)
+  const { weeklyGoalMinutes } = usePlannerWeek()
 
   // Servidor primeiro; sem ele, o dashboard ainda abre com o que o aparelho
   // tem gravado das sessoes locais, em vez de ficar vazio.

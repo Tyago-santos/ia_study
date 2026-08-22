@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { queryKeys } from '@/shared/constants/queryKeys'
 import { subjectsService, topicsService } from '@/shared/services/dataStore'
-import { useWeeklyPlannerStore } from '@/features/dashboard/store/weeklyPlanner'
+import { usePlannerWeek } from '@/features/dashboard/hooks/usePlannerWeek'
 import { groupTopicsBySubject, plannedMinutesByTopic } from '../services/library.service'
 
 /** Materias, assuntos e o tempo que o planner reservou para cada assunto. */
@@ -18,7 +18,7 @@ export function useLibrary() {
     queryFn: topicsService.list,
   })
 
-  const plannerDays = useWeeklyPlannerStore((s) => s.days)
+  const { days: plannerDays } = usePlannerWeek()
 
   const invalidateSubjects = () =>
     queryClient.invalidateQueries({ queryKey: queryKeys.subjects.all })

@@ -17,7 +17,13 @@ import { read, write } from '@/shared/services/db'
 import { flashcardsApi } from '@/shared/services/flashcardsApi'
 import { subjectsApi, topicsApi } from '@/shared/services/libraryApi'
 import { createThrough, listThrough, mutateThrough } from '@/shared/services/offlineFirst'
+import {
+  type UpdatePlanBlockInput,
+  plannerApi,
+  toPlanBlock,
+} from '@/shared/services/plannerApi'
 import { quizzesApi } from '@/shared/services/quizzesApi'
+import { scheduleApi, toScheduleEvent } from '@/shared/services/scheduleApi'
 import { studySessionsApi } from '@/shared/services/studySessionsApi'
 import type {
   ChatMessage,
@@ -35,7 +41,7 @@ import type {
   Summary,
   Topic,
 } from '@/shared/types'
-import type { Database, StoredActivity } from '@/shared/services/db'
+import type { Database, StoredActivity, StoredPlanBlock } from '@/shared/services/db'
 
 const now = () => new Date().toISOString()
 
@@ -496,11 +502,41 @@ export const mindMapsService = {
 
 // -------------------------------------------------------------- cronograma
 
+/**
+ * Muda a data de um evento no fuso do aparelho e sobe a data pronta.
+ *
+ * O calculo nao pode ir pro servidor: la' e' UTC, e um evento das 21h no
+ * Brasil viraria o dia seguinte. Aqui `new Date` e `getDay` usam o fuso de
+ * quem esta com o app na mao, que e' o que o usuario ve na tela.
+ */
+async function reschedule(id: string, nextDate: (current: Date) => Date): Promise<string> {
+  const event = await read((db) => db.events.find((e) => e.id === id))
+  if (!event) return id
+
+  const date = nextDate(new Date(event.date)).toISOString()
+
+  await mutateThrough({
+    key: 'events',
+    id,
+    action: 'update',
+    applyLocal: (db) => {
+      db.events = db.events.map((e) => (e.id === id ? { ...e, date } : e))
+    },
+    remote: () => scheduleApi.update(id, { date }),
+    payload: { id, date },
+  })
+
+  return id
+}
+
 export const scheduleService = {
-  list: () =>
-    read((db) =>
-      [...db.events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
-    ),
+  list: async () => {
+    const events = await listThrough('events', async () =>
+      (await scheduleApi.list()).map(toScheduleEvent),
+    )
+    return [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  },
+
   create: (input: {
     title: string
     type: ScheduleEvent['type']
@@ -509,21 +545,27 @@ export const scheduleService = {
     subjectId?: string
     description?: string
   }) =>
-    write((db) => {
-      const event: ScheduleEvent = {
-        id: createId('ev'),
-        completed: false,
-        createdAt: now(),
-        ...input,
-      }
-      db.events = [...db.events, event]
-      return event
+    createThrough<ScheduleEvent, 'events'>({
+      key: 'events',
+      draft: { id: createId('ev'), completed: false, createdAt: now(), ...input },
+      remote: async () => toScheduleEvent(await scheduleApi.create(input)),
+      payload: input,
+      position: 'end',
     }),
-  toggle: (id: string) =>
-    write((db) => {
-      db.events = db.events.map((e) => (e.id === id ? { ...e, completed: !e.completed } : e))
-      return db.events.find((e) => e.id === id)!
-    }),
+
+  toggle: async (id: string) => {
+    await mutateThrough({
+      key: 'events',
+      id,
+      action: 'toggle',
+      applyLocal: (db) => {
+        db.events = db.events.map((e) => (e.id === id ? { ...e, completed: !e.completed } : e))
+      },
+      remote: () => scheduleApi.toggle(id),
+      payload: id,
+    })
+    return read((db) => db.events.find((e) => e.id === id)!)
+  },
 
   /**
    * Tira o compromisso da semana corrente empurrando-o sete dias. Nao apaga o
@@ -531,15 +573,10 @@ export const scheduleService = {
    * pode ser arrastado de volta.
    */
   postponeWeek: (id: string) =>
-    write((db) => {
-      const event = db.events.find((e) => e.id === id)
-      if (!event) return id
-
-      const next = new Date(event.date)
+    reschedule(id, (current) => {
+      const next = new Date(current)
       next.setDate(next.getDate() + 7)
-
-      db.events = db.events.map((e) => (e.id === id ? { ...e, date: next.toISOString() } : e))
-      return id
+      return next
     }),
 
   /**
@@ -547,26 +584,131 @@ export const scheduleService = {
    * quando um compromisso e arrastado para um dia no planner semanal.
    */
   moveToWeekday: (input: { id: string; weekday: number }) =>
-    write((db) => {
-      const event = db.events.find((e) => e.id === input.id)
-      if (!event) return input.id
-
-      const current = new Date(event.date)
-
+    reschedule(input.id, (current) => {
       const target = new Date()
       target.setHours(current.getHours(), current.getMinutes(), 0, 0)
       target.setDate(target.getDate() - target.getDay() + input.weekday)
+      return target
+    }),
 
-      db.events = db.events.map((e) =>
-        e.id === input.id ? { ...e, date: target.toISOString() } : e,
-      )
-      return input.id
+  remove: async (id: string) => {
+    await mutateThrough({
+      key: 'events',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.events = db.events.filter((e) => e.id !== id)
+      },
+      remote: () => scheduleApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+}
+
+// ------------------------------------------------------- planner semanal
+
+/**
+ * Blocos da semana modelo. O servidor guarda a lista achatada com `weekday`;
+ * a tela agrupa por dia (ver `useWeeklyPlanner`).
+ */
+export const plannerService = {
+  blocks: () =>
+    listThrough('planBlocks', async () => {
+      const week = await plannerApi.week()
+
+      // A meta vem no mesmo GET: aproveita para espelhar junto, senao a tela
+      // precisaria de uma segunda chamada so' para ela.
+      await write((db) => {
+        db.weeklyGoalMinutes = week.weeklyGoalMinutes
+      })
+
+      return week.blocks.map((block) => ({ ...toPlanBlock(block), weekday: block.weekday }))
     }),
-  remove: (id: string) =>
-    write((db) => {
-      db.events = db.events.filter((e) => e.id !== id)
-      return id
+
+  weeklyGoal: () => read((db) => db.weeklyGoalMinutes),
+
+  setWeeklyGoal: async (weeklyGoalMinutes: number) => {
+    await mutateThrough({
+      key: 'planBlocks',
+      id: 'goal',
+      action: 'update',
+      applyLocal: (db) => {
+        db.weeklyGoalMinutes = weeklyGoalMinutes
+      },
+      remote: () => plannerApi.setGoal(weeklyGoalMinutes),
+      payload: { goal: weeklyGoalMinutes },
+    })
+    return weeklyGoalMinutes
+  },
+
+  addBlock: (input: {
+    weekday: number
+    subjectId: string
+    subjectName: string
+    subjectColor: string
+    duration: number
+  }) =>
+    createThrough<StoredPlanBlock, 'planBlocks'>({
+      key: 'planBlocks',
+      draft: { id: createId('blk'), ...input },
+      remote: async () => {
+        const saved = await plannerApi.createBlock(input)
+        return { ...toPlanBlock(saved), weekday: saved.weekday }
+      },
+      payload: input,
+      position: 'end',
     }),
+
+  /** Serve para arrastar de dia (`weekday`) e para editar duracao/horario/assunto. */
+  updateBlock: async (id: string, patch: UpdatePlanBlockInput) => {
+    await mutateThrough({
+      key: 'planBlocks',
+      id,
+      action: 'update',
+      applyLocal: (db) => {
+        db.planBlocks = db.planBlocks.map((block) =>
+          block.id === id ? applyBlockPatch(block, patch) : block,
+        )
+      },
+      remote: () => plannerApi.updateBlock(id, patch),
+      payload: { id, ...patch },
+    })
+    return id
+  },
+
+  removeBlock: async (id: string) => {
+    await mutateThrough({
+      key: 'planBlocks',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.planBlocks = db.planBlocks.filter((block) => block.id !== id)
+      },
+      remote: () => plannerApi.removeBlock(id),
+      payload: id,
+    })
+    return id
+  },
+}
+
+/** `null` no patch limpa o campo; `undefined` deixa como esta. */
+function applyBlockPatch(block: StoredPlanBlock, patch: UpdatePlanBlockInput): StoredPlanBlock {
+  const next = { ...block }
+
+  if (patch.weekday !== undefined) next.weekday = patch.weekday
+  if (patch.duration !== undefined) next.duration = patch.duration
+
+  if (patch.startTime === null) delete next.startTime
+  else if (patch.startTime !== undefined) next.startTime = patch.startTime
+
+  if (patch.topicId === null) delete next.topicId
+  else if (patch.topicId !== undefined) next.topicId = patch.topicId
+
+  if (patch.topicName === null) delete next.topicName
+  else if (patch.topicName !== undefined) next.topicName = patch.topicName
+
+  return next
 }
 
 // ---------------------------------------------------------------- chat IA

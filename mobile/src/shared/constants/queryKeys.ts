@@ -35,6 +35,11 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.mindmaps.all, 'detail', id] as const,
   },
 
+  planner: {
+    all: ['planner'] as const,
+    blocks: () => [...queryKeys.planner.all, 'blocks'] as const,
+    goal: () => [...queryKeys.planner.all, 'goal'] as const,
+  },
   schedule: {
     all: ['schedule'] as const,
     list: () => [...queryKeys.schedule.all, 'list'] as const,

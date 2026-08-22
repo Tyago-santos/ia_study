@@ -5,7 +5,7 @@ import { queryKeys } from '@/shared/constants/queryKeys'
 import { refreshNotificationPermission, rescheduleReminders } from '@/shared/services/notifications'
 import { scheduleService } from '@/shared/services/dataStore'
 import { useNotificationSettings } from '@/shared/store/notificationSettings'
-import { useWeeklyPlannerStore } from '@/features/dashboard/store/weeklyPlanner'
+import { usePlannerWeek } from '@/features/dashboard/hooks/usePlannerWeek'
 import { remindersFromEvents, remindersFromPlanner } from '../services/reminders.service'
 
 /**
@@ -14,7 +14,7 @@ import { remindersFromEvents, remindersFromPlanner } from '../services/reminders
  */
 export function useReminders() {
   const { schedule, planner, leadMinutes } = useNotificationSettings()
-  const days = useWeeklyPlannerStore((s) => s.days)
+  const { days } = usePlannerWeek()
 
   const { data: events } = useQuery({
     queryKey: queryKeys.schedule.list(),

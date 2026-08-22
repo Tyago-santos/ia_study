@@ -14,6 +14,7 @@ import type {
   Conversation,
   Flashcard,
   MindMap,
+  PlanBlock,
   Quiz,
   ReferenceFile,
   ScheduleEvent,
@@ -31,6 +32,15 @@ export interface AppSettings {
   notifications: boolean
 }
 
+/**
+ * Bloco do planner com o dia da semana junto (0 = domingo).
+ *
+ * A tela trabalha com `DayPlan[]` (uma lista por dia), mas o espelho guarda a
+ * lista achatada, do mesmo jeito que o servidor devolve — agrupar e' feito na
+ * leitura, e assim `listThrough` pode gravar o que veio sem transformar nada.
+ */
+export type StoredPlanBlock = PlanBlock & { weekday: number }
+
 /** A materia fica junto da atividade para o dashboard colorir a linha. */
 export type StoredActivity = Activity & { subjectId: string }
 
@@ -43,6 +53,9 @@ export interface Database {
   summaries: Summary[]
   mindMaps: MindMap[]
   events: ScheduleEvent[]
+  planBlocks: StoredPlanBlock[]
+  /** Meta semanal em minutos; espelha o valor guardado no usuario do servidor. */
+  weeklyGoalMinutes: number
   conversations: Conversation[]
   activities: StoredActivity[]
   referenceFiles: ReferenceFile[]
@@ -59,6 +72,8 @@ function emptyDatabase(): Database {
     summaries: [],
     mindMaps: [],
     events: [],
+    planBlocks: [],
+    weeklyGoalMinutes: 600,
     conversations: [],
     activities: [],
     referenceFiles: [],

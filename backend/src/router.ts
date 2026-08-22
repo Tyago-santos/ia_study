@@ -9,6 +9,8 @@ import { routerAi } from "./modules/ai/router/index.js";
 import { routerStudySessions } from "./modules/studySessions/router/index.js";
 import { routerFlashcards } from "./modules/flashcards/router/index.js";
 import { routerQuiz } from "./modules/quiz/router/index.js";
+import { routerPlanner } from "./modules/planner/router/index.js";
+import { routerSchedule } from "./modules/schedule/router/index.js";
 
 const router = Router();
 
@@ -22,5 +24,7 @@ router.use("/ai", routerAi);
 router.use("/study-sessions", routerStudySessions);
 router.use("/flashcards", routerFlashcards);
 router.use("/quizzes", routerQuiz);
+router.use("/planner", routerPlanner);
+router.use("/schedule", routerSchedule);
 
 export { router as mainRouter };

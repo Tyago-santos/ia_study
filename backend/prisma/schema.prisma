@@ -16,12 +16,17 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  subjects      Subject[]
-  resumes       Resume[]
-  mindMaps      MindMap[]
-  studySessions StudySession[]
-  flashcards    Flashcard[]
-  quizzes       Quiz[]
+  subjects       Subject[]
+  resumes        Resume[]
+  mindMaps       MindMap[]
+  studySessions  StudySession[]
+  flashcards     Flashcard[]
+  quizzes        Quiz[]
+  planBlocks     PlanBlock[]
+  scheduleEvents ScheduleEvent[]
+
+  /** Meta de estudo da semana em minutos, mostrada no planner. */
+  weeklyGoalMinutes Int @default(600)
 
   @@map("users")
 }
@@ -39,9 +44,11 @@ model Subject {
   user   User    @relation(fields: [userId], references: [id])
   topics Topic[]
 
-  mindMaps   MindMap[]
-  flashcards Flashcard[]
-  quizzes    Quiz[]
+  mindMaps       MindMap[]
+  flashcards     Flashcard[]
+  quizzes        Quiz[]
+  planBlocks     PlanBlock[]
+  scheduleEvents ScheduleEvent[]
 
   @@map("subjects")
 }
@@ -143,6 +150,57 @@ model Flashcard {
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   @@map("flashcards")
+}
+
+/**
+ * Um bloco do planejador semanal — "segunda, 2h de Biologia".
+ *
+ * E' uma semana modelo, que vale para toda semana: `weekday` (0 = domingo) no
+ * lugar de uma data. Nome e cor da materia ficam copiados aqui porque o bloco
+ * continua legivel mesmo depois que a materia e' renomeada ou apagada; a FK
+ * com `SetNull` preserva o bloco em vez de derrubar o planejamento junto.
+ */
+model PlanBlock {
+  id           String  @id @default(uuid())
+  userId       String
+  weekday      Int
+  subjectId    String?
+  subjectName  String
+  subjectColor String
+  duration     Int
+  /** "HH:MM"; ausente = bloco sem horario marcado. */
+  startTime    String?
+  topicId      String?
+  topicName    String?
+
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId, weekday])
+  @@map("plan_blocks")
+}
+
+/** Compromisso com data marcada (prova, entrega) — o que a tela Cronograma lista. */
+model ScheduleEvent {
+  id              String   @id @default(uuid())
+  userId          String
+  title           String
+  type            String
+  subjectId       String?
+  date            DateTime
+  durationMinutes Int?
+  description     String?
+  completed       Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+  @@map("schedule_events")
 }
 
 model Quiz {

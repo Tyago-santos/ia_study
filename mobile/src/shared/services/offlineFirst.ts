@@ -21,7 +21,7 @@ import { type Database, read, write } from '@/shared/services/db'
  */
 
 /** Coleções do banco local que espelham uma tabela do servidor. */
-type SyncedKey = 'subjects' | 'topics' | 'flashcards' | 'quizzes'
+type SyncedKey = 'subjects' | 'topics' | 'flashcards' | 'quizzes' | 'planBlocks' | 'events'
 
 /** O servidor nao respondeu (rede caiu, dormindo, sobrecarregado). */
 export function isServerUnreachable(error: unknown): boolean {
@@ -83,7 +83,7 @@ const QUEUE_KEY = 'gnosis:syncqueue:v1'
 export interface PendingOp {
   id: string
   key: SyncedKey
-  action: 'create' | 'remove' | 'toggle' | 'submit'
+  action: 'create' | 'remove' | 'toggle' | 'submit' | 'update'
   /** id provisorio gerado no aparelho — trocado pelo do servidor ao sincronizar. */
   localId?: string
   payload: unknown
@@ -219,6 +219,8 @@ export type SyncHandlers = {
     remove?: (id: string) => Promise<unknown>
     toggle?: (id: string) => Promise<unknown>
     submit?: (payload: any) => Promise<unknown>
+    /** Recebe o payload inteiro (id + campos alterados), nao so' o id. */
+    update?: (payload: any) => Promise<unknown>
   }
 }
 
@@ -263,7 +265,7 @@ export async function drainQueue(handlers: SyncHandlers): Promise<number> {
               if (index >= 0) list[index] = saved
             })
           }
-        } else if (op.action === 'submit') {
+        } else if (op.action === 'submit' || op.action === 'update') {
           await (handler as (p: unknown) => Promise<unknown>)(op.payload)
         } else {
           await (handler as (id: string) => Promise<unknown>)(op.localId ?? '')

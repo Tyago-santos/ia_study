@@ -1,4 +1,3 @@
-import { useWeeklyPlannerStore } from '@/features/dashboard/store/weeklyPlanner'
 import { usePomodoroStore } from '@/features/pomodoro/store/pomodoro'
 import { clearDatabase } from '@/shared/services/db'
 import { clearQueue } from '@/shared/services/offlineFirst'
@@ -15,8 +14,9 @@ import { clearQueue } from '@/shared/services/offlineFirst'
  * reenvia-las depois do logout as gravaria na conta errada.
  */
 export async function resetLocalData(): Promise<void> {
+  // O planner nao aparece aqui: os blocos e a meta vivem no banco local
+  // (`db.planBlocks`/`db.weeklyGoalMinutes`), entao `clearDatabase` ja leva os dois.
   await clearDatabase()
   await clearQueue()
   usePomodoroStore.getState().reset()
-  useWeeklyPlannerStore.getState().reset()
 }

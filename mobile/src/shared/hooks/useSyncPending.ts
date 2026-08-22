@@ -5,7 +5,9 @@ import { queryKeys } from '@/shared/constants/queryKeys'
 import { flashcardsApi } from '@/shared/services/flashcardsApi'
 import { subjectsApi, topicsApi } from '@/shared/services/libraryApi'
 import { type SyncHandlers, drainQueue } from '@/shared/services/offlineFirst'
+import { plannerApi } from '@/shared/services/plannerApi'
 import { quizzesApi } from '@/shared/services/quizzesApi'
+import { scheduleApi } from '@/shared/services/scheduleApi'
 import { useAuthStore } from '@/shared/store/auth'
 
 /**
@@ -33,6 +35,19 @@ const HANDLERS: SyncHandlers = {
     create: (payload) => quizzesApi.create(payload),
     submit: (payload) => quizzesApi.submit(payload),
     remove: (id) => quizzesApi.remove(id),
+  },
+  planBlocks: {
+    create: (payload) => plannerApi.createBlock(payload),
+    // A meta da semana viaja na mesma fila dos blocos, com `id: 'goal'`.
+    update: ({ id, goal, ...patch }) =>
+      goal !== undefined ? plannerApi.setGoal(goal) : plannerApi.updateBlock(id, patch),
+    remove: (id) => plannerApi.removeBlock(id),
+  },
+  events: {
+    create: (payload) => scheduleApi.create(payload),
+    update: ({ id, ...patch }) => scheduleApi.update(id, patch),
+    toggle: (id) => scheduleApi.toggle(id),
+    remove: (id) => scheduleApi.remove(id),
   },
 }
 
