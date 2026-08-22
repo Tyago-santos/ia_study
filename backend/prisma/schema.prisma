@@ -16,5 +16,94 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  schoolSubjects SchoolSubject[]
+  resumes        Resume[]
+  mindMaps       MindMap[]
+  studySessions  StudySession[]
+
   @@map("users")
 }
+
+model SchoolSubject {
+  id     String @id @default(uuid())
+  name   String @db.VarChar(100)
+  userId String
+  answer String
+  response String
+  user   User   @relation(fields: [userId], references: [id])
+
+  mindMaps MindMap[]
+
+  @@map("schoolsubjects")
+}
+
+
+model Resume {
+  id     String @id @default(uuid())
+  name   String @db.VarChar(100)
+  userId String
+  content String
+
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("resumes")
+}
+
+model MindMap {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(100)
+  description String?
+  userId      String
+  subjectId   String
+
+  user    User          @relation(fields: [userId], references: [id])
+  subject SchoolSubject @relation(fields: [subjectId], references: [id])
+  nodes   MindMapNode[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mindmaps")
+}
+
+model MindMapNode {
+  id        String  @id @default(uuid())
+  label     String
+  note      String?
+  color     String?
+  collapsed Boolean @default(false)
+  positionX Float?
+  positionY Float?
+
+  mindMapId String
+  mindMap   MindMap @relation(fields: [mindMapId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   MindMapNode?  @relation("MindMapNodeTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children MindMapNode[] @relation("MindMapNodeTree")
+
+  @@map("mindmap_nodes")
+}
+
+/**
+ * Uma sessao de estudo concluida (pomodoro ou avulsa), a base do dashboard e
+ * da sequencia de dias. `subjectId`/`subjectName` sao um rotulo livre — nao
+ * ha' FK pra SchoolSubject porque as materias do app ainda vivem so' no
+ * aparelho, sem sincronizar com o backend.
+ */
+model StudySession {
+  id          String   @id @default(uuid())
+  userId      String
+  subjectId   String?
+  subjectName String?
+  duration    Int
+  type        String   @default("free")
+  completedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("study_sessions")
+}
+
+

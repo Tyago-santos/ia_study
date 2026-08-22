@@ -4,7 +4,6 @@ import { AuthService } from "../services/index.js";
 import { loginSchema } from "../schema/login.schema.js";
 import { env } from "@/config/env.js";
 import { registerSchema } from "../schema/register.schema.js";
-import { httpUrl } from "zod";
 
 export class AuthController {
   private service: AuthService;
@@ -31,9 +30,11 @@ export class AuthController {
       maxAge: 15 * 60 * 1000,
     });
 
+    req.user = user;
+
     return res.status(200).json({
-      id: user.id,
-      name: user.name,
+      user: { id: user.id, name: user.name, email: user.email },
+      token,
     });
   }
 
@@ -53,9 +54,11 @@ export class AuthController {
       maxAge: 15 * 60 * 1000,
     });
 
+    req.user = user;
+
     return res.status(201).json({
-      id: user.id,
-      name: user.name,
+      user: { id: user.id, name: user.name, email: user.email },
+      token,
     });
   }
 }

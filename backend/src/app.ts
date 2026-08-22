@@ -8,11 +8,19 @@ import { mainRouter } from "./router.js";
 import { erroHandle } from "@shared/middlewares/error-handler.js";
 
 const app = expres();
-app.use(expres.json());
+// Atrás do proxy/load balancer do Render: sem isto req.protocol e req.ip
+// refletem o proxy interno, não o cliente real.
+app.set("trust proxy", 1);
+
+// Limite alto por causa dos anexos da IA (imagem/PDF em base64 no corpo da requisição).
+app.use(expres.json({ limit: "15mb" }));
 app.use(helmet());
 app.use(cors());
 
 app.use(cookieParser());
+
+// Health check do Render: precisa responder 200 sem autenticação nem tocar no banco.
+app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
 
 app.use(mainRouter);
 

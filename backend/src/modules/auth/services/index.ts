@@ -30,7 +30,7 @@ export class AuthService {
 
       if (!user) throw new AppError("Credenciais inválidas", 401);
 
-      await this.encrypt.verifyPassword(user.password, password);
+      await this.encrypt.verifyPassword(password, user.password);
 
       const token = this.jwt.createToken({
         userId: user.id,

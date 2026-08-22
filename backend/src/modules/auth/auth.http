@@ -1,0 +1,40 @@
+### Configuração
+# @name config
+# Rodando local (npm run dev, usa backend/.env -> PORT=3002).
+# Se estiver testando contra o docker-compose, troque para http://localhost:3000
+@baseUrl = http://localhost:3000
+            
+### Registro
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Usuario Teste",
+  "email": "teste@estudyia.com",
+  "password": "senha123"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "teste@estudyia.com",
+    "password": "senha123"
+}
+
+### Login com credenciais inválidas (deve retornar 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teste@estudyia.com",
+  "password": "senhaerrada"
+}
+
+### Usuário autenticado (usa o cookie accesToken devolvido pelo login acima)
+# @name me
+GET {{baseUrl}}/users/me
+Cookie: accesToken={{login.response.headers.Set-Cookie}}

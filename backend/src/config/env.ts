@@ -8,6 +8,12 @@ const envcSchema = z.object({
   JWT_SECRET: z.string(),
   COOKIE_SECRET: z.string(),
   DATABASE_URL: z.url(),
+  /** Migrações/CLI usam esta se vier definida (conexão direta/sessão) —
+   * pooler em modo transação (pgbouncer) não suporta os locks do Migrate. */
+  DIRECT_URL: z.url().optional(),
+  /** Uma ou mais chaves separadas por vírgula — ver GeminiService para a rotação. */
+  GEMINI_API_KEY: z.string().default(""),
+  GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
 });
 
 const _env = envcSchema.safeParse(process.env);

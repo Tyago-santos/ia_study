@@ -1,0 +1,45 @@
+import Animated from 'react-native-reanimated'
+import { styled } from '@/shared/styles'
+
+export const Host = styled.View<{ $top: number }>`
+  position: absolute;
+  top: ${({ $top }) => $top}px;
+  left: ${({ theme }) => theme.spacing.md}px;
+  right: ${({ theme }) => theme.spacing.md}px;
+  z-index: 1000;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+`
+
+export const Banner = styled(Animated.View)<{ $tint: string }>`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+  border-width: 1px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  padding-horizontal: ${({ theme }) => theme.spacing.md}px;
+  padding-vertical: ${({ theme }) => theme.spacing.md}px;
+  background-color: ${({ theme }) => theme.colors.card};
+  border-color: ${({ $tint }) => $tint};
+  /* Sombra para o banner descolar do conteudo da tela por baixo. */
+  elevation: 6;
+  shadow-color: #000;
+  shadow-opacity: 0.2;
+  shadow-radius: 8px;
+  shadow-offset: 0px 3px;
+`
+
+export const Content = styled.View`
+  flex: 1;
+  gap: 1px;
+`
+
+export const Title = styled.Text`
+  font-size: 14px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+`
+
+export const Message = styled.Text`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`

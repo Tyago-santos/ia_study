@@ -11,8 +11,8 @@ export class Bcrypt {
       throw error;
     }
   }
-  async verifyPassword(password: string, passwordUser: string) {
-    const passwordEcrypt = await bcrypt.compare(password, passwordUser);
+  async verifyPassword(plainPassword: string, hashedPassword: string) {
+    const passwordEcrypt = await bcrypt.compare(plainPassword, hashedPassword);
 
     if (!passwordEcrypt) throw new Error("Senha ao comparar senhar");
 

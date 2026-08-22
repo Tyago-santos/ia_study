@@ -7,7 +7,12 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies.accesToken;
+  const authHeader = req.headers.authorization;
+  const bearerToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length)
+    : undefined;
+
+  const token = req.cookies.accesToken ?? bearerToken;
 
   if (!token) {
     throw new AppError("Token inválido", 401);

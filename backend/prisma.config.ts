@@ -10,6 +10,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env.DATABASE_URL,
+    // Migrate/CLI precisam de uma conexao direta (sem pooler em modo
+    // transacao): DDL e os locks do Migrate nao funcionam via pgbouncer.
+    url: env.DIRECT_URL ?? env.DATABASE_URL,
   },
 });
