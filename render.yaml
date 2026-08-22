@@ -7,6 +7,9 @@ services:
     plan: starter
     region: oregon
     healthCheckPath: /health
+    # Roda antes de trocar o trafego pra nova versao — separado do boot do
+    # servidor, pra migracao lenta nao competir com o timeout do health check.
+    preDeployCommand: npx prisma migrate deploy
     envVars:
       - key: NODE_ENV
         value: production

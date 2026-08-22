@@ -77,8 +77,8 @@ USER node
 
 EXPOSE 3000
 
-# `migrate deploy` so' aplica as migracoes pendentes (idempotente) — seguro de
-# rodar a cada start/restart do container, sem precisar de um passo separado
-# de "release" na plataforma. Usa DIRECT_URL (ver prisma.config.ts) pra nao
-# tentar rodar DDL/locks do Migrate atraves de um pooler em modo transacao.
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+# `prisma migrate deploy` NAO roda aqui: encadeado no CMD ele competia com o
+# boot do servidor pelo prazo do health check da plataforma (o container
+# podia ser morto por timeout antes do `node` sequer abrir a porta). Roda
+# como passo separado antes do deploy — ver `preDeployCommand` no render.yaml.
+CMD ["node", "dist/server.js"]
