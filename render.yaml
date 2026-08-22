@@ -4,12 +4,12 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    plan: starter
+    plan: free
     region: oregon
     healthCheckPath: /health
-    # Roda antes de trocar o trafego pra nova versao — separado do boot do
-    # servidor, pra migracao lenta nao competir com o timeout do health check.
-    preDeployCommand: npx prisma migrate deploy
+    # Pre-Deploy Command exige plano pago (Starter+); no free, migrações rodam
+    # manualmente antes do deploy: `cd backend && npx prisma migrate deploy`
+    # de uma máquina com o DIRECT_URL de produção configurado.
     envVars:
       - key: NODE_ENV
         value: production
