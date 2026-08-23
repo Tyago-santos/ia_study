@@ -34,6 +34,7 @@ export function Screen({ children, scroll, centered, safeTop }: ScreenProps) {
           alignItems: centered ? 'center' : 'stretch',
           paddingHorizontal: Spacing.lg,
           paddingTop: safeTop ? insets.top : undefined,
+          paddingBottom: Spacing.xl + insets.bottom,
         }}
         keyboardShouldPersistTaps="handled"
       >

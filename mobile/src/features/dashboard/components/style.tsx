@@ -72,6 +72,7 @@ export const SubjectChip = styled.View<{ $color: string }>`
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs}px;
+  max-width: 200px;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.full}px;
   padding-left: 5px;
@@ -91,6 +92,7 @@ export const SubjectChipIcon = styled.View<{ $color: string }>`
 `
 
 export const SubjectChipLabel = styled.Text<{ $color: string }>`
+  flex-shrink: 1;
   font-size: 13px;
   font-weight: 700;
   color: ${({ $color }) => $color};

@@ -7,6 +7,7 @@ export const TYPE_LABELS: Record<ScheduleEvent['type'], string> = {
   prova: 'Prova',
   estudo: 'Estudo',
   trabalho: 'Trabalho',
+  aula: 'Aula',
   outro: 'Outro',
 }
 
@@ -14,6 +15,7 @@ export const TYPE_COLORS: Record<ScheduleEvent['type'], string> = {
   prova: Tints.red,
   estudo: Tints.green,
   trabalho: Tints.amber,
+  aula: Tints.violet,
   outro: Tints.cyan,
 }
 
@@ -21,6 +23,7 @@ export const TYPE_ICONS: Record<ScheduleEvent['type'], keyof typeof Ionicons.gly
   prova: 'school',
   estudo: 'book',
   trabalho: 'briefcase',
+  aula: 'easel-outline',
   outro: 'ellipsis-horizontal',
 }
 

@@ -1,5 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
-import { Pressable } from 'react-native'
+import { useEffect, useState } from 'react'
+import { type LayoutChangeEvent, Pressable } from 'react-native'
+import { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { Badge } from '@/shared/components/ui/Badge'
 import { useTheme } from '@/shared/hooks/useTheme'
 import type { Flashcard, Subject } from '@/shared/types'
@@ -24,6 +26,32 @@ export function FlashcardItem({
 }: FlashcardItemProps) {
   const { colors } = useTheme()
 
+  const flip = useSharedValue(0)
+  useEffect(() => {
+    flip.value = withTiming(flipped ? 1 : 0, { duration: 300 })
+  }, [flipped, flip])
+
+  /* A face de tras e absoluta pra sobrepor a da frente, entao o palco precisa
+     de uma altura explicita: a maior entre as duas, medida no layout. */
+  const [frontHeight, setFrontHeight] = useState(0)
+  const [backHeight, setBackHeight] = useState(0)
+  const onFrontLayout = (event: LayoutChangeEvent) => setFrontHeight(event.nativeEvent.layout.height)
+  const onBackLayout = (event: LayoutChangeEvent) => setBackHeight(event.nativeEvent.layout.height)
+
+  const frontStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 1000 },
+      { rotateY: `${interpolate(flip.value, [0, 1], [0, 180])}deg` },
+    ],
+  }))
+
+  const backStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 1000 },
+      { rotateY: `${interpolate(flip.value, [0, 1], [180, 360])}deg` },
+    ],
+  }))
+
   return (
     <S.Card
       onPress={onFlip}
@@ -42,8 +70,20 @@ export function FlashcardItem({
         </S.CardHeaderRight>
       </S.CardHeader>
 
-      <S.CardSide>{flipped ? 'RESPOSTA' : 'PERGUNTA'}</S.CardSide>
-      <S.CardContent>{flipped ? flashcard.back : flashcard.front}</S.CardContent>
+      <S.FlipStage style={{ height: Math.max(frontHeight, backHeight) || undefined }}>
+        <S.FlipFace style={frontStyle} onLayout={onFrontLayout}>
+          <S.CardSide>PERGUNTA</S.CardSide>
+          <S.CardContent>{flashcard.front}</S.CardContent>
+        </S.FlipFace>
+
+        <S.FlipFace
+          style={[{ position: 'absolute', top: 0, left: 0, right: 0 }, backStyle]}
+          onLayout={onBackLayout}
+        >
+          <S.CardSide>RESPOSTA</S.CardSide>
+          <S.CardContent>{flashcard.back}</S.CardContent>
+        </S.FlipFace>
+      </S.FlipStage>
 
       <S.CardFooter>
         <S.CardMeta>{flashcard.reviewCount} revisões</S.CardMeta>

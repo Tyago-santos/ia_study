@@ -1,3 +1,4 @@
+import { ScrollView } from 'react-native'
 import { parseMarkdown, type InlineToken } from '../libs/markdown'
 import * as S from './style'
 
@@ -29,6 +30,31 @@ export function MarkdownText({ content }: { content: string }) {
 
           case 'paragraph':
             return <S.Paragraph key={index}>{renderInline(line.tokens)}</S.Paragraph>
+
+          case 'table':
+            return (
+              <ScrollView key={index} horizontal showsHorizontalScrollIndicator={false}>
+                <S.Table>
+                  <S.TableRow $header>
+                    {line.header.map((cell, cellIndex) => (
+                      <S.TableCell key={cellIndex} $align={line.align[cellIndex] ?? 'left'}>
+                        <S.TableCellText $header>{renderInline(cell)}</S.TableCellText>
+                      </S.TableCell>
+                    ))}
+                  </S.TableRow>
+
+                  {line.rows.map((row, rowIndex) => (
+                    <S.TableRow key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <S.TableCell key={cellIndex} $align={line.align[cellIndex] ?? 'left'}>
+                          <S.TableCellText>{renderInline(cell)}</S.TableCellText>
+                        </S.TableCell>
+                      ))}
+                    </S.TableRow>
+                  ))}
+                </S.Table>
+              </ScrollView>
+            )
         }
       })}
     </S.Markdown>

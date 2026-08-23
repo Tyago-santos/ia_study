@@ -17,11 +17,13 @@ export const EventCard = styled.View<{ $overdue: boolean; $completed: boolean }>
 
 export const EventInfo = styled.View`
   flex: 1;
+  flex-shrink: 1;
   gap: ${({ theme }) => theme.spacing.xs}px;
 `
 
 export const EventBadges = styled.View`
   flex-direction: row;
+  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.xs}px;
 `
 

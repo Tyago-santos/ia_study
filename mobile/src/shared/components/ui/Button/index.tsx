@@ -26,7 +26,7 @@ export function Button({ title, onPress, variant = 'primary', loading, disabled 
       style={({ pressed }) => (pressed && !isDisabled ? { opacity: 0.85 } : null)}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? colors.onAccent : colors.accentText} />
+        <ActivityIndicator color={variant === 'secondary' ? colors.accentText : colors.onAccent} />
       ) : (
         <S.Label $variant={variant}>{title}</S.Label>
       )}

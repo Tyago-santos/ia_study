@@ -46,7 +46,9 @@ export function PlannerPalette({
                 <S.SubjectChipIcon $color={subject.color}>
                   <Ionicons name={getSubjectIcon(subject.icon)} size={13} color={subject.color} />
                 </S.SubjectChipIcon>
-                <S.SubjectChipLabel $color={subject.color}>{subject.name}</S.SubjectChipLabel>
+                <S.SubjectChipLabel $color={subject.color} numberOfLines={1}>
+                  {subject.name}
+                </S.SubjectChipLabel>
               </S.SubjectChip>
             </Draggable>
           ))

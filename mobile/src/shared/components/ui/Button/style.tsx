@@ -1,6 +1,6 @@
 import { styled } from '@/shared/styles'
 
-export type ButtonVariant = 'primary' | 'secondary'
+export type ButtonVariant = 'primary' | 'secondary' | 'danger'
 
 export const Container = styled.Pressable<{ $variant: ButtonVariant; $disabled?: boolean }>`
   outline-style: none;
@@ -10,9 +10,9 @@ export const Container = styled.Pressable<{ $variant: ButtonVariant; $disabled?:
   align-items: center;
   justify-content: center;
   background-color: ${({ theme, $variant }) =>
-    $variant === 'primary' ? theme.colors.accent : 'transparent'};
+    $variant === 'primary' ? theme.colors.accent : $variant === 'danger' ? theme.colors.danger : 'transparent'};
   border-color: ${({ theme, $variant }) =>
-    $variant === 'primary' ? theme.colors.accent : theme.colors.border};
+    $variant === 'primary' ? theme.colors.accent : $variant === 'danger' ? theme.colors.danger : theme.colors.border};
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
 `
 
@@ -20,5 +20,7 @@ export const Label = styled.Text<{ $variant: ButtonVariant }>`
   font-size: 16px;
   font-weight: 600;
   color: ${({ theme, $variant }) =>
-    $variant === 'primary' ? theme.colors.onAccent : theme.colors.accentText};
+    /* Fundo solido (primary/danger) sempre pede texto claro, independente do
+       tema — accentText so contrasta bem sobre fundo transparente. */
+    $variant === 'secondary' ? theme.colors.accentText : theme.colors.onAccent};
 `

@@ -34,7 +34,9 @@ export function EventCard({ event, subject, onToggle, onRemove }: EventCardProps
           {subject ? <Badge label={subject.name} color={subject.color} /> : null}
         </S.EventBadges>
 
-        <S.EventTitle $completed={event.completed}>{event.title}</S.EventTitle>
+        <S.EventTitle $completed={event.completed} numberOfLines={2} ellipsizeMode="tail">
+          {event.title}
+        </S.EventTitle>
 
         {event.description ? (
           <S.EventDescription numberOfLines={2}>{event.description}</S.EventDescription>

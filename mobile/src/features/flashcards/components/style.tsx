@@ -1,3 +1,4 @@
+import Animated from 'react-native-reanimated'
 import { styled } from '@/shared/styles'
 
 export const Card = styled.Pressable<{ $borderColor: string }>`
@@ -25,6 +26,17 @@ export const CardHeaderRight = styled.View`
 
 /* Rotulo "PERGUNTA"/"RESPOSTA": pequeno e espacado para nao competir com o
    conteudo do cartao. */
+/* Palco do flip: a face de tras fica absoluta sobre a da frente, que da a
+   altura do bloco (a maior das duas, medida no layout). */
+export const FlipStage = styled.View`
+  position: relative;
+`
+
+export const FlipFace = styled(Animated.View)`
+  gap: ${({ theme }) => theme.spacing.sm}px;
+  backface-visibility: hidden;
+`
+
 export const CardSide = styled.Text`
   font-size: 10px;
   font-weight: 700;

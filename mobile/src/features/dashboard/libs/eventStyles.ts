@@ -7,6 +7,7 @@ export const EVENT_COLORS: Record<ScheduleEvent['type'], string> = {
   prova: Tints.red,
   estudo: Tints.green,
   trabalho: Tints.amber,
+  aula: Tints.violet,
   outro: Tints.cyan,
 }
 
@@ -14,5 +15,6 @@ export const EVENT_ICONS: Record<ScheduleEvent['type'], keyof typeof Ionicons.gl
   prova: 'school',
   estudo: 'book',
   trabalho: 'briefcase',
+  aula: 'easel-outline',
   outro: 'ellipsis-horizontal',
 }

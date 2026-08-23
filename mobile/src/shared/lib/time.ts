@@ -34,3 +34,16 @@ export function addMinutes(startTime: string, minutes: number): string | null {
 export function isCompleteTime(value: string): boolean {
   return /^\d{2}:\d{2}$/.test(value)
 }
+
+/**
+ * "AAAA-MM-DD" de hoje no fuso local. new Date().toISOString() usa UTC: das
+ * 21h as 23h59 no Brasil isso ja e o dia seguinte, abrindo o cronograma com
+ * a data errada pre-selecionada.
+ */
+export function todayISODate(): string {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}

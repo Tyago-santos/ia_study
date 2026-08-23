@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createScheduleEventSchema = z.object({
   title: z.string().min(1).max(150),
-  type: z.enum(["prova", "estudo", "trabalho", "outro"]),
+  type: z.enum(["prova", "estudo", "trabalho", "aula", "outro"]),
   subjectId: z.uuid().optional(),
   /** ISO completo; a hora dentro dele e' o horario marcado do evento. */
   date: z.iso.datetime(),
@@ -15,7 +15,7 @@ export type TypeCreateScheduleEventSchema = z.infer<typeof createScheduleEventSc
 export const updateScheduleEventSchema = z
   .object({
     title: z.string().min(1).max(150).optional(),
-    type: z.enum(["prova", "estudo", "trabalho", "outro"]).optional(),
+    type: z.enum(["prova", "estudo", "trabalho", "aula", "outro"]).optional(),
     date: z.iso.datetime().optional(),
     durationMinutes: z.number().int().positive().nullable().optional(),
     description: z.string().nullable().optional(),

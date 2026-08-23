@@ -13,12 +13,15 @@ export type InlineToken =
   | { kind: 'bold'; value: string }
   | { kind: 'code'; value: string }
 
+export type TableAlign = 'left' | 'center' | 'right'
+
 export type MarkdownLine =
   | { kind: 'blank' }
   | { kind: 'rule' }
   | { kind: 'heading'; tokens: InlineToken[] }
   | { kind: 'listItem'; marker: string; tokens: InlineToken[] }
   | { kind: 'paragraph'; tokens: InlineToken[] }
+  | { kind: 'table'; header: InlineToken[][]; align: TableAlign[]; rows: InlineToken[][][] }
 
 /** Quebra a linha em trechos, alternando texto normal, negrito e codigo curto. */
 export function parseInline(line: string): InlineToken[] {
@@ -38,28 +41,96 @@ export function parseInline(line: string): InlineToken[] {
     })
 }
 
-/** Linha de separacao de tabela — o conteudo em si cai como texto comum. */
-const TABLE_SEPARATOR = /^\s*\|?[\s|:-]+\|[\s|:-]*$/
+/** Linha "| :-- | :-: | --: |" que separa cabecalho do corpo da tabela. */
+const TABLE_SEPARATOR = /^\s*\|?\s*:?-{1,}:?\s*(\|\s*:?-{1,}:?\s*)*\|?\s*$/
+
+function isTableRow(line: string): boolean {
+  return line.includes('|') && line.trim().length > 0
+}
+
+/** "| a | b |" -> ["a", "b"], tirando as barras das pontas. */
+function splitTableRow(line: string): string[] {
+  let trimmed = line.trim()
+  if (trimmed.startsWith('|')) trimmed = trimmed.slice(1)
+  if (trimmed.endsWith('|')) trimmed = trimmed.slice(0, -1)
+  return trimmed.split('|').map((cell) => cell.trim())
+}
+
+function parseTableRow(line: string): InlineToken[][] {
+  return splitTableRow(line).map(parseInline)
+}
+
+function parseTableAlign(line: string): TableAlign[] {
+  return splitTableRow(line).map((cell) => {
+    if (cell.startsWith(':') && cell.endsWith(':')) return 'center'
+    if (cell.endsWith(':')) return 'right'
+    return 'left'
+  })
+}
 
 export function parseMarkdown(content: string): MarkdownLine[] {
-  return content.split('\n').map((raw): MarkdownLine => {
-    const line = raw.trimEnd()
+  const rawLines = content.split('\n')
+  const result: MarkdownLine[] = []
+  let i = 0
 
-    if (!line.trim()) return { kind: 'blank' }
+  while (i < rawLines.length) {
+    const line = rawLines[i].trimEnd()
+
+    // Tabela: uma linha de cabecalho com "|" seguida da linha separadora.
+    if (isTableRow(line) && i + 1 < rawLines.length && TABLE_SEPARATOR.test(rawLines[i + 1].trim())) {
+      const header = parseTableRow(line)
+      const align = parseTableAlign(rawLines[i + 1])
+
+      let j = i + 2
+      const rows: InlineToken[][][] = []
+      while (j < rawLines.length && isTableRow(rawLines[j])) {
+        rows.push(parseTableRow(rawLines[j]))
+        j++
+      }
+
+      result.push({ kind: 'table', header, align, rows })
+      i = j
+      continue
+    }
+
+    if (!line.trim()) {
+      result.push({ kind: 'blank' })
+      i++
+      continue
+    }
 
     const heading = /^(#{1,6})\s+(.*)$/.exec(line)
-    if (heading) return { kind: 'heading', tokens: parseInline(heading[2]) }
+    if (heading) {
+      result.push({ kind: 'heading', tokens: parseInline(heading[2]) })
+      i++
+      continue
+    }
 
     const bullet = /^\s*[-*]\s+(.*)$/.exec(line)
-    if (bullet) return { kind: 'listItem', marker: '•', tokens: parseInline(bullet[1]) }
+    if (bullet) {
+      result.push({ kind: 'listItem', marker: '•', tokens: parseInline(bullet[1]) })
+      i++
+      continue
+    }
 
     const numbered = /^\s*(\d+)[.)]\s+(.*)$/.exec(line)
     if (numbered) {
-      return { kind: 'listItem', marker: `${numbered[1]}.`, tokens: parseInline(numbered[2]) }
+      result.push({ kind: 'listItem', marker: `${numbered[1]}.`, tokens: parseInline(numbered[2]) })
+      i++
+      continue
     }
 
-    if (TABLE_SEPARATOR.test(line)) return { kind: 'rule' }
+    // Linha separadora de tabela sem cabecalho valido antes dela: mantem o
+    // comportamento antigo de virar um filete.
+    if (TABLE_SEPARATOR.test(line)) {
+      result.push({ kind: 'rule' })
+      i++
+      continue
+    }
 
-    return { kind: 'paragraph', tokens: parseInline(line) }
-  })
+    result.push({ kind: 'paragraph', tokens: parseInline(line) })
+    i++
+  }
+
+  return result
 }

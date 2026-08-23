@@ -11,7 +11,7 @@ import { SkeletonBlock, SkeletonCard } from '@/shared/components/ui/Skeleton'
 import { StatTile } from '@/shared/components/ui/StatTile'
 import { Tints } from '@/shared/constants/theme'
 import { useTheme } from '@/shared/hooks/useTheme'
-import { addMinutes, isCompleteTime, maskTime } from '@/shared/lib/time'
+import { addMinutes, isCompleteTime, maskTime, todayISODate } from '@/shared/lib/time'
 import type { ScheduleEvent } from '@/shared/types'
 import { EventCard } from '../components/EventCard'
 import { useSchedule } from '../hooks/useSchedule'
@@ -90,7 +90,7 @@ export function SchedulePage() {
         actionLabel="Novo"
         onAction={() => {
           setSubjectId(subjects[0]?.id ?? null)
-          setDate(new Date().toISOString().slice(0, 10))
+          setDate(todayISODate())
           setIsCreating(true)
         }}
       />

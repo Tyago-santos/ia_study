@@ -149,7 +149,7 @@ export interface SubjectStats {
 export interface ScheduleEvent {
   id: string
   title: string
-  type: 'prova' | 'estudo' | 'trabalho' | 'outro'
+  type: 'prova' | 'estudo' | 'trabalho' | 'aula' | 'outro'
   subjectId?: string
   /** ISO completo; a hora dentro dele e o horario marcado do evento. */
   date: string

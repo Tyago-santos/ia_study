@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons'
+import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 import { getSubjectIcon } from '@/shared/constants/subjectIcons'
 import { useTheme } from '@/shared/hooks/useTheme'
-import { maskTime } from '@/shared/lib/time'
+import { isCompleteTime, maskTime } from '@/shared/lib/time'
 import type { PlanBlock, Topic } from '@/shared/types'
 import { DURATION_STEP, endTimeOf, formatDuration } from '../services/planner.service'
 import * as S from './style'
@@ -34,6 +35,18 @@ export function PlanBlockCard({
   onRemove,
 }: PlanBlockCardProps) {
   const { colors } = useTheme()
+
+  /**
+   * Buffer local do digitado: o backend so aceita "HH:MM" completo, entao
+   * mandar cada tecla pro servidor faz o campo controlado voltar ao valor
+   * anterior a cada digito e trava a digitacao. So confirma no servidor
+   * quando o horario fica completo (ou apagado).
+   */
+  const [draftTime, setDraftTime] = useState(block.startTime ?? '')
+
+  useEffect(() => {
+    setDraftTime(block.startTime ?? '')
+  }, [block.startTime])
 
   return (
     <>
@@ -92,8 +105,14 @@ export function PlanBlockCard({
           <S.TimeRow>
             <S.TimeInput
               underlineColorAndroid="transparent"
-              value={block.startTime ?? ''}
-              onChangeText={(value) => onChangeStartTime(maskTime(value) || undefined)}
+              value={draftTime}
+              onChangeText={(value) => {
+                const masked = maskTime(value)
+                setDraftTime(masked)
+                if (masked === '' || isCompleteTime(masked)) {
+                  onChangeStartTime(masked || undefined)
+                }
+              }}
               placeholder="--:--"
               placeholderTextColor={colors.textSecondary}
               keyboardType="number-pad"
