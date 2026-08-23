@@ -29,3 +29,5 @@ services:
         sync: false
       - key: GEMINI_MODEL
         value: gemini-2.5-flash
+      - key: FRONTEND_URL
+        value: https://ia-study-wheat.vercel.app
