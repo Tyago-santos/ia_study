@@ -60,6 +60,7 @@ export const queryKeys = {
     pomodoro: () => [...queryKeys.stats.all, 'pomodoro'] as const,
     quiz: () => [...queryKeys.stats.all, 'quiz'] as const,
     flashcards: () => [...queryKeys.stats.all, 'flashcards'] as const,
+    activities: () => [...queryKeys.stats.all, 'activities'] as const,
   },
 
   search: {

@@ -1,18 +1,6 @@
 import { useMemo } from 'react'
-import {
-  mockActivities,
-  mockDashboardStats,
-  mockMonthlyStats,
-  mockSubjects,
-  mockSubjectStats,
-  mockWeeklyStats,
-} from '@/shared/mocks/data'
-import type { DailyStats } from '@/shared/types'
+import type { Activity, DailyStats, Subject, SubjectStats } from '@/shared/types'
 import type { CustomRange, DateRange } from '@/features/dashboard/components/DashboardFilters'
-
-// Mock data is anchored to this date (the last day of mockWeeklyStats) instead of the real
-// current date, so "hoje"/"7 dias"/"30 dias" line up with the seeded activity history.
-const REFERENCE_NOW = new Date('2025-07-26T23:59:59')
 
 const DAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
 
@@ -23,7 +11,15 @@ interface DashboardFiltersState {
   selectedTypes: string[]
 }
 
-const WEEKLY_GOAL_MINUTES = mockDashboardStats.weeklyGoal
+interface UseDashboardDataArgs extends DashboardFiltersState {
+  /** Serie diaria terminando hoje, ordenada do dia mais antigo pro mais recente (`/study-sessions/contributions`). */
+  contributions: DailyStats[]
+  /** Totais por materia, todo o historico (`/study-sessions/subjects`). */
+  subjectStats: SubjectStats[]
+  subjects: Subject[]
+  activities: Activity[]
+  weeklyGoalMinutes: number
+}
 
 export interface MetricTrend {
   value: number
@@ -40,9 +36,8 @@ function percentChange(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100)
 }
 
-/** Hoje contra o dia anterior; ambos existem na serie semanal. */
-function comparePreviousDay(): MetricTrend | undefined {
-  const days = mockWeeklyStats.days
+/** Hoje contra o dia anterior; ambos existem na serie de contribuicoes. */
+function comparePreviousDay(days: DailyStats[]): MetricTrend | undefined {
   if (days.length < 2) return undefined
 
   const previous = days[days.length - 2].minutes
@@ -55,12 +50,13 @@ function comparePreviousDay(): MetricTrend | undefined {
 /**
  * Periodo selecionado contra a janela imediatamente anterior de mesmo tamanho.
  *
- * Devolve `undefined` quando nao ha historico suficiente — a serie cobre 30 dias,
- * e um filtro de 30 dias nao tem mes anterior para comparar. Omitir a tendencia
- * é melhor que inventar a base de comparacao.
+ * Devolve `undefined` quando nao ha historico suficiente na serie de
+ * contribuicoes. Omitir a tendencia é melhor que inventar a base de comparacao.
  */
-function comparePreviousWindow(window: DailyStats[]): MetricTrend | undefined {
-  const allDays = mockMonthlyStats.days
+function comparePreviousWindow(
+  window: DailyStats[],
+  allDays: DailyStats[]
+): MetricTrend | undefined {
   const size = window.length
   if (size === 0) return undefined
 
@@ -78,11 +74,13 @@ function comparePreviousWindow(window: DailyStats[]): MetricTrend | undefined {
   }
 }
 
-function resolveRangeBounds(dateRange: DateRange, customRange: CustomRange) {
-  const end = REFERENCE_NOW
+function resolveRangeBounds(dateRange: DateRange, customRange: CustomRange, now: Date) {
+  const end = now
 
   if (dateRange === 'today') {
-    return { start: new Date('2025-07-26T00:00:00'), end }
+    const start = new Date(now)
+    start.setHours(0, 0, 0, 0)
+    return { start, end }
   }
 
   if (dateRange === '30d') {
@@ -105,44 +103,48 @@ function resolveRangeBounds(dateRange: DateRange, customRange: CustomRange) {
 }
 
 /**
- * Derives every chart/timeline dataset shown on the dashboard from the
- * currently selected filters.
+ * Deriva os datasets dos graficos/timeline do dashboard a partir dos dados
+ * reais (`/study-sessions/*`, `/activities/recent`, `/subjects`) e dos
+ * filtros selecionados.
  */
 export function useDashboardData({
   dateRange,
   customRange,
   selectedSubjects,
   selectedTypes,
-}: DashboardFiltersState) {
+  contributions,
+  subjectStats,
+  subjects,
+  activities,
+  weeklyGoalMinutes,
+}: UseDashboardDataArgs) {
+  const now = useMemo(() => new Date(), [])
+
   const rangeBounds = useMemo(
-    () => resolveRangeBounds(dateRange, customRange),
-    [dateRange, customRange]
+    () => resolveRangeBounds(dateRange, customRange, now),
+    [dateRange, customRange, now]
   )
 
-  const chartDays = useMemo(() => {
-    if (dateRange === '30d') return mockMonthlyStats.days
-    if (dateRange === 'today') return mockWeeklyStats.days.slice(-1)
-    if (dateRange === 'custom') {
-      // A serie de 30 dias ja contem a semana, entao filtrar ela basta —
-      // concatenar as duas duplicaria os ultimos 7 dias no grafico.
-      return mockMonthlyStats.days.filter((d) => {
+  const chartDays = useMemo(
+    () =>
+      contributions.filter((d) => {
         const date = new Date(`${d.date}T12:00:00`)
         return date >= rangeBounds.start && date <= rangeBounds.end
-      })
-    }
-    return mockWeeklyStats.days
-  }, [dateRange, rangeBounds])
+      }),
+    [contributions, rangeBounds]
+  )
 
-  const activities = useMemo(
+  const filteredActivities = useMemo(
     () =>
-      mockActivities.filter((a) => {
+      activities.filter((a) => {
         const createdAt = new Date(a.createdAt)
         if (createdAt < rangeBounds.start || createdAt > rangeBounds.end) return false
         if (selectedTypes.length > 0 && !selectedTypes.includes(a.type)) return false
-        if (selectedSubjects.length > 0 && !selectedSubjects.includes(a.subjectId)) return false
+        if (selectedSubjects.length > 0 && !selectedSubjects.includes(a.subjectId ?? ''))
+          return false
         return true
       }),
-    [rangeBounds, selectedTypes, selectedSubjects]
+    [activities, rangeBounds, selectedTypes, selectedSubjects]
   )
 
   const weeklyChartData = useMemo(
@@ -164,15 +166,15 @@ export function useDashboardData({
   const subjectChartData = useMemo(() => {
     const filtered =
       selectedSubjects.length > 0
-        ? mockSubjectStats.filter((s) => selectedSubjects.includes(s.subjectId))
-        : mockSubjectStats
+        ? subjectStats.filter((s) => selectedSubjects.includes(s.subjectId))
+        : subjectStats
 
     return filtered.map((s) => ({
       name: s.subjectName,
       value: s.totalMinutes,
-      color: mockSubjects.find((ms) => ms.id === s.subjectId)?.color ?? '#6b7280',
+      color: subjects.find((subj) => subj.id === s.subjectId)?.color ?? '#6b7280',
     }))
-  }, [selectedSubjects])
+  }, [selectedSubjects, subjectStats, subjects])
 
   const trendData = useMemo(
     () =>
@@ -193,19 +195,23 @@ export function useDashboardData({
 
   /** Avanco acumulado sobre a meta semanal, dia a dia, em pontos percentuais. */
   const goalProgressSeries = useMemo(() => {
+    if (weeklyGoalMinutes <= 0) return []
     let accumulated = 0
-    return mockWeeklyStats.days.map((day) => {
+    return contributions.slice(-7).map((day) => {
       accumulated += day.minutes
-      return Math.round((accumulated / WEEKLY_GOAL_MINUTES) * 100)
+      return Math.round((accumulated / weeklyGoalMinutes) * 100)
     })
-  }, [])
+  }, [contributions, weeklyGoalMinutes])
 
-  const todayTrend = useMemo(() => comparePreviousDay(), [])
+  const todayTrend = useMemo(() => comparePreviousDay(contributions), [contributions])
 
-  const periodTrend = useMemo(() => comparePreviousWindow(chartDays), [chartDays])
+  const periodTrend = useMemo(
+    () => comparePreviousWindow(chartDays, contributions),
+    [chartDays, contributions]
+  )
 
   return {
-    activities,
+    activities: filteredActivities,
     weeklyChartData,
     subjectChartData,
     trendData,

@@ -2,8 +2,13 @@ import { useState } from 'react'
 import { Clock, Flame, Target, TrendingUp } from 'lucide-react'
 import { ErrorState, StatsSkeleton } from '@/shared/components/ui'
 import { formatMinutes } from '@/shared/lib/utils'
-import { mockSubjects } from '@/shared/mocks/data'
-import { useDashboardStats } from '@/features/statistics/hooks/useStats'
+import { useSubjects } from '@/features/library/hooks/useSubjects'
+import {
+  useContributions,
+  useDashboardStats,
+  useRecentActivities,
+  useSubjectStats,
+} from '@/features/statistics/hooks/useStats'
 import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData'
 import { ActivityTimeline } from '../components/ActivityTimeline'
 import {
@@ -20,6 +25,10 @@ import { WeeklyPlanner } from '../components/weekly-planner/WeeklyPlanner'
 
 export function DashboardPage() {
   const { data: stats, isLoading, error, refetch } = useDashboardStats()
+  const { data: contributions } = useContributions()
+  const { data: subjectStats } = useSubjectStats()
+  const { data: subjects } = useSubjects()
+  const { data: activities } = useRecentActivities()
 
   const [dateRange, setDateRange] = useState<DateRange>('7d')
   const [customRange, setCustomRange] = useState<CustomRange>({ start: '', end: '' })
@@ -27,7 +36,7 @@ export function DashboardPage() {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
 
   const {
-    activities,
+    activities: filteredActivities,
     weeklyChartData,
     subjectChartData,
     trendData,
@@ -36,7 +45,17 @@ export function DashboardPage() {
     goalProgressSeries,
     todayTrend,
     periodTrend,
-  } = useDashboardData({ dateRange, customRange, selectedSubjects, selectedTypes })
+  } = useDashboardData({
+    dateRange,
+    customRange,
+    selectedSubjects,
+    selectedTypes,
+    contributions: contributions ?? [],
+    subjectStats: subjectStats ?? [],
+    subjects: subjects ?? [],
+    activities: activities ?? [],
+    weeklyGoalMinutes: stats?.weeklyGoal ?? 0,
+  })
 
   if (error) {
     return <ErrorState message="Erro ao carregar dashboard" onRetry={refetch} />
@@ -76,7 +95,7 @@ export function DashboardPage() {
         onSubjectsChange={setSelectedSubjects}
         selectedTypes={selectedTypes}
         onTypesChange={setSelectedTypes}
-        subjects={mockSubjects.map((s) => ({ id: s.id, name: s.name, color: s.color }))}
+        subjects={(subjects ?? []).map((s) => ({ id: s.id, name: s.name, color: s.color }))}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -140,7 +159,7 @@ export function DashboardPage() {
         />
       </div>
 
-      <ActivityTimeline activities={activities} />
+      <ActivityTimeline activities={filteredActivities} />
     </div>
   )
 }

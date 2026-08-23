@@ -1,6 +1,7 @@
 import { api } from '@/shared/services/api'
+import { activitiesApi } from '@/shared/services/activitiesApi'
 import { studySessionsApi } from '@/shared/services/studySessionsApi'
-import type { DailyStats, SubjectStats } from '@/shared/types'
+import type { Activity, DailyStats, SubjectStats } from '@/shared/types'
 
 /**
  * Estatísticas reais, lidas direto de `/study-sessions/*`, `/flashcards/stats`
@@ -71,4 +72,6 @@ export const statsService = {
 
   getFlashcardStats: (): Promise<FlashcardStatsView> =>
     api.get<{ total: number }>('/flashcards/stats'),
+
+  getActivities: (): Promise<Activity[]> => activitiesApi.getRecent(),
 }

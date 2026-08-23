@@ -43,3 +43,10 @@ export function useFlashcardStats() {
     queryFn: statsService.getFlashcardStats,
   })
 }
+
+export function useRecentActivities() {
+  return useQuery({
+    queryKey: queryKeys.stats.activities(),
+    queryFn: statsService.getActivities,
+  })
+}

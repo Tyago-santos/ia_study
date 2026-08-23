@@ -143,6 +143,7 @@ export interface Activity {
   type: 'pomodoro' | 'quiz' | 'flashcard' | 'summary'
   title: string
   description: string
+  subjectId: string | null
   createdAt: string
 }
 
