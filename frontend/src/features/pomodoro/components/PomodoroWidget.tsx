@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Pause, Play, RotateCcw, Settings, Timer } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
@@ -26,7 +27,7 @@ export function PomodoroWidget({ compact }: PomodoroWidgetProps) {
   const switchMode = usePomodoroStore((s) => s.switchMode)
   const toggleRunning = usePomodoroStore((s) => s.toggleRunning)
 
-  const { data: subjects } = useSubjects()
+  const { data: subjects, isLoading: subjectsLoading } = useSubjects()
   // Uma sessão "em andamento" (timer iniciado mas ainda não concluído) trava
   // a troca de matéria — sem id de sessão vindo do servidor, isso é só o
   // timer ter saído do estado inicial.
@@ -117,6 +118,20 @@ export function PomodoroWidget({ compact }: PomodoroWidgetProps) {
             </select>
           )}
 
+          {mode === 'focus' && !subjectsLoading && (!subjects || subjects.length === 0) && (
+            <p className="mb-4 text-xs text-[var(--text-secondary)] text-center">
+              Cadastre uma matéria na{' '}
+              <Link
+                to="/biblioteca"
+                onClick={() => setPanelOpen(false)}
+                className="text-[var(--accent-text)] font-medium hover:underline"
+              >
+                Biblioteca
+              </Link>{' '}
+              para iniciar o Pomodoro.
+            </p>
+          )}
+
           <div className="flex flex-col items-center py-2">
             <div className="relative w-32 h-32 mb-4">
               <svg className="w-full h-full transform -rotate-90">
@@ -163,7 +178,13 @@ export function PomodoroWidget({ compact }: PomodoroWidgetProps) {
                 size="sm"
                 onClick={handleToggle}
                 disabled={!isRunning && mode === 'focus' && !selectedSubjectId}
-                title={isRunning ? 'Pausar' : 'Iniciar'}
+                title={
+                  isRunning
+                    ? 'Pausar'
+                    : mode === 'focus' && !selectedSubjectId
+                      ? 'Selecione uma matéria para iniciar'
+                      : 'Iniciar'
+                }
               >
                 {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </Button>
