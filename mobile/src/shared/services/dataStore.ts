@@ -890,10 +890,23 @@ function titleFrom(content: string): string {
  * banco (nao so' a de arquivos) passava a falhar. Cada conteudo mora no seu
  * proprio arquivo em `reference-files/`, fora do JSON gravado de uma vez.
  */
-const REFERENCE_FILES_DIR = new Directory(Paths.document, 'reference-files')
+let referenceFilesDir: Directory | null = null
+
+/**
+ * So constroi o `Directory` quando alguem de fato mexe num arquivo de
+ * referencia. `expo-file-system` nao existe na build web (o export estatico
+ * do Expo Router carrega este modulo mesmo sem nenhuma tela pedir arquivo),
+ * e o `new Directory(...)` direto no escopo do modulo derrubava o export
+ * inteiro ali — `Paths`/`Directory` so' sao seguros de tocar depois que uma
+ * acao de verdade precisa deles, em runtime nativo.
+ */
+function getReferenceFilesDir(): Directory {
+  referenceFilesDir ??= new Directory(Paths.document, 'reference-files')
+  return referenceFilesDir
+}
 
 function referenceContentFile(id: string, kind: 'base64' | 'text'): File {
-  return new File(REFERENCE_FILES_DIR, `${id}.${kind}`)
+  return new File(getReferenceFilesDir(), `${id}.${kind}`)
 }
 
 function loadReferenceContent(meta: ReferenceFile): Pick<ReferenceFile, 'text' | 'base64'> {
@@ -929,7 +942,8 @@ export const referenceFilesService = {
     base64?: string
   }) => {
     const id = createId('rf')
-    if (!REFERENCE_FILES_DIR.exists) REFERENCE_FILES_DIR.create({ intermediates: true })
+    const dir = getReferenceFilesDir()
+    if (!dir.exists) dir.create({ intermediates: true })
     if (input.base64) referenceContentFile(id, 'base64').write(input.base64)
     if (input.text) referenceContentFile(id, 'text').write(input.text)
 

@@ -83,6 +83,9 @@
     "owner": "thiago321",
     "updates": {
       "url": "https://u.expo.dev/f3b74a05-1f98-40b9-b270-0e63df416828"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
