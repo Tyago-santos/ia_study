@@ -1,4 +1,4 @@
-# StudyHub AI — Referência de Rotas da API
+# Gnosis IA — Referência de Rotas da API
 
 Especificação das **55 rotas** que o backend precisa expor. Complementa
 `../FRONTEND_API_CONTRACT.md` (que explica *por que* cada formato é assim); este

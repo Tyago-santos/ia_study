@@ -1,6 +1,6 @@
-# StudyHub Mobile
+# Gnosis IA Mobile
 
-App mobile do StudyHub, feito com [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction). A arquitetura por features é a mesma do `frontend/` (React web): `src/features/<feature>/{pages,components,hooks,services,schemas}` para lógica de cada área, e `src/shared/` para o que é comum (API client, stores, tipos, UI kit). As rotas em `src/app/` são só um fino roteador do Expo Router que renderiza as páginas de `src/features/*/pages`.
+App mobile do Gnosis IA, feito com [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction). A arquitetura por features é a mesma do `frontend/` (React web): `src/features/<feature>/{pages,components,hooks,services,schemas}` para lógica de cada área, e `src/shared/` para o que é comum (API client, stores, tipos, UI kit). As rotas em `src/app/` são só um fino roteador do Expo Router que renderiza as páginas de `src/features/*/pages`.
 
 ## Como rodar
 

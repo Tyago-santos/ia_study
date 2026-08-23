@@ -14,6 +14,8 @@ const envcSchema = z.object({
   /** Uma ou mais chaves separadas por vírgula — ver GeminiService para a rotação. */
   GEMINI_API_KEY: z.string().default(""),
   GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
+  /** Origem do app web (CORS + cookie de sessão precisam saber quem pode mandar credenciais). */
+  FRONTEND_URL: z.string().default("http://localhost:5173"),
 });
 
 const _env = envcSchema.safeParse(process.env);
