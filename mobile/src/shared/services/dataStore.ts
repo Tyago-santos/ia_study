@@ -15,6 +15,7 @@
  *
  * Nada aqui vem semeado: o app abre vazio e cresce com o uso.
  */
+import { Directory, File, Paths } from 'expo-file-system'
 import { createId } from '@/shared/lib/id'
 import { read, write } from '@/shared/services/db'
 import { conversationsApi, toChatMessage, toConversation } from '@/shared/services/conversationsApi'
@@ -880,25 +881,76 @@ function titleFrom(content: string): string {
  * `read_reference_file` em `features/ai/services/agent-tools.service.ts`).
  * Ficam no banco local igual ao resto: nada e enviado a lugar nenhum ate o
  * proprio agente pedir, dentro de uma conversa.
+ *
+ * O conteudo pesado (base64 da imagem, ate ~11MB; texto extraido do PDF, ate
+ * 4MB) NAO entra no blob unico do AsyncStorage — so o metadado entra la'. O
+ * Android grava esse blob como uma linha de SQLite sujeita ao limite padrao
+ * do CursorWindow (~2MB por linha): um unico anexo grande ja estourava isso,
+ * e como a lista nunca e' podada sozinha, qualquer gravacao seguinte no
+ * banco (nao so' a de arquivos) passava a falhar. Cada conteudo mora no seu
+ * proprio arquivo em `reference-files/`, fora do JSON gravado de uma vez.
  */
+const REFERENCE_FILES_DIR = new Directory(Paths.document, 'reference-files')
+
+function referenceContentFile(id: string, kind: 'base64' | 'text'): File {
+  return new File(REFERENCE_FILES_DIR, `${id}.${kind}`)
+}
+
+function loadReferenceContent(meta: ReferenceFile): Pick<ReferenceFile, 'text' | 'base64'> {
+  const base64File = referenceContentFile(meta.id, 'base64')
+  if (base64File.exists) return { base64: base64File.textSync() }
+
+  const textFile = referenceContentFile(meta.id, 'text')
+  if (textFile.exists) return { text: textFile.textSync() }
+
+  return {}
+}
+
+function deleteReferenceContent(id: string): void {
+  for (const kind of ['base64', 'text'] as const) {
+    const file = referenceContentFile(id, kind)
+    if (file.exists) file.delete()
+  }
+}
+
 export const referenceFilesService = {
   list: () => read((db) => db.referenceFiles),
-  get: (id: string) => read((db) => db.referenceFiles.find((f) => f.id === id) ?? null),
-  create: (input: {
+
+  get: async (id: string) => {
+    const meta = await read((db) => db.referenceFiles.find((f) => f.id === id) ?? null)
+    return meta ? { ...meta, ...loadReferenceContent(meta) } : null
+  },
+
+  create: async (input: {
     name: string
     mimeType: ReferenceFile['mimeType']
     sizeBytes: number
     text?: string
     base64?: string
-  }) =>
-    write((db) => {
-      const file: ReferenceFile = { id: createId('rf'), createdAt: now(), ...input }
-      db.referenceFiles = [file, ...db.referenceFiles]
-      return file
-    }),
+  }) => {
+    const id = createId('rf')
+    if (!REFERENCE_FILES_DIR.exists) REFERENCE_FILES_DIR.create({ intermediates: true })
+    if (input.base64) referenceContentFile(id, 'base64').write(input.base64)
+    if (input.text) referenceContentFile(id, 'text').write(input.text)
+
+    const meta: ReferenceFile = {
+      id,
+      createdAt: now(),
+      name: input.name,
+      mimeType: input.mimeType,
+      sizeBytes: input.sizeBytes,
+    }
+
+    return write((db) => {
+      db.referenceFiles = [meta, ...db.referenceFiles]
+      return meta
+    })
+  },
+
   remove: (id: string) =>
     write((db) => {
       db.referenceFiles = db.referenceFiles.filter((f) => f.id !== id)
+      deleteReferenceContent(id)
       return id
     }),
 }
