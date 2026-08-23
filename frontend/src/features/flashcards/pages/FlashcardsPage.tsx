@@ -1,0 +1,77 @@
+import { useState } from 'react'
+import { Sparkles } from 'lucide-react'
+import { Card, CardContent, CardSkeleton, EmptyState, ErrorState } from '@/shared/components/ui'
+import { useDeleteFlashcard, useFlashcards } from '@/features/flashcards/hooks/useFlashcards'
+import { useSubjects } from '@/features/library/hooks/useSubjects'
+import { CreateFlashcardModal } from '../components/CreateFlashcardModal'
+import { FlashcardItem } from '../components/FlashcardItem'
+import { FlashcardsHeader } from '../components/FlashcardsHeader'
+
+/** Frente do cartao encurtada para caber no toast de undo. */
+function toCardLabel(front: string): string {
+  const clean = front.replace(/\s+/g, ' ').trim()
+  return clean.length > 40 ? `${clean.slice(0, 40)}...` : clean
+}
+
+export function FlashcardsPage() {
+  const [flippedId, setFlippedId] = useState<string | null>(null)
+  const [isCreating, setIsCreating] = useState(false)
+
+  const { data, isLoading, error, refetch } = useFlashcards()
+  const { data: subjects } = useSubjects()
+  const deleteFlashcard = useDeleteFlashcard()
+
+  const flashcards = data?.flashcards ?? []
+  const getSubject = (subjectId: string) => subjects?.find((s) => s.id === subjectId)
+
+  if (error) {
+    return <ErrorState message="Erro ao carregar flashcards" onRetry={refetch} />
+  }
+
+  return (
+    <div className="space-y-6">
+      <FlashcardsHeader total={flashcards.length} onCreate={() => setIsCreating(true)} />
+
+      <CreateFlashcardModal open={isCreating} onClose={() => setIsCreating(false)} />
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      ) : flashcards.length > 0 ? (
+        <>
+          <p className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" />
+            Passe o mouse sobre um card (ou toque nele) para virar e ver a resposta
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {flashcards.map((flashcard, i) => (
+              <FlashcardItem
+                key={flashcard.id}
+                flashcard={flashcard}
+                subject={getSubject(flashcard.subjectId)}
+                index={i}
+                flipped={flippedId === flashcard.id}
+                onFlip={() => setFlippedId(flippedId === flashcard.id ? null : flashcard.id)}
+                onDelete={() =>
+                  deleteFlashcard({ id: flashcard.id, label: toCardLabel(flashcard.front) })
+                }
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <Card>
+          <CardContent>
+            <EmptyState
+              title="Nenhum flashcard criado"
+              description="Clique em 'Criar Flashcard' para começar!"
+            />
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}

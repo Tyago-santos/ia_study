@@ -2,8 +2,8 @@
 node_modules
 dist
 
-# Versionado em repositório próprio (github.com/Tyago-santos/study-ia)
-frontend/
+# Historico do repositorio study-ia antigo, guardado so' de referencia
+frontend/.git.bak/
 
 # Artefato de cache solto, sem código-fonte
 studyhub-ai/

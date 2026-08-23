@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  --color-primary-950: #052e16;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+
+  --color-violet-500: #907fe8;
+  --color-rose-500: #f43f5e;
+  --color-amber-500: #f59e0b;
+  --color-emerald-500: #22a06b;
+  --color-cyan-500: #2596be;
+}
+
+:root {
+  /*
+   * Altura da faixa superior da casca do app. O header e o bloco do logo na
+   * barra lateral sao vizinhos horizontais: se as alturas divergem, o avatar
+   * fica fora do eixo do logo. O token existe para que os dois nao possam
+   * dessincronizar.
+   */
+  --app-chrome-h: 4.5rem;
+
+  /*
+   * Mesma paleta do app mobile (mobile/src/shared/constants/theme.ts): verde
+   * rebaixado em vez de neon puro sobre preto — satura menos em sessao longa
+   * de estudo.
+   */
+  --bg: #f3f6fa;
+  --bg-secondary: #e9eff5;
+  --text: #16202d;
+  --text-secondary: #515f70;
+  --border: #dbe3ec;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --sidebar-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(21, 128, 61, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --gradient-start: #f0fdf4;
+  --gradient-mid: #f3f6fa;
+  --gradient-end: #f0fdf4;
+  --accent: #15803d;
+  --accent-glow: rgba(21, 128, 61, 0.2);
+
+  /*
+   * Tokens de primeiro plano, validados contra a superficie de cada tema.
+   * A cor que funciona como preenchimento nao funciona como texto: nenhum valor
+   * unico atinge 4.5:1 nos tres temas, por isso estes variam junto com o tema.
+   * Os contrastes anotados sao medidos sobre --card-bg composto sobre --bg.
+   */
+  --accent-text: #146b33;
+  --focus-ring: #146b33;
+  --danger: #c62f2f;
+  --warning: #a45c07;
+  --negative: #e11d48;
+
+  --on-accent: #ffffff;
+  --danger-solid: #dc2626;     /* 4.83:1 com texto branco por cima */
+}
+
+.dark {
+  --bg: #0a0e13;
+  --bg-secondary: #111821;
+  --text: #e3e9f0;
+  --text-secondary: #95a3b2;
+  --border: #253041;
+  --card-bg: rgba(23, 31, 42, 0.95);
+  --sidebar-bg: rgba(10, 14, 19, 0.85);
+  --glass-bg: rgba(17, 24, 33, 0.85);
+  --glass-border: rgba(63, 185, 80, 0.25);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --gradient-start: #0a0e13;
+  --gradient-mid: #111821;
+  --gradient-end: #0a0e13;
+  --accent: #3fb950;
+  --accent-glow: rgba(63, 185, 80, 0.35);
+
+  --accent-text: #56d364;
+  --focus-ring: #3fb950;
+  --danger: #ff7b72;
+  --warning: #e3b341;
+  --negative: #f43f5e;
+  --on-accent: #08110c;
+}
+
+.reading {
+  --bg: #f8f2e3;
+  --bg-secondary: #f0e7d2;
+  --text: #37301f;
+  --text-secondary: #685e4e;
+  --border: #e1d4b8;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --sidebar-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(154, 107, 18, 0.3);
+  --glass-shadow: 0 8px 32px rgba(133, 77, 14, 0.08);
+  --gradient-start: #f8f2e3;
+  --gradient-mid: #f0e7d2;
+  --gradient-end: #f8f2e3;
+  --accent: #9a6b12;
+  --accent-glow: rgba(154, 107, 18, 0.2);
+
+  --accent-text: #14622f;
+  --focus-ring: #9a6b12;
+  --danger: #c62f2f;
+  --warning: #a45c07;
+  --negative: #e11d48;
+  --on-accent: #fffdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4); }
+  50% { box-shadow: 0 0 20px 4px rgba(63, 185, 80, 0.15); }
+}
+
+@keyframes glitch {
+  0%, 100% { text-shadow: 2px 0 rgba(63, 185, 80, 1), -2px 0 rgba(63, 185, 80, 0.5); }
+  25% { text-shadow: -2px -2px rgba(63, 185, 80, 1), 2px 2px rgba(63, 185, 80, 0.5); }
+  50% { text-shadow: 2px 2px rgba(63, 185, 80, 1), -2px -2px rgba(63, 185, 80, 0.5); }
+  75% { text-shadow: -2px 0 rgba(63, 185, 80, 1), 2px 0 rgba(63, 185, 80, 0.5); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-glitch {
+  animation: glitch 3s infinite;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(63, 185, 80, 0.6);
+}
+
+.box-glow {
+  box-shadow: 0 0 15px rgba(63, 185, 80, 0.25);
+}
+
+/*
+ * Quem pede menos movimento no sistema operacional recebe o estado final, nao
+ * uma versao mais lenta do mesmo movimento. As transicoes caem para 1ms em vez
+ * de zero para que handlers de `transitionend` continuem disparando.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
