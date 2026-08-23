@@ -7,16 +7,25 @@
  * (ver `offlineFirst.ts`). As versoes `local*` sao a metade de disco disso,
  * exportadas para quem precisar so' do que ja esta no aparelho.
  *
- * Resumos, mapas mentais, cronograma, chat e configuracoes ainda sao so'
- * locais — o backend nao tem rota para eles.
+ * Resumos, mapas mentais e configuracoes ainda sao so' locais — o backend nao
+ * tem rota para eles. Cronograma e conversas do chat de IA seguem o mesmo
+ * padrao servidor+espelho da Biblioteca; mensagens do chat, porem, exigem
+ * rede de qualquer forma (a resposta vem do Gemini), entao nao entram na fila
+ * de sync — ver comentario em `aiService` mais abaixo.
  *
  * Nada aqui vem semeado: o app abre vazio e cresce com o uso.
  */
 import { createId } from '@/shared/lib/id'
 import { read, write } from '@/shared/services/db'
+import { conversationsApi, toChatMessage, toConversation } from '@/shared/services/conversationsApi'
 import { flashcardsApi } from '@/shared/services/flashcardsApi'
 import { subjectsApi, topicsApi } from '@/shared/services/libraryApi'
-import { createThrough, listThrough, mutateThrough } from '@/shared/services/offlineFirst'
+import {
+  createThrough,
+  isServerUnreachable,
+  listThrough,
+  mutateThrough,
+} from '@/shared/services/offlineFirst'
 import {
   type UpdatePlanBlockInput,
   plannerApi,
@@ -743,42 +752,91 @@ function applyBlockPatch(block: StoredPlanBlock, patch: UpdatePlanBlockInput): S
 // ---------------------------------------------------------------- chat IA
 
 /**
- * O chat guarda apenas o que foi dito. Quem produz a resposta e o agente em
- * `features/ai` — aqui as mensagens sao gravadas uma a uma, na ordem em que
- * acontecem, para que a conversa sobreviva ao fechamento do app.
+ * Conversas vivem no backend (uma por sessao, cada uma com seu proprio
+ * historico isolado das demais) com o banco local como espelho, igual ao
+ * cronograma e a Biblioteca.
+ *
+ * Mensagens sao a excecao: gravar uma so acontece quando ha rede, porque a
+ * resposta do assistente vem do Gemini (`runAgent`, em `features/ai`) — sem
+ * rede a pergunta inteira falha antes de qualquer coisa ser gravada, entao
+ * nao ha "mensagem offline" para enfileirar. `listMessages` cai no espelho
+ * local so' para leitura, quando o servidor nao responde.
  */
 export const aiService = {
-  listConversations: () => read((db) => db.conversations),
+  listConversations: () =>
+    listThrough('conversations', async () => (await conversationsApi.list()).map(toConversation)),
+
   createConversation: (title = 'Nova conversa') =>
-    write((db) => {
-      const conversation: Conversation = {
-        id: createId('c'),
-        title,
-        messages: [],
-        createdAt: now(),
-        updatedAt: now(),
-      }
-      db.conversations = [conversation, ...db.conversations]
-      return conversation
+    createThrough<Conversation, 'conversations'>({
+      key: 'conversations',
+      draft: { id: createId('c'), title, messages: [], createdAt: now(), updatedAt: now() },
+      remote: async () => toConversation(await conversationsApi.create(title)),
+      payload: { title },
     }),
-  listMessages: (conversationId: string) =>
-    read((db) => db.conversations.find((c) => c.id === conversationId)?.messages ?? []),
+
+  renameConversation: async (input: { id: string; title: string }) => {
+    await mutateThrough({
+      key: 'conversations',
+      id: input.id,
+      action: 'update',
+      applyLocal: (db) => {
+        db.conversations = db.conversations.map((c) =>
+          c.id === input.id ? { ...c, title: input.title, updatedAt: now() } : c,
+        )
+      },
+      remote: () => conversationsApi.rename(input.id, input.title),
+      payload: input,
+    })
+    return input.id
+  },
+
+  deleteConversation: async (id: string) => {
+    await mutateThrough({
+      key: 'conversations',
+      id,
+      action: 'remove',
+      applyLocal: (db) => {
+        db.conversations = db.conversations.filter((c) => c.id !== id)
+      },
+      remote: () => conversationsApi.remove(id),
+      payload: id,
+    })
+    return id
+  },
+
+  listMessages: async (conversationId: string) => {
+    try {
+      const messages = (await conversationsApi.listMessages(conversationId)).map(toChatMessage)
+      await write((db) => {
+        db.conversations = db.conversations.map((c) =>
+          c.id === conversationId ? { ...c, messages } : c,
+        )
+      })
+      return messages
+    } catch (error) {
+      if (!isServerUnreachable(error)) throw error
+      return read((db) => db.conversations.find((c) => c.id === conversationId)?.messages ?? [])
+    }
+  },
 
   /**
    * Acrescenta uma mensagem a conversa. A pergunta e gravada antes da chamada
    * ao modelo: se a resposta falhar, o que o usuario escreveu nao se perde.
    *
-   * A primeira pergunta tambem vira o titulo, que ate entao era "Nova conversa".
+   * A primeira pergunta tambem vira o titulo, que ate entao era "Nova
+   * conversa" — o servidor aplica a mesma regra e devolve so' a mensagem, por
+   * isso o titulo e' recalculado aqui tambem para o espelho local nao ficar
+   * defasado ate o proximo `listConversations`.
    */
-  addMessage: (input: { conversationId: string; content: string; role: ChatMessage['role'] }) =>
-    write((db) => {
-      const message: ChatMessage = {
-        id: createId('m'),
-        content: input.content,
+  addMessage: async (input: { conversationId: string; content: string; role: ChatMessage['role'] }) => {
+    const message = toChatMessage(
+      await conversationsApi.addMessage(input.conversationId, {
         role: input.role,
-        createdAt: now(),
-      }
+        content: input.content,
+      }),
+    )
 
+    await write((db) => {
       db.conversations = db.conversations.map((c) => {
         if (c.id !== input.conversationId) return c
 
@@ -790,18 +848,21 @@ export const aiService = {
           updatedAt: now(),
         }
       })
+    })
 
-      return message
-    }),
+    return message
+  },
 
   /** Apaga as mensagens da conversa, que continua existindo (e reutilizavel). */
-  clearMessages: (conversationId: string) =>
-    write((db) => {
+  clearMessages: async (conversationId: string) => {
+    await conversationsApi.clearMessages(conversationId)
+    await write((db) => {
       db.conversations = db.conversations.map((c) =>
         c.id === conversationId ? { ...c, messages: [], updatedAt: now() } : c,
       )
-      return conversationId
-    }),
+    })
+    return conversationId
+  },
 }
 
 /** Titulo curto o bastante para caber numa linha da lista de conversas. */

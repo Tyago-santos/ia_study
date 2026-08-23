@@ -56,6 +56,37 @@ export const Rule = styled.View`
   background-color: ${({ theme }) => theme.colors.textSecondary};
 `
 
+export const Table = styled.View`
+  border-width: 1px;
+  border-radius: ${({ theme }) => theme.radius.sm}px;
+  overflow: hidden;
+  margin-vertical: 2px;
+  border-color: ${({ theme }) => theme.colors.border};
+`
+
+export const TableRow = styled.View<{ $header?: boolean }>`
+  flex-direction: row;
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  background-color: ${({ theme, $header }) => ($header ? theme.colors.bgSecondary : 'transparent')};
+  border-bottom-color: ${({ theme }) => theme.colors.border};
+`
+
+export const TableCell = styled.View<{ $align: 'left' | 'center' | 'right' }>`
+  min-width: 96px;
+  padding: ${({ theme }) => theme.spacing.sm}px;
+  border-right-width: ${StyleSheet.hairlineWidth}px;
+  border-right-color: ${({ theme }) => theme.colors.border};
+  align-items: ${({ $align }) =>
+    $align === 'center' ? 'center' : $align === 'right' ? 'flex-end' : 'flex-start'};
+`
+
+export const TableCellText = styled.Text<{ $header?: boolean }>`
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: ${({ $header }) => ($header ? '700' : '400')};
+  color: ${({ theme }) => theme.colors.text};
+`
+
 /* -------------------------------- Balao --------------------------------- */
 
 export const BubbleRow = styled.View<{ $mine: boolean }>`
@@ -142,7 +173,7 @@ export const Composer = styled.View`
   gap: ${({ theme }) => theme.spacing.xs}px;
   margin-top: -${({ theme }) => theme.spacing.md}px;
   margin-horizontal: ${({ theme }) => theme.spacing.md}px;
-  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+  margin-bottom: ${({ theme }) => theme.spacing.sm + 10}px;
   padding: ${({ theme }) => theme.spacing.xs}px;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.full}px;
@@ -296,5 +327,123 @@ export const PickerLabel = styled.Text`
 export const PickerNote = styled.Text`
   font-size: 12px;
   line-height: 17px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`
+
+/* --------------------------- Historico de sessoes ------------------------- */
+
+export const SessionsBackdrop = styled.View`
+  flex: 1;
+  justify-content: flex-end;
+  background-color: rgba(0, 0, 0, 0.55);
+`
+
+export const SessionsBackdropFill = styled.Pressable`
+  outline-style: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+`
+
+export const SessionsSheet = styled.View`
+  max-height: 78%;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-left-radius: ${({ theme }) => theme.radius.lg}px;
+  border-top-right-radius: ${({ theme }) => theme.radius.lg}px;
+  background-color: ${({ theme }) => theme.colors.card};
+  border-color: ${({ theme }) => theme.colors.border};
+`
+
+export const SessionsHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-horizontal: ${({ theme }) => theme.spacing.lg}px;
+  padding-vertical: ${({ theme }) => theme.spacing.md}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.colors.border};
+`
+
+export const SessionsTitle = styled.Text`
+  font-size: 17px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+`
+
+export const NewSessionButton = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+  margin: ${({ theme }) => theme.spacing.lg}px;
+  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+  padding: ${({ theme }) => theme.spacing.md}px;
+  border-width: 1px;
+  border-style: dashed;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-color: ${({ theme }) => theme.colors.accent};
+`
+
+export const NewSessionText = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.accentText};
+`
+
+export const SessionsList = styled.ScrollView.attrs(({ theme }) => ({
+  showsVerticalScrollIndicator: false,
+  contentContainerStyle: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
+  },
+}))``
+
+export const SessionRow = styled.Pressable<{ $active: boolean }>`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+  padding: ${({ theme }) => theme.spacing.md}px;
+  border-width: 1px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  background-color: ${({ theme, $active }) => ($active ? `${theme.colors.accent}14` : 'transparent')};
+  border-color: ${({ theme, $active }) => ($active ? theme.colors.accent : theme.colors.border)};
+`
+
+export const SessionRowText = styled.View`
+  flex: 1;
+  gap: 2px;
+`
+
+export const SessionRowTitle = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text};
+`
+
+export const SessionRowSubtitle = styled.Text`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`
+
+export const SessionRowActions = styled.View`
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`
+
+export const SessionRowIconButton = styled.Pressable`
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+`
+
+export const SessionsEmpty = styled.Text`
+  padding: ${({ theme }) => theme.spacing.lg}px;
+  text-align: center;
+  font-size: 13px;
   color: ${({ theme }) => theme.colors.textSecondary};
 `

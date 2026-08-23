@@ -21,7 +21,14 @@ import { type Database, read, write } from '@/shared/services/db'
  */
 
 /** Coleções do banco local que espelham uma tabela do servidor. */
-type SyncedKey = 'subjects' | 'topics' | 'flashcards' | 'quizzes' | 'planBlocks' | 'events'
+type SyncedKey =
+  | 'subjects'
+  | 'topics'
+  | 'flashcards'
+  | 'quizzes'
+  | 'planBlocks'
+  | 'events'
+  | 'conversations'
 
 /** O servidor nao respondeu (rede caiu, dormindo, sobrecarregado). */
 export function isServerUnreachable(error: unknown): boolean {

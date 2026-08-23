@@ -36,6 +36,11 @@ export function useAgentChat() {
   const [error, setError] = useState<string | null>(null)
   const controllerRef = useRef<AbortController | null>(null)
 
+  // undefined = nenhuma escolhida ainda (usa a mais recente); null = "nova
+  // conversa" explicita (rascunho, sem id ate a primeira pergunta); string =
+  // conversa escolhida no historico.
+  const [activeId, setActiveId] = useState<string | null | undefined>(undefined)
+
   const { data: conversations } = useQuery({
     queryKey: queryKeys.ai.conversations(),
     queryFn: aiService.listConversations,
@@ -46,7 +51,7 @@ export function useAgentChat() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const conversationId = conversations?.[0]?.id ?? null
+  const conversationId = activeId === undefined ? (conversations?.[0]?.id ?? null) : activeId
 
   const { data: messages } = useQuery({
     queryKey: queryKeys.ai.messages(conversationId ?? ''),
@@ -61,8 +66,11 @@ export function useAgentChat() {
       const question = content.trim()
       if (!question) return
 
-      // O app comeca sem nenhuma conversa gravada: a primeira pergunta abre uma.
+      // Sem conversa ativa (app novo ou "nova conversa" pedida): a primeira
+      // pergunta abre uma, e a sessao fica presa nela.
       const id = conversationId ?? (await aiService.createConversation()).id
+      if (id !== conversationId) setActiveId(id)
+
       const history = toHistory(messages ?? [])
 
       await aiService.addMessage({ conversationId: id, content: question, role: 'user' })
@@ -97,7 +105,23 @@ export function useAgentChat() {
     onSettled: invalidate,
   })
 
+  const remove = useMutation({
+    mutationFn: (id: string) => aiService.deleteConversation(id),
+    onSuccess: (id) => {
+      // Apagou a ativa: volta a escolher a mais recente que sobrar, depois do refetch.
+      if (id === conversationId) setActiveId(undefined)
+      invalidate()
+    },
+  })
+
+  const rename = useMutation({
+    mutationFn: (input: { id: string; title: string }) => aiService.renameConversation(input),
+    onSettled: invalidate,
+  })
+
   return {
+    conversations: conversations ?? [],
+    activeConversationId: conversationId,
     messages: messages ?? [],
     isEmpty: (messages?.length ?? 0) === 0,
     loading: ask.isPending,
@@ -109,6 +133,10 @@ export function useAgentChat() {
     },
     clearChat: clear.mutate,
     clearing: clear.isPending,
+    switchConversation: (id: string) => setActiveId(id),
+    newChat: () => setActiveId(null),
+    deleteConversation: remove.mutate,
+    renameConversation: rename.mutate,
     dismissError: () => setError(null),
     cancel: () => controllerRef.current?.abort(),
   }

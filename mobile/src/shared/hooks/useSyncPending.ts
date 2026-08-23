@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { AppState } from 'react-native'
 import { queryKeys } from '@/shared/constants/queryKeys'
+import { conversationsApi } from '@/shared/services/conversationsApi'
 import { flashcardsApi } from '@/shared/services/flashcardsApi'
 import { subjectsApi, topicsApi } from '@/shared/services/libraryApi'
 import { type SyncHandlers, drainQueue } from '@/shared/services/offlineFirst'
@@ -48,6 +49,11 @@ const HANDLERS: SyncHandlers = {
     update: ({ id, ...patch }) => scheduleApi.update(id, patch),
     toggle: (id) => scheduleApi.toggle(id),
     remove: (id) => scheduleApi.remove(id),
+  },
+  conversations: {
+    create: (payload) => conversationsApi.create(payload.title),
+    update: ({ id, title }) => conversationsApi.rename(id, title),
+    remove: (id) => conversationsApi.remove(id),
   },
 }
 

@@ -24,6 +24,7 @@ model User {
   quizzes        Quiz[]
   planBlocks     PlanBlock[]
   scheduleEvents ScheduleEvent[]
+  conversations  Conversation[]
 
   /** Meta de estudo da semana em minutos, mostrada no planner. */
   weeklyGoalMinutes Int @default(600)
@@ -201,6 +202,36 @@ model ScheduleEvent {
 
   @@index([userId, date])
   @@map("schedule_events")
+}
+
+/** Uma sessao do chat de IA — cada uma com seu proprio historico, isolado das demais. */
+model Conversation {
+  id     String @id @default(uuid())
+  userId String
+  title  String @default("Nova conversa")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id])
+  messages ChatMessage[]
+
+  @@index([userId, updatedAt])
+  @@map("conversations")
+}
+
+model ChatMessage {
+  id             String @id @default(uuid())
+  conversationId String
+  role           String
+  content        String
+
+  createdAt DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("chat_messages")
 }
 
 model Quiz {

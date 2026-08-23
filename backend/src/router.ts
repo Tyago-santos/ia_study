@@ -11,6 +11,7 @@ import { routerFlashcards } from "./modules/flashcards/router/index.js";
 import { routerQuiz } from "./modules/quiz/router/index.js";
 import { routerPlanner } from "./modules/planner/router/index.js";
 import { routerSchedule } from "./modules/schedule/router/index.js";
+import { routerConversations } from "./modules/conversations/router/index.js";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/flashcards", routerFlashcards);
 router.use("/quizzes", routerQuiz);
 router.use("/planner", routerPlanner);
 router.use("/schedule", routerSchedule);
+router.use("/conversations", routerConversations);
 
 export { router as mainRouter };

@@ -1,16 +1,18 @@
 import { Ionicons } from '@expo/vector-icons'
-import { useEffect, useRef } from 'react'
-import { Alert, Pressable } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Pressable } from 'react-native'
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
   type KeyboardAwareScrollViewRef,
 } from 'react-native-keyboard-controller'
+import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { ChatBanner } from '../components/ChatBanner'
 import { ChatBubble, ChatBubbleLoading } from '../components/ChatBubble'
 import { ChatComposer } from '../components/ChatComposer'
 import { ChatWelcome } from '../components/ChatWelcome'
+import { ConversationsSheet } from '../components/ConversationsSheet'
 import { useAgentChat } from '../hooks/useAgentChat'
 import * as S from './style'
 
@@ -18,22 +20,30 @@ export function AIPage() {
   const { colors } = useTheme()
   const scrollRef = useRef<KeyboardAwareScrollViewRef>(null)
 
-  const { messages, isEmpty, loading, error, isConfigured, submit, clearChat, cancel } =
-    useAgentChat()
+  const {
+    conversations,
+    activeConversationId,
+    messages,
+    isEmpty,
+    loading,
+    error,
+    isConfigured,
+    submit,
+    clearChat,
+    cancel,
+    switchConversation,
+    newChat,
+    deleteConversation,
+    renameConversation,
+  } = useAgentChat()
+
+  const [confirmingClear, setConfirmingClear] = useState(false)
+  const [sessionsOpen, setSessionsOpen] = useState(false)
 
   // Mensagem nova entra no fim da lista; sem isto ela nasceria fora da vista.
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true })
   }, [messages, loading])
-
-  const confirmClear = () => {
-    if (isEmpty) return
-
-    Alert.alert('Limpar conversa', 'Todas as mensagens serao apagadas.', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Limpar', style: 'destructive', onPress: () => clearChat() },
-    ])
-  }
 
   return (
     <S.Container>
@@ -46,7 +56,11 @@ export function AIPage() {
           <S.HeaderSubtitle>Conhece suas matérias e responde sobre elas</S.HeaderSubtitle>
         </S.HeaderText>
 
-        <Pressable onPress={confirmClear} hitSlop={8} disabled={isEmpty}>
+        <Pressable onPress={() => setSessionsOpen(true)} hitSlop={8}>
+          <Ionicons name="chatbubbles-outline" size={20} color={colors.textSecondary} />
+        </Pressable>
+
+        <Pressable onPress={() => setConfirmingClear(true)} hitSlop={8} disabled={isEmpty}>
           <Ionicons
             name="trash-outline"
             size={20}
@@ -61,6 +75,7 @@ export function AIPage() {
         ref={scrollRef}
         contentContainerStyle={{
           padding: 16,
+          paddingBottom: 32,
           gap: 8,
         }}
         keyboardShouldPersistTaps="handled"
@@ -92,6 +107,30 @@ export function AIPage() {
 
         <ChatComposer disabled={loading} onSend={submit} onCancel={cancel} />
       </KeyboardStickyView>
+
+      <ConfirmModal
+        open={confirmingClear}
+        title="Limpar conversa"
+        message="Todas as mensagens serão apagadas."
+        confirmLabel="Limpar"
+        destructive
+        onCancel={() => setConfirmingClear(false)}
+        onConfirm={() => {
+          clearChat()
+          setConfirmingClear(false)
+        }}
+      />
+
+      <ConversationsSheet
+        open={sessionsOpen}
+        conversations={conversations}
+        activeId={activeConversationId}
+        onClose={() => setSessionsOpen(false)}
+        onSelect={switchConversation}
+        onNew={newChat}
+        onRename={renameConversation}
+        onDelete={deleteConversation}
+      />
     </S.Container>
   )
 }
