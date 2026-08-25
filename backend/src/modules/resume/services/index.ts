@@ -1,5 +1,6 @@
 import { ResumeRepository } from "../repository/index.js";
 
+import { prisma } from "@/config/prisma.js";
 import type { Prisma } from "@/generated/prisma/client.js";
 import { AppError } from "@/shared/error/app-error.js";
 import type { TypeUpdateResumeSchema } from "../schema/updateResume.schema.js";
@@ -12,9 +13,9 @@ export class ResumeService {
     this.repository = new ResumeRepository();
   }
 
-  async getAll(userId: string) {
+  async getAll(userId: string, subjectId?: string) {
     try {
-      return await this.repository.findAllByUserId(userId);
+      return await this.repository.findAllByUserId(userId, subjectId);
     } catch (error) {
       if (error instanceof AppError) throw error;
       throw new AppError("Erro ao buscar resumos", 500);
@@ -34,9 +35,17 @@ export class ResumeService {
 
   async create(userId: string, data: TypeCreateResumeSchema) {
     try {
+      const { subjectId, ...rest } = data;
+
+      const subject = await prisma.subject.findFirst({
+        where: { id: subjectId, userId },
+      });
+      if (!subject) throw new AppError("Matéria não encontrada", 404);
+
       return await this.repository.createResume({
-        ...data,
+        ...rest,
         user: { connect: { id: userId } },
+        subject: { connect: { id: subjectId } },
       });
     } catch (error) {
       if (error instanceof AppError) throw error;

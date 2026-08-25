@@ -23,13 +23,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-20 h-20 shrink-0 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <UserIcon className="w-10 h-10 text-[var(--accent-text)]" />
           </div>
-          <div>
-            <CardTitle>{user?.name}</CardTitle>
-            <p className="text-sm text-[var(--text-secondary)]">{user?.email}</p>
+          <div className="min-w-0">
+            <CardTitle className="truncate">{user?.name}</CardTitle>
+            <p className="text-sm text-[var(--text-secondary)] truncate">{user?.email}</p>
           </div>
         </div>
       </CardHeader>

@@ -49,3 +49,46 @@ export function useDeleteEvent() {
     errorMessage: 'Erro ao remover evento',
   })
 }
+
+/**
+ * Move um compromisso para um dia da semana corrente, preservando o horario.
+ * Usado ao arrastar um compromisso para um dia no planejador semanal.
+ */
+export function useMoveEventToWeekday() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, weekday, date }: { id: string; weekday: number; date: string }) => {
+      const current = new Date(date)
+      const target = new Date()
+      target.setHours(current.getHours(), current.getMinutes(), 0, 0)
+      target.setDate(target.getDate() - target.getDay() + weekday)
+      return scheduleService.updateDate(id, target.toISOString())
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all })
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erro ao mover compromisso')
+    },
+  })
+}
+
+/** Adia um compromisso em uma semana, mantendo o horario. */
+export function usePostponeEvent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, date }: { id: string; date: string }) => {
+      const next = new Date(date)
+      next.setDate(next.getDate() + 7)
+      return scheduleService.updateDate(id, next.toISOString())
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all })
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erro ao adiar compromisso')
+    },
+  })
+}

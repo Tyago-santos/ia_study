@@ -27,7 +27,7 @@ export function ProfilePage() {
       </div>
 
       <ProfileForm user={user} />
-      <ProfileStats createdAt={user?.createdAt} />
+      <ProfileStats createdAt={user?.createdAt} lastLoginAt={user?.lastLoginAt} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { Clock, FileText, Layers, Sparkles, Timer, Trophy } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui'
-import { cn } from '@/shared/lib/utils'
+import { cn, formatRelativeTime } from '@/shared/lib/utils'
 import type { Activity } from '@/shared/types'
 
 const typeConfig: Record<string, { icon: typeof Clock; color: string; bg: string; label: string }> = {
@@ -8,22 +8,6 @@ const typeConfig: Record<string, { icon: typeof Clock; color: string; bg: string
   quiz: { icon: Trophy, color: 'text-[var(--accent-text)]', bg: 'bg-emerald-500/15', label: 'Quiz' },
   flashcard: { icon: Layers, color: 'text-[var(--warning)]', bg: 'bg-amber-500/15', label: 'Flashcard' },
   summary: { icon: FileText, color: 'text-primary-400', bg: 'bg-primary-400/15', label: 'Resumo' },
-}
-
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMin = Math.floor((now.getTime() - date.getTime()) / 60000)
-  const diffHours = Math.floor(diffMin / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMin < 1) return 'agora'
-  if (diffMin < 60) return `ha ${diffMin} min`
-  if (diffHours < 24) return `ha ${diffHours}h`
-  if (diffDays === 1)
-    return `ontem ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
-  if (diffDays < 7) return `ha ${diffDays} dias`
-  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 }
 
 function getDayGroup(dateStr: string): string {

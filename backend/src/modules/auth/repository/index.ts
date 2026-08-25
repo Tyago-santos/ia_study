@@ -11,4 +11,11 @@ export class AuthRepository {
   async createUser(user: Prisma.UserCreateInput) {
     return await prisma.user.create({ data: user });
   }
+
+  async updateLastLogin(id: string) {
+    return await prisma.user.update({
+      where: { id },
+      data: { lastLoginAt: new Date() },
+    });
+  }
 }

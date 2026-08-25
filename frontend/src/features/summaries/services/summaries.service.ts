@@ -1,16 +1,11 @@
-import { mockSummaries } from '@/shared/mocks/data'
-import { delay, nextId } from '@/shared/mocks/helpers'
+import { summariesApi, toSummary } from '@/shared/services/summariesApi'
 import type { Summary } from '@/shared/types'
 
-const summaries = [...mockSummaries]
-
+/** Resumos (cronograma de estudo) no backend real. */
 export const summariesService = {
   getAll: async (params?: { subjectId?: string }) => {
-    let filtered = summaries
-    if (params?.subjectId) {
-      filtered = filtered.filter((r) => r.subjectId === params.subjectId)
-    }
-    return delay([...filtered])
+    const summaries = (await summariesApi.list(params?.subjectId)).map(toSummary)
+    return [...summaries].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   },
 
   create: async (data: {
@@ -19,27 +14,12 @@ export const summariesService = {
     content: string
     sourceType: Summary['sourceType']
   }) => {
-    const summary: Summary = {
-      id: nextId('r'),
-      ...data,
-      createdAt: new Date().toISOString(),
-    }
-    summaries.push(summary)
-    return delay({ ...summary })
-  },
-
-  generateWithAI: async (data: { content: string; sourceType: string }) => {
-    return delay({
-      summary: `Resumo gerado por IA a partir do conteudo fornecido. Conteudo original: ${data.content.substring(0, 100)}...`,
+    const summary = await summariesApi.create({
+      name: data.title,
+      content: data.content,
+      subjectId: data.subjectId,
+      sourceType: data.sourceType,
     })
-  },
-
-  generateFlashcards: async (_summaryId: string) => {
-    return delay({
-      flashcards: [
-        { front: 'Pergunta gerada 1?', back: 'Resposta gerada 1' },
-        { front: 'Pergunta gerada 2?', back: 'Resposta gerada 2' },
-      ],
-    })
+    return toSummary(summary)
   },
 }

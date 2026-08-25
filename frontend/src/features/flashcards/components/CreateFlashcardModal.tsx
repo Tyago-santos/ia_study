@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { CheckCircle2, Edit2, HelpCircle, Layers, Plus, Sparkles } from 'lucide-react'
-import { Button, Modal, ModeToggle } from '@/shared/components/ui'
-import { useCreateFlashcard } from '@/features/flashcards/hooks/useFlashcards'
+import { Button, Input, Modal, ModeToggle } from '@/shared/components/ui'
+import { useCreateFlashcard, useGenerateFlashcardsWithAI } from '@/features/flashcards/hooks/useFlashcards'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
-import {
-  useGenerateFlashcardsFromSummary,
-  useSummaries,
-} from '@/features/summaries/hooks/useSummaries'
+import { useTopics } from '@/features/library/hooks/useTopics'
+import type { GeneratedFlashcard } from '@/features/ai/services/generation.service'
 
 interface CreateFlashcardModalProps {
   open: boolean
@@ -15,25 +13,23 @@ interface CreateFlashcardModalProps {
 
 export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProps) {
   const { data: subjects } = useSubjects()
-  const { data: summaries } = useSummaries()
+  const { data: topics } = useTopics()
   const createFlashcard = useCreateFlashcard()
-  const generateFlashcards = useGenerateFlashcardsFromSummary()
+  const generateFlashcards = useGenerateFlashcardsWithAI()
 
   const [mode, setMode] = useState<'manual' | 'ai'>('manual')
   const [front, setFront] = useState('')
   const [back, setBack] = useState('')
   const [subjectId, setSubjectId] = useState('')
-  const [aiSummaryId, setAiSummaryId] = useState('')
-  const [aiDrafts, setAiDrafts] = useState<{ front: string; back: string }[]>([])
-
-  const selectedSummary = summaries?.find((r) => r.id === aiSummaryId)
+  const [aiFocus, setAiFocus] = useState('')
+  const [aiDrafts, setAiDrafts] = useState<GeneratedFlashcard[]>([])
 
   const resetAndClose = () => {
     setMode('manual')
     setFront('')
     setBack('')
     setSubjectId('')
-    setAiSummaryId('')
+    setAiFocus('')
     setAiDrafts([])
     onClose()
   }
@@ -44,28 +40,35 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
   }
 
   const handleGenerate = () => {
-    if (!aiSummaryId) return
-    generateFlashcards.mutate(aiSummaryId, {
-      onSuccess: (data) => setAiDrafts(data.flashcards),
-    })
+    const subject = subjects?.find((s) => s.id === subjectId)
+    if (!subject) return
+    generateFlashcards.mutate(
+      {
+        subject,
+        topics: topics?.filter((t) => t.subjectId === subjectId) ?? [],
+        focus: aiFocus.trim() || undefined,
+      },
+      { onSuccess: setAiDrafts }
+    )
   }
 
   const handleAddDraft = (index: number) => {
-    if (!selectedSummary) return
+    if (!subjectId) return
     const draft = aiDrafts[index]
     createFlashcard.mutate(
-      { subjectId: selectedSummary.subjectId, front: draft.front, back: draft.back },
+      { subjectId, front: draft.front, back: draft.back, difficulty: draft.difficulty },
       { onSuccess: () => setAiDrafts((prev) => prev.filter((_, i) => i !== index)) }
     )
   }
 
   const handleAddAllDrafts = () => {
-    if (!selectedSummary) return
+    if (!subjectId) return
     aiDrafts.forEach((draft) => {
       createFlashcard.mutate({
-        subjectId: selectedSummary.subjectId,
+        subjectId,
         front: draft.front,
         back: draft.back,
+        difficulty: draft.difficulty,
       })
     })
     setAiDrafts([])
@@ -102,23 +105,24 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
           ]}
         />
 
+        <div>
+          <label className="block text-sm font-medium text-[var(--text)] mb-1">Matéria</label>
+          <select
+            value={subjectId}
+            onChange={(e) => setSubjectId(e.target.value)}
+            className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent"
+          >
+            <option value="">Selecione uma matéria</option>
+            {subjects?.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {mode === 'manual' ? (
           <>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text)] mb-1">Matéria</label>
-              <select
-                value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent"
-              >
-                <option value="">Selecione uma matéria</option>
-                {subjects?.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text)] mb-1">Frente</label>
               <div className="relative">
@@ -158,40 +162,21 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
           </>
         ) : (
           <>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text)] mb-1">
-                Resumo de origem
-              </label>
-              <select
-                value={aiSummaryId}
-                onChange={(e) => {
-                  setAiSummaryId(e.target.value)
-                  setAiDrafts([])
-                }}
-                className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent"
-              >
-                <option value="">Selecione um resumo</option>
-                {summaries?.map((r) => {
-                  const subject = subjects?.find((s) => s.id === r.subjectId)
-                  return (
-                    <option key={r.id} value={r.id}>
-                      {r.title}
-                      {subject ? ` · ${subject.name}` : ''}
-                    </option>
-                  )
-                })}
-              </select>
-              {summaries && summaries.length === 0 && (
-                <p className="mt-1.5 text-xs text-[var(--text-secondary)]">
-                  Crie um resumo primeiro para a IA gerar flashcards a partir dele.
-                </p>
-              )}
-            </div>
+            <Input
+              label="Tópico (opcional)"
+              placeholder="Ex: Revolução Francesa"
+              value={aiFocus}
+              onChange={(e) => setAiFocus(e.target.value)}
+            />
+
+            <p className="text-xs text-[var(--text-secondary)]">
+              A IA gera flashcards para a matéria selecionada, focados no tópico informado.
+            </p>
 
             <Button
               className="w-full"
               onClick={handleGenerate}
-              disabled={!aiSummaryId || generateFlashcards.isPending}
+              disabled={!subjectId || generateFlashcards.isPending}
             >
               <Sparkles className="w-4 h-4 mr-2" />
               {generateFlashcards.isPending ? 'Gerando...' : 'Gerar Flashcards com IA'}

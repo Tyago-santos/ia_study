@@ -20,4 +20,7 @@ export const flashcardsApi = {
   }) => api.post<Flashcard>('/flashcards', input),
 
   remove: (id: string) => api.delete<void>(`/flashcards/${id}`),
+
+  review: (id: string, difficulty: Flashcard['difficulty']) =>
+    api.post<Flashcard>(`/flashcards/${id}/review`, { difficulty }),
 }

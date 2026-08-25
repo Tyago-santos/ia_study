@@ -168,7 +168,7 @@ export function MindMapCanvas({ editor, rootColor }: MindMapCanvasProps) {
           zoomable
           nodeColor={(node) => (node.data as { color?: string }).color ?? rootColor}
           maskColor="rgba(0, 0, 0, 0.15)"
-          className="!border !border-[var(--glass-border)] !bg-[var(--card-bg)]"
+          className="!hidden !border !border-[var(--glass-border)] !bg-[var(--card-bg)] md:!block"
         />
       </ReactFlow>
     </MindMapNodeActionsProvider>

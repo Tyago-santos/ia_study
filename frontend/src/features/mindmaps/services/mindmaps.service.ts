@@ -1,7 +1,7 @@
 import { delay } from '@/shared/mocks/helpers'
 import { mindMapsApi, type MindMapApi } from '@/shared/services/mindMapsApi'
 import type { MindMap, MindMapNode } from '@/shared/types'
-import { createStarterNodes, generateMindMapNodes } from '@/features/mindmaps/lib/generator'
+import { createStarterNodes } from '@/features/mindmaps/lib/generator'
 
 /**
  * Arvore de topicos (`MindMapNode`) mantida so' em memoria, por mapa. O
@@ -77,14 +77,5 @@ export const mindmapsService = {
     await mindMapsApi.remove(id)
     localNodes.delete(id)
     return { id }
-  },
-
-  /**
-   * Geracao simulada. A estrutura vem de `generateMindMapNodes`, que e o ponto
-   * unico a trocar quando a IA real for conectada. O backend `mindMap` nao tem
-   * nenhum endpoint de geracao por IA hoje.
-   */
-  generateWithAI: async (data: { topic: string; content?: string }) => {
-    return delay({ nodes: generateMindMapNodes(data) })
   },
 }

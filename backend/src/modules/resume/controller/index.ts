@@ -15,7 +15,8 @@ export class ResumeController {
   }
 
   async list(req: Request, res: Response) {
-    const resumes = await this.service.getAll(req.user!.id);
+    const subjectId = typeof req.query.subjectId === "string" ? req.query.subjectId : undefined;
+    const resumes = await this.service.getAll(req.user!.id, subjectId);
     return res.status(200).json(resumes);
   }
 

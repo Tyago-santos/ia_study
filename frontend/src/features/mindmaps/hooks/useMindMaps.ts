@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { queryKeys } from '@/shared/constants/queryKeys'
+import { generateMindMap } from '@/features/ai/services/generation.service'
+import type { GenerationInput } from '@/features/ai/lib/generation.prompt'
 import { mindmapsService } from '@/features/mindmaps/services/mindmaps.service'
 
 export function useMindMaps(subjectId?: string) {
@@ -57,7 +59,7 @@ export function useDeleteMindMap() {
 
 export function useGenerateMindMapWithAI() {
   return useMutation({
-    mutationFn: mindmapsService.generateWithAI,
+    mutationFn: (input: GenerationInput) => generateMindMap(input),
     onError: (error: Error) => {
       toast.error(error.message || 'Erro ao gerar mapa mental com IA')
     },

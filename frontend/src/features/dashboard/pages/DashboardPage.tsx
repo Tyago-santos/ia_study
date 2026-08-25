@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Clock, Flame, Target, TrendingUp } from 'lucide-react'
 import { ErrorState, StatsSkeleton } from '@/shared/components/ui'
 import { formatMinutes } from '@/shared/lib/utils'
@@ -11,11 +10,6 @@ import {
 } from '@/features/statistics/hooks/useStats'
 import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData'
 import { ActivityTimeline } from '../components/ActivityTimeline'
-import {
-  DashboardFilters,
-  type CustomRange,
-  type DateRange,
-} from '../components/DashboardFilters'
 import { StatsCard } from '../components/StatsCard'
 import { StreakWidget } from '../components/StreakWidget'
 import { SubjectDonutChart } from '../components/SubjectDonutChart'
@@ -30,10 +24,10 @@ export function DashboardPage() {
   const { data: subjects } = useSubjects()
   const { data: activities } = useRecentActivities()
 
-  const [dateRange, setDateRange] = useState<DateRange>('7d')
-  const [customRange, setCustomRange] = useState<CustomRange>({ start: '', end: '' })
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([])
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const dateRange = '7d' as const
+  const customRange = { start: '', end: '' }
+  const selectedSubjects: string[] = []
+  const selectedTypes: string[] = []
 
   const {
     activities: filteredActivities,
@@ -85,18 +79,6 @@ export function DashboardPage() {
           Acompanhe seu progresso de estudos
         </p>
       </div>
-
-      <DashboardFilters
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        customRange={customRange}
-        onCustomRangeChange={setCustomRange}
-        selectedSubjects={selectedSubjects}
-        onSubjectsChange={setSelectedSubjects}
-        selectedTypes={selectedTypes}
-        onTypesChange={setSelectedTypes}
-        subjects={(subjects ?? []).map((s) => ({ id: s.id, name: s.name, color: s.color }))}
-      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/*

@@ -87,8 +87,8 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
             onExportMarkdown={() => exportAsMarkdown(currentMap)}
             onExportJson={() => exportAsJson(currentMap)}
           />
-          <div className="flex">
-            <div className="h-[calc(100vh-19rem)] min-h-[420px] flex-1 text-[var(--text-secondary)]">
+          <div className="flex flex-col md:flex-row">
+            <div className="h-[60dvh] min-h-[280px] flex-1 text-[var(--text-secondary)] md:h-[calc(100dvh-19rem)] md:min-h-[420px]">
               <MindMapCanvas editor={editor} rootColor={rootColor} />
             </div>
             <MindMapNodePanel editor={editor} />
@@ -96,13 +96,13 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
         </ReactFlowProvider>
       </div>
 
-      <p className="text-center text-[11px] text-[var(--text-secondary)] lg:hidden">
+      <p className="text-center text-[11px] text-[var(--text-secondary)] md:hidden">
         Toque duas vezes em um topico para renomear. Use os botoes do topico para adicionar ou
         excluir.
       </p>
 
       {editor.isDirty && (
-        <div className="flex justify-center lg:hidden">
+        <div className="flex justify-center md:hidden">
           <Button onClick={handleSave} disabled={updateNodes.isPending}>
             {updateNodes.isPending ? 'Salvando...' : 'Salvar alteracoes'}
           </Button>

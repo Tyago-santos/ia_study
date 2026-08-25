@@ -32,14 +32,16 @@ export class AuthService {
 
       await this.encrypt.verifyPassword(password, user.password);
 
+      const updatedUser = await this.repository.updateLastLogin(user.id);
+
       const token = this.jwt.createToken({
-        userId: user.id,
-        email: user.email,
+        userId: updatedUser.id,
+        email: updatedUser.email,
       });
 
       return {
         token,
-        user,
+        user: updatedUser,
       };
     } catch (error) {
       if (error instanceof AppError) throw error;

@@ -3,6 +3,7 @@ import { CheckCircle2, Circle, Edit2, ListChecks, Plus, Sparkles, Trash2 } from 
 import { Button, Input, Modal, ModeToggle } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
+import { useTopics } from '@/features/library/hooks/useTopics'
 import { useCreateQuiz, useGenerateQuizWithAI } from '@/features/quiz/hooks/useQuiz'
 
 interface CreateQuizModalProps {
@@ -22,6 +23,7 @@ function emptyQuestion(): DraftQuestion {
 
 export function CreateQuizModal({ open, onClose }: CreateQuizModalProps) {
   const { data: subjects } = useSubjects()
+  const { data: topics } = useTopics()
   const createQuiz = useCreateQuiz()
   const generateQuiz = useGenerateQuizWithAI()
 
@@ -41,9 +43,14 @@ export function CreateQuizModal({ open, onClose }: CreateQuizModalProps) {
   }
 
   const handleGenerate = () => {
-    if (!subjectId) return
+    const subject = subjects?.find((s) => s.id === subjectId)
+    if (!subject) return
     generateQuiz.mutate(
-      { subjectId, topic: aiTopic.trim() || undefined },
+      {
+        subject,
+        topics: topics?.filter((t) => t.subjectId === subjectId) ?? [],
+        focus: aiTopic.trim() || undefined,
+      },
       { onSuccess: resetAndClose }
     )
   }

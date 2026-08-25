@@ -83,7 +83,7 @@ export function PomodoroWidget({ compact }: PomodoroWidgetProps) {
       </button>
 
       {panelOpen && (
-        <div className="absolute right-0 mt-2 w-72 rounded-2xl border backdrop-blur-xl p-4 z-50 bg-[var(--card-bg)] border-[var(--glass-border)] shadow-2xl">
+        <div className="fixed inset-x-3 top-16 z-50 rounded-2xl border backdrop-blur-xl p-4 bg-[var(--card-bg)] border-[var(--glass-border)] shadow-2xl sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mt-2 sm:w-72">
           <div className="flex gap-1.5 mb-4">
             {(Object.keys(MODE_LABELS) as PomodoroMode[]).map((m) => (
               <button

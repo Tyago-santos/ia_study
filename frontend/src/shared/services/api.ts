@@ -2,6 +2,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002'
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown
+  /** Sobrescreve o timeout padrao de 10s — chamadas de IA demoram mais. */
+  timeoutMs?: number
 }
 
 class ApiError extends Error {
@@ -39,7 +41,7 @@ export function setUnauthorizedHandler(handler: () => void): void {
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { body, headers: customHeaders, ...rest } = options
+  const { body, headers: customHeaders, timeoutMs = 10000, ...rest } = options
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -53,7 +55,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
       headers,
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(timeoutMs),
     })
   } catch {
     throw new OfflineError()

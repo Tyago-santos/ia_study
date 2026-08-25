@@ -7,6 +7,7 @@ export interface User {
   bio?: string
   avatar?: string
   createdAt?: string
+  lastLoginAt?: string
 }
 
 export interface Subject {

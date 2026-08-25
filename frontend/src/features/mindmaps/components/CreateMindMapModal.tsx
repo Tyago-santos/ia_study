@@ -3,6 +3,7 @@ import { Edit2, Network, Sparkles } from 'lucide-react'
 import { Button, Input, Modal, ModeToggle } from '@/shared/components/ui'
 import type { MindMap, MindMapNode } from '@/shared/types'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
+import { useTopics } from '@/features/library/hooks/useTopics'
 import {
   useCreateMindMap,
   useGenerateMindMapWithAI,
@@ -17,6 +18,7 @@ interface CreateMindMapModalProps {
 
 export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapModalProps) {
   const { data: subjects } = useSubjects()
+  const { data: topics } = useTopics()
   const createMindMap = useCreateMindMap()
   const generateMindMap = useGenerateMindMapWithAI()
 
@@ -24,7 +26,6 @@ export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapMo
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [subjectId, setSubjectId] = useState('')
-  const [aiSource, setAiSource] = useState('')
   const [generatedNodes, setGeneratedNodes] = useState<MindMapNode[] | null>(null)
 
   const resetAndClose = () => {
@@ -32,15 +33,19 @@ export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapMo
     setTitle('')
     setDescription('')
     setSubjectId('')
-    setAiSource('')
     setGeneratedNodes(null)
     onClose()
   }
 
   const handleGenerate = () => {
-    if (!title.trim()) return
+    const subject = subjects?.find((s) => s.id === subjectId)
+    if (!subject || !title.trim()) return
     generateMindMap.mutate(
-      { topic: title, content: aiSource.trim() || undefined },
+      {
+        subject,
+        topics: topics?.filter((t) => t.subjectId === subjectId) ?? [],
+        focus: title,
+      },
       { onSuccess: (data) => setGeneratedNodes(data.nodes) }
     )
   }
@@ -127,15 +132,10 @@ export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapMo
 
         {mode === 'ai' && (
           <div className="animate-fade-in space-y-2 rounded-xl border border-primary-500/20 bg-primary-500/5 p-3">
-            <label className="block text-sm font-medium text-[var(--text)]">
-              Conteudo de origem (opcional)
-            </label>
-            <textarea
-              className="h-24 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-              placeholder="Cole um resumo ou suas anotacoes para a IA derivar os ramos. Se ficar vazio, a IA monta uma estrutura de estudo padrao."
-              value={aiSource}
-              onChange={(event) => setAiSource(event.target.value)}
-            />
+            <p className="text-xs text-[var(--text-secondary)]">
+              A IA monta os ramos e subtopicos a partir da materia e do tema central informados
+              acima.
+            </p>
             <Button
               className="w-full"
               onClick={handleGenerate}

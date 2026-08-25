@@ -20,7 +20,7 @@ function App() {
   const { theme } = useThemeStore()
 
   return (
-    <div className={`${theme} min-h-screen bg-[var(--bg)] text-[var(--text)]`}>
+    <div className={`${theme} min-h-dvh bg-[var(--bg)] text-[var(--text)]`}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <Toaster position="top-right" richColors />

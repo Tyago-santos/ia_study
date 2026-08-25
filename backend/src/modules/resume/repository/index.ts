@@ -2,13 +2,10 @@ import { prisma } from "@/config/prisma.js";
 import type { Prisma } from "@/generated/prisma/client.js";
 
 export class ResumeRepository {
-  async findAllByUserId(userId: string) {
+  async findAllByUserId(userId: string, subjectId?: string) {
     return await prisma.resume.findMany({
-      where: {
-        user: {
-          id: userId,
-        },
-      },
+      where: { userId, ...(subjectId ? { subjectId } : {}) },
+      orderBy: { createdAt: "desc" },
     });
   }
 

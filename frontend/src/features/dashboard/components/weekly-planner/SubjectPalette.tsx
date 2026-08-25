@@ -54,8 +54,8 @@ function DraggableSubjectChip({ subject }: { subject: Subject }) {
         touchAction: 'none',
       }}
       className={cn(
-        'flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-lg text-sm font-medium cursor-grab active:cursor-grabbing transition-all select-none',
-        'hover:-translate-y-0.5 hover:shadow-md',
+        'flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-lg text-sm font-medium cursor-grab active:cursor-grabbing select-none',
+        !isDragging && 'transition-all hover:-translate-y-0.5 hover:shadow-md',
         isDragging && 'shadow-lg scale-105 rotate-2 z-10 relative'
       )}
     >

@@ -20,6 +20,21 @@ export class FlashcardsRepository {
     return await prisma.flashcard.delete({ where: { id: flashcard.id } });
   }
 
+  async findById(userId: string, id: string) {
+    return await prisma.flashcard.findFirst({ where: { id, userId } });
+  }
+
+  async review(id: string, data: { difficulty: string; nextReview: Date }) {
+    return await prisma.flashcard.update({
+      where: { id },
+      data: {
+        difficulty: data.difficulty,
+        nextReview: data.nextReview,
+        reviewCount: { increment: 1 },
+      },
+    });
+  }
+
   async countByUserId(userId: string) {
     return await prisma.flashcard.count({ where: { userId } });
   }

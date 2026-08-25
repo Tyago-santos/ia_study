@@ -3,6 +3,8 @@ import { toast } from 'sonner'
 import { queryKeys } from '@/shared/constants/queryKeys'
 import { useUndoableDelete } from '@/shared/hooks/useUndoableDelete'
 import type { Flashcard } from '@/shared/types'
+import { generateFlashcards } from '@/features/ai/services/generation.service'
+import type { GenerationInput } from '@/features/ai/lib/generation.prompt'
 import { flashcardsService } from '@/features/flashcards/services/flashcards.service'
 
 export function useFlashcards(subjectId?: string) {
@@ -23,6 +25,31 @@ export function useCreateFlashcard() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Erro ao criar flashcard')
+    },
+  })
+}
+
+/** Gera rascunhos com a IA — nao persiste, so devolve pra tela revisar antes de salvar. */
+export function useGenerateFlashcardsWithAI() {
+  return useMutation({
+    mutationFn: (input: GenerationInput) => generateFlashcards(input),
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erro ao gerar flashcards')
+    },
+  })
+}
+
+export function useReviewFlashcard() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, difficulty }: { id: string; difficulty: Flashcard['difficulty'] }) =>
+      flashcardsService.review(id, difficulty),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.flashcards.all })
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erro ao registrar revisão')
     },
   })
 }

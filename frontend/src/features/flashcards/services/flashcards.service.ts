@@ -21,4 +21,7 @@ export const flashcardsService = {
   }) => flashcardsApi.create({ ...data, difficulty: data.difficulty ?? 'medium' }),
 
   delete: (id: string) => flashcardsApi.remove(id),
+
+  review: (id: string, difficulty: Flashcard['difficulty']) =>
+    flashcardsApi.review(id, difficulty),
 }

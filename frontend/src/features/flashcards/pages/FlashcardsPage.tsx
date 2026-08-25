@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { Card, CardContent, CardSkeleton, EmptyState, ErrorState } from '@/shared/components/ui'
 import { useDeleteFlashcard, useFlashcards } from '@/features/flashcards/hooks/useFlashcards'
+import { useFlashcardReviewSession } from '@/features/flashcards/hooks/useFlashcardReviewSession'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
 import { CreateFlashcardModal } from '../components/CreateFlashcardModal'
 import { FlashcardItem } from '../components/FlashcardItem'
+import { FlashcardReviewComplete } from '../components/FlashcardReviewComplete'
+import { FlashcardReviewRunner } from '../components/FlashcardReviewRunner'
 import { FlashcardsHeader } from '../components/FlashcardsHeader'
 
 /** Frente do cartao encurtada para caber no toast de undo. */
@@ -24,13 +27,46 @@ export function FlashcardsPage() {
   const flashcards = data?.flashcards ?? []
   const getSubject = (subjectId: string) => subjects?.find((s) => s.id === subjectId)
 
+  const review = useFlashcardReviewSession(flashcards)
+
   if (error) {
     return <ErrorState message="Erro ao carregar flashcards" onRetry={refetch} />
   }
 
+  if (review.isActive) {
+    if (review.showResults) {
+      return (
+        <FlashcardReviewComplete
+          total={review.total}
+          onRestart={review.start}
+          onBack={review.exit}
+        />
+      )
+    }
+
+    if (review.currentCard) {
+      return (
+        <FlashcardReviewRunner
+          card={review.currentCard}
+          subject={getSubject(review.currentCard.subjectId)}
+          index={review.index}
+          total={review.total}
+          flipped={review.flipped}
+          onFlip={review.flip}
+          onRate={review.rate}
+          onExit={review.exit}
+        />
+      )
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <FlashcardsHeader total={flashcards.length} onCreate={() => setIsCreating(true)} />
+      <FlashcardsHeader
+        total={flashcards.length}
+        onCreate={() => setIsCreating(true)}
+        onReview={review.start}
+      />
 
       <CreateFlashcardModal open={isCreating} onClose={() => setIsCreating(false)} />
 

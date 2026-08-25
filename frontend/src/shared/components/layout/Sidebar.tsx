@@ -66,7 +66,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
       )}
       <aside
         className={cn(
-          'flex flex-col h-screen transition-all duration-300 ease-in-out',
+          'flex flex-col h-dvh transition-all duration-300 ease-in-out',
           'backdrop-blur-xl border-r',
           'fixed inset-y-0 left-0 z-50 lg:static lg:z-auto',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
@@ -109,7 +109,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
               'group relative flex items-center gap-3 rounded-xl text-sm font-semibold mb-3',
               'transition-all duration-300 ease-out',
               collapsed ? 'justify-center px-2 py-3' : 'px-3 py-3',
-              'bg-gradient-to-r from-primary-500 to-primary-600 text-[var(--on-accent)]',
+              'bg-gradient-to-r from-primary-500 to-primary-600 text-white',
               'shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:scale-[1.02]',
               location.pathname.startsWith(aiNavigation.href) &&
                 'ring-2 ring-primary-300/60 ring-offset-2 ring-offset-[var(--sidebar-bg)]'

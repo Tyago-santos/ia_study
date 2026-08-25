@@ -27,6 +27,11 @@ export const scheduleService = {
     return toScheduleEvent(event)
   },
 
+  updateDate: async (id: string, date: string) => {
+    const event = await scheduleApi.update(id, { date })
+    return toScheduleEvent(event)
+  },
+
   delete: async (id: string) => {
     await scheduleApi.remove(id)
   },

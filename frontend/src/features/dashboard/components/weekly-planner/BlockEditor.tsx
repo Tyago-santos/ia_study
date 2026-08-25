@@ -33,7 +33,7 @@ export function BlockEditor({ block, dayIndex, onClose }: BlockEditorProps) {
 
   return (
     <div ref={ref} className="absolute bottom-full left-0 right-0 mb-2 z-50">
-      <div className="flex flex-col gap-1.5 p-2 rounded-lg shadow-lg border bg-[var(--card-bg)] border-[var(--glass-border)] min-w-[200px]">
+      <div className="flex flex-col gap-1.5 p-2 rounded-lg shadow-lg border bg-[var(--card-bg)] border-[var(--glass-border)]">
         {subjectTopics.length > 0 && (
           <select
             value={block.topicId ?? ''}

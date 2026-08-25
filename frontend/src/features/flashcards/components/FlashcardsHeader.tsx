@@ -4,9 +4,10 @@ import { Button } from '@/shared/components/ui'
 interface FlashcardsHeaderProps {
   total: number
   onCreate: () => void
+  onReview: () => void
 }
 
-export function FlashcardsHeader({ total, onCreate }: FlashcardsHeaderProps) {
+export function FlashcardsHeader({ total, onCreate, onReview }: FlashcardsHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="flex items-center gap-3">
@@ -19,7 +20,12 @@ export function FlashcardsHeader({ total, onCreate }: FlashcardsHeaderProps) {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button variant="secondary" className="flex-1 sm:flex-none">
+        <Button
+          variant="secondary"
+          className="flex-1 sm:flex-none"
+          onClick={onReview}
+          disabled={total === 0}
+        >
           <RotateCcw className="w-4 h-4 mr-2" />
           Revisar
         </Button>

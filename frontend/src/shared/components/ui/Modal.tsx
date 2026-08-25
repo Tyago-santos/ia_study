@@ -37,7 +37,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         aria-modal="true"
         aria-label={typeof title === 'string' ? title : undefined}
         className={cn(
-          'relative w-full max-w-sm rounded-2xl border backdrop-blur-xl p-6',
+          'relative w-full max-w-sm max-h-[85vh] overflow-y-auto rounded-2xl border backdrop-blur-xl p-6',
           'bg-[var(--card-bg)] border-[var(--glass-border)] shadow-2xl',
           'animate-fade-in',
           className

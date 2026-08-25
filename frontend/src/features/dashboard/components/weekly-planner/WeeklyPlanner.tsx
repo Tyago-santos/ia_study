@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -15,26 +15,38 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { CalendarDays, Sparkles } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
+import { useSchedule, useMoveEventToWeekday, usePostponeEvent } from '@/features/schedule/hooks/useSchedule'
 import { DAY_LABELS, formatDuration } from '@/features/dashboard/lib/duration'
+import { groupEventsByWeekday, unplacedEvents } from '@/features/dashboard/lib/scheduleEvents'
 import { useWeeklyPlannerStore } from '@/features/dashboard/store/weeklyPlanner.store'
-import type { PlanBlock } from '@/shared/types'
+import type { PlanBlock, ScheduleEvent } from '@/shared/types'
 import { DayColumn } from './DayColumn'
 import { SubjectPalette } from './SubjectPalette'
+import { EventPalette } from './EventPalette'
 import { StudyBlockCard } from './StudyBlock'
+import { ScheduleEventOverlayCard } from './ScheduleEventBlock'
 
 const TODAY_INDEX = new Date().getDay()
 
 type DraggableData =
   | { type: 'subject'; subjectId: string }
   | { type: 'block'; dayIndex: number; blockId: string }
+  | { type: 'event'; eventId: string; date: string }
   | { type: 'day'; dayIndex: number }
   | { type: 'subjects' }
 
 export function WeeklyPlanner() {
   const { days, addBlock, moveBlock } = useWeeklyPlannerStore()
   const { data: subjects } = useSubjects()
+  const { data: events } = useSchedule()
+  const moveEventToWeekday = useMoveEventToWeekday()
+  const postponeEvent = usePostponeEvent()
   const [activeBlock, setActiveBlock] = useState<PlanBlock | null>(null)
+  const [activeEvent, setActiveEvent] = useState<ScheduleEvent | null>(null)
   const [overContainer, setOverContainer] = useState<number | 'subjects' | null>(null)
+
+  const eventsByDay = useMemo(() => groupEventsByWeekday(events ?? []), [events])
+  const pendingEvents = useMemo(() => unplacedEvents(events ?? []), [events])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -56,18 +68,24 @@ export function WeeklyPlanner() {
   )
 
   const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      const data = event.active.data.current as DraggableData | undefined
+    (dragEvent: DragStartEvent) => {
+      const data = dragEvent.active.data.current as DraggableData | undefined
       if (data?.type === 'block') {
         const block = days
           .find((d) => d.dayIndex === data.dayIndex)
           ?.blocks.find((b) => b.id === data.blockId)
         setActiveBlock(block ?? null)
+        setActiveEvent(null)
+      } else if (data?.type === 'event') {
+        const found = (events ?? []).find((e) => e.id === data.eventId)
+        setActiveEvent(found ?? null)
+        setActiveBlock(null)
       } else {
         setActiveBlock(null)
+        setActiveEvent(null)
       }
     },
-    [days]
+    [days, events]
   )
 
   const handleDragOver = useCallback(
@@ -112,13 +130,25 @@ export function WeeklyPlanner() {
   )
 
   const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event
+    (dragEvent: DragEndEvent) => {
+      const { active, over } = dragEvent
       setActiveBlock(null)
+      setActiveEvent(null)
       setOverContainer(null)
       if (!over) return
 
       const activeData = active.data.current as DraggableData | undefined
+
+      if (activeData?.type === 'event') {
+        const destContainer = resolveContainer(over.id as string)
+        if (destContainer === null || destContainer === 'subjects') return
+        moveEventToWeekday.mutate({
+          id: activeData.eventId,
+          weekday: destContainer,
+          date: activeData.date,
+        })
+        return
+      }
 
       if (activeData?.type === 'subject') {
         const destContainer = resolveContainer(over.id as string)
@@ -151,7 +181,14 @@ export function WeeklyPlanner() {
         }
       }
     },
-    [addBlock, days, moveBlock, resolveContainer, subjects]
+    [addBlock, days, moveBlock, moveEventToWeekday, resolveContainer, subjects]
+  )
+
+  const handlePostponeEvent = useCallback(
+    (event: ScheduleEvent) => {
+      postponeEvent.mutate({ id: event.id, date: event.date })
+    },
+    [postponeEvent]
   )
 
   const totalWeeklyMinutes = days.reduce(
@@ -198,6 +235,8 @@ export function WeeklyPlanner() {
 
           <SubjectPalette subjects={subjects ?? []} isOver={overContainer === 'subjects'} />
 
+          <EventPalette events={pendingEvents} />
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {DAY_LABELS.map((name, index) => (
               <DayColumn
@@ -206,12 +245,15 @@ export function WeeklyPlanner() {
                 dayIndex={index}
                 isToday={index === TODAY_INDEX}
                 isOver={overContainer === index}
+                events={eventsByDay.get(index) ?? []}
+                onPostponeEvent={handlePostponeEvent}
               />
             ))}
           </div>
 
           <DragOverlay dropAnimation={{ duration: 150, easing: 'ease' }}>
             {activeBlock && <StudyBlockCard block={activeBlock} />}
+            {activeEvent && <ScheduleEventOverlayCard event={activeEvent} />}
           </DragOverlay>
         </DndContext>
       </CardContent>

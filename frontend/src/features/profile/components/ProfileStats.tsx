@@ -1,12 +1,13 @@
 import { Calendar } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui'
-import { formatDate } from '@/shared/lib/utils'
+import { formatDate, formatRelativeTime } from '@/shared/lib/utils'
 
 interface ProfileStatsProps {
   createdAt?: string
+  lastLoginAt?: string
 }
 
-export function ProfileStats({ createdAt }: ProfileStatsProps) {
+export function ProfileStats({ createdAt, lastLoginAt }: ProfileStatsProps) {
   return (
     <Card>
       <CardHeader>
@@ -27,7 +28,9 @@ export function ProfileStats({ createdAt }: ProfileStatsProps) {
             <Calendar className="w-5 h-5 text-[var(--text-secondary)]" />
             <div>
               <p className="text-sm text-[var(--text-secondary)]">Último acesso</p>
-              <p className="font-medium text-[var(--text)]">Hoje</p>
+              <p className="font-medium text-[var(--text)]">
+                {lastLoginAt ? formatRelativeTime(lastLoginAt) : '-'}
+              </p>
             </div>
           </div>
         </div>

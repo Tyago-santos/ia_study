@@ -13,7 +13,7 @@ export function MindMapNodePanel({ editor }: MindMapNodePanelProps) {
 
   if (!node) {
     return (
-      <div className="hidden w-64 shrink-0 flex-col gap-2 border-l border-[var(--glass-border)] p-4 lg:flex">
+      <div className="hidden shrink-0 flex-col gap-2 border-t border-[var(--glass-border)] p-4 md:flex md:w-64 md:border-t-0 md:border-l">
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]/70">
           Topico
         </p>
@@ -42,7 +42,7 @@ export function MindMapNodePanel({ editor }: MindMapNodePanelProps) {
   }
 
   return (
-    <div className="hidden w-64 shrink-0 flex-col gap-3 overflow-y-auto border-l border-[var(--glass-border)] p-4 lg:flex">
+    <div className="flex max-h-[45dvh] w-full shrink-0 flex-col gap-3 overflow-y-auto border-t border-[var(--glass-border)] p-4 md:max-h-none md:w-64 md:border-t-0 md:border-l">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]/70">
           Topico

@@ -1,8 +1,8 @@
-import { Moon, Sun, BookOpen, Bell, Search, Menu } from 'lucide-react'
+import { Moon, Sun, BookOpen, Menu } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
-import { PENDING_BACKEND_HINT } from '@/shared/constants/pendingFeature'
 import { useThemeStore } from '@/shared/store/theme'
 import type { Theme } from '@/shared/types'
+import { NotificationsBell } from '@/features/notifications/components/NotificationsBell'
 import { PomodoroWidget } from '@/features/pomodoro/components/PomodoroWidget'
 
 interface HeaderProps {
@@ -54,44 +54,19 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
 
   return (
     <header className="relative z-30 flex items-center justify-between gap-3 px-3 sm:px-6 py-3 bg-[var(--bg)]">
-      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-md">
+      <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={onMenuClick}
           className="flex items-center justify-center w-9 h-9 shrink-0 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)] lg:hidden"
         >
           <Menu className="w-[18px] h-[18px]" />
         </button>
-        <div className="relative w-full hidden sm:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
-          {/* Busca global ainda nao existe; desabilitada em vez de aceitar digitacao e ignorar. */}
-          <input
-            type="text"
-            disabled
-            placeholder="Buscar matérias, resumos e flashcards"
-            aria-label="Buscar no Gnosis IA"
-            title={`Busca global: ${PENDING_BACKEND_HINT.toLowerCase()}`}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)] text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] cursor-not-allowed opacity-60 focus:outline-none transition-all"
-          />
-        </div>
       </div>
 
       <div className="flex items-center gap-1 sm:gap-2">
         <PomodoroWidget />
 
-        {/*
-          O ponto vermelho de "nao lidas" foi removido: nao existe notificacao
-          nenhuma no sistema, entao ele afirmava um estado inventado.
-        */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="rounded-xl"
-          disabled
-          aria-label="Notificações"
-          title={`Notificações: ${PENDING_BACKEND_HINT.toLowerCase()}`}
-        >
-          <Bell className="w-[18px] h-[18px]" />
-        </Button>
+        <NotificationsBell />
 
         <Button
           variant="ghost"

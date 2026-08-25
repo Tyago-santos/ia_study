@@ -26,9 +26,11 @@ export function SubjectTimeCard({ stats, isLoading }: SubjectTimeCardProps) {
           <div className="space-y-4">
             {stats.map((stat) => (
               <div key={stat.subjectId} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text)]">{stat.subjectName}</span>
-                  <span className="text-sm text-[var(--text-secondary)]">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-[var(--text)] truncate min-w-0">
+                    {stat.subjectName}
+                  </span>
+                  <span className="text-sm text-[var(--text-secondary)] shrink-0">
                     {formatMinutes(stat.totalMinutes)}
                   </span>
                 </div>

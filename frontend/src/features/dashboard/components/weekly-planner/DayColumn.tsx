@@ -4,20 +4,33 @@ import { Calendar } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import { formatDuration, MAX_DURATION } from '@/features/dashboard/lib/duration'
 import { useWeeklyPlannerStore } from '@/features/dashboard/store/weeklyPlanner.store'
+import type { ScheduleEvent } from '@/shared/types'
 import { StudyBlock } from './StudyBlock'
+import { ScheduleEventBlock } from './ScheduleEventBlock'
 
 interface DayColumnProps {
   dayName: string
   dayIndex: number
   isToday: boolean
   isOver: boolean
+  events: ScheduleEvent[]
+  onPostponeEvent: (event: ScheduleEvent) => void
 }
 
-export function DayColumn({ dayName, dayIndex, isToday, isOver }: DayColumnProps) {
+export function DayColumn({
+  dayName,
+  dayIndex,
+  isToday,
+  isOver,
+  events,
+  onPostponeEvent,
+}: DayColumnProps) {
   const { days } = useWeeklyPlannerStore()
   const blocks = days.find((d) => d.dayIndex === dayIndex)?.blocks ?? []
-  const totalMinutes = blocks.reduce((acc, b) => acc + b.duration, 0)
-  const isEmpty = blocks.length === 0
+  const plannedMinutes = blocks.reduce((acc, b) => acc + b.duration, 0)
+  const bookedMinutes = events.reduce((acc, e) => acc + (e.durationMinutes ?? 0), 0)
+  const totalMinutes = plannedMinutes + bookedMinutes
+  const isEmpty = blocks.length === 0 && events.length === 0
   const loadPct = Math.min(100, (totalMinutes / MAX_DURATION) * 100)
 
   const { setNodeRef } = useDroppable({
@@ -69,6 +82,14 @@ export function DayColumn({ dayName, dayIndex, isToday, isOver }: DayColumnProps
           style={{ width: `${loadPct}%` }}
         />
       </div>
+
+      {events.map((event) => (
+        <ScheduleEventBlock
+          key={event.id}
+          event={event}
+          onPostpone={() => onPostponeEvent(event)}
+        />
+      ))}
 
       <SortableContext
         items={blocks.map((b) => `block-${b.id}`)}

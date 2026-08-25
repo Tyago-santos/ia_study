@@ -11,6 +11,7 @@ router.use(authMiddleware);
 router.get("/", (req, res) => flashcardsController.list(req, res));
 router.get("/stats", (req, res) => flashcardsController.stats(req, res));
 router.post("/", (req, res) => flashcardsController.create(req, res));
+router.post("/:id/review", (req, res) => flashcardsController.review(req, res));
 router.delete("/:id", (req, res) => flashcardsController.delete(req, res));
 
 export { router as routerFlashcards };
