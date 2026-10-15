@@ -102,13 +102,13 @@ export function ConversationsPanel({
                       />
                       <button
                         onClick={commitRename}
-                        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--accent-text)] hover:bg-[var(--bg-secondary)]"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[var(--accent-text)] hover:bg-[var(--bg-secondary)]"
                       >
                         <Check className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setRenamingId(null)}
-                        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -131,13 +131,13 @@ export function ConversationsPanel({
                       </button>
                       <button
                         onClick={() => startRenaming(conversation)}
-                        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => setDeletingId(conversation.id)}
-                        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)]"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)]"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>

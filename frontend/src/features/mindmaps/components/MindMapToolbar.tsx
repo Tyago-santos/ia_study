@@ -38,7 +38,7 @@ function ToolButton({ icon, label, onClick, disabled }: ToolButtonProps) {
       title={label}
       aria-label={label}
       className={cn(
-        'flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
+        'flex items-center justify-center w-9 h-9 rounded-lg transition-colors',
         'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent'
       )}

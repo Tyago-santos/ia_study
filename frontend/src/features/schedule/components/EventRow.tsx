@@ -29,7 +29,7 @@ export function EventRow({ event, subjectName, subjectColor }: EventRowProps) {
         type="button"
         onClick={() => toggleEvent.mutate(event.id)}
         className={cn(
-          'mt-0.5 flex items-center justify-center w-6 h-6 rounded-full border-2 shrink-0 transition-colors',
+          'mt-0.5 -m-1 p-1 flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 transition-colors',
           event.completed
             ? 'bg-primary-500 border-primary-500 text-[var(--on-accent)]'
             : 'border-[var(--border)] hover:border-primary-500'

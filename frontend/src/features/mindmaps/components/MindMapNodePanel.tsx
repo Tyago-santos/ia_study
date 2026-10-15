@@ -49,10 +49,10 @@ export function MindMapNodePanel({ editor }: MindMapNodePanelProps) {
         </p>
         <button
           onClick={() => editor.setSelectedId(null)}
-          className="flex items-center justify-center w-6 h-6 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
+          className="flex items-center justify-center w-9 h-9 -my-1.5 -mr-1.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
           title="Fechar"
         >
-          <X className="w-3.5 h-3.5" />
+          <X className="w-4 h-4" />
         </button>
       </div>
 
@@ -102,7 +102,7 @@ export function MindMapNodePanel({ editor }: MindMapNodePanelProps) {
               onClick={() => editor.setColor(node.id, color)}
               style={{ backgroundColor: color }}
               className={cn(
-                'h-6 w-6 rounded-lg border-2 transition-transform hover:scale-110',
+                'h-9 w-9 rounded-lg border-2 transition-transform hover:scale-110',
                 node.color === color ? 'border-[var(--text)]' : 'border-transparent'
               )}
               title={`Usar ${color}`}

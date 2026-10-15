@@ -61,7 +61,7 @@ export function BlockEditor({ block, dayIndex, onClose }: BlockEditorProps) {
               e.stopPropagation()
               updateDuration(dayIndex, block.id, block.duration - DURATION_STEP)
             }}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-[var(--bg-secondary)] active:scale-95 transition-all"
+            className="flex items-center justify-center w-9 h-9 rounded-md hover:bg-[var(--bg-secondary)] active:scale-95 transition-all"
           >
             <Minus className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
           </button>
@@ -74,7 +74,7 @@ export function BlockEditor({ block, dayIndex, onClose }: BlockEditorProps) {
               e.stopPropagation()
               updateDuration(dayIndex, block.id, block.duration + DURATION_STEP)
             }}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-[var(--bg-secondary)] active:scale-95 transition-all"
+            className="flex items-center justify-center w-9 h-9 rounded-md hover:bg-[var(--bg-secondary)] active:scale-95 transition-all"
           >
             <Plus className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
           </button>
@@ -86,7 +86,7 @@ export function BlockEditor({ block, dayIndex, onClose }: BlockEditorProps) {
               removeBlock(dayIndex, block.id)
               onClose()
             }}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-error-500/15 active:scale-95 transition-all"
+            className="flex items-center justify-center w-9 h-9 rounded-md hover:bg-error-500/15 active:scale-95 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5 text-[var(--danger)]" />
           </button>

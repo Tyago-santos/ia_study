@@ -25,6 +25,11 @@ export function Layout() {
           className={
             isImmersive ? 'flex-1 overflow-hidden' : 'flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6'
           }
+          style={
+            isImmersive
+              ? undefined
+              : { paddingBottom: 'max(env(safe-area-inset-bottom), 0.75rem)' }
+          }
         >
           <Outlet />
         </main>

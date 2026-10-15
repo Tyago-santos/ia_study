@@ -92,6 +92,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
           'shadow-[var(--glass-shadow)]',
           className
         )}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <div
           className={cn(
@@ -107,7 +108,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
           )}
           <button
             onClick={onClose}
-            className="ml-auto flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] lg:hidden"
+            className="ml-auto flex items-center justify-center w-9 h-9 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] lg:hidden"
           >
             <X className="w-[18px] h-[18px]" />
           </button>

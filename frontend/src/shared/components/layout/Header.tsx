@@ -39,7 +39,10 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
 
   if (immersive) {
     return (
-      <header className="relative z-30 flex items-center gap-3 px-4 py-3 bg-[var(--bg)] lg:hidden">
+      <header
+        className="relative z-30 flex items-center gap-3 px-4 py-3 bg-[var(--bg)] lg:hidden"
+        style={{ paddingTop: 'max(env(safe-area-inset-top), 0.75rem)' }}
+      >
         <button
           onClick={onMenuClick}
           className="flex items-center justify-center w-9 h-9 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)]"
@@ -53,8 +56,11 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
   }
 
   return (
-    <header className="relative z-30 flex items-center justify-between gap-3 px-3 sm:px-6 py-3 bg-[var(--bg)]">
-      <div className="flex items-center gap-2 sm:gap-3">
+    <header
+      className="relative z-30 flex items-center justify-between gap-3 px-3 sm:px-6 py-3 bg-[var(--bg)]"
+      style={{ paddingTop: 'max(env(safe-area-inset-top), 0.75rem)' }}
+    >
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <button
           onClick={onMenuClick}
           className="flex items-center justify-center w-9 h-9 shrink-0 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)] lg:hidden"
@@ -63,7 +69,8 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
         </button>
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-2">
+      {/* shrink-0 nos itens fixos + widget do pomodoro pode encolher em 320px */}
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         <PomodoroWidget />
 
         <NotificationsBell />

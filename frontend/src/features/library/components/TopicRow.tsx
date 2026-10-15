@@ -13,7 +13,12 @@ export function TopicRow({ topic }: TopicRowProps) {
 
   return (
     <div className="group flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors">
-      <button type="button" onClick={() => toggleTopic.mutate(topic.id)} className="shrink-0">
+      <button
+        type="button"
+        onClick={() => toggleTopic.mutate(topic.id)}
+        aria-label={topic.completed ? `Marcar ${topic.name} como pendente` : `Concluir ${topic.name}`}
+        className="shrink-0 -m-1.5 p-1.5 flex items-center justify-center rounded-md hover:bg-[var(--bg-secondary)]"
+      >
         {topic.completed ? (
           <CheckCircle2 className="w-4 h-4 text-[var(--accent-text)]" />
         ) : (
