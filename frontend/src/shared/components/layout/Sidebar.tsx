@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
+import { AnimatedLogo } from '@/shared/components/ui'
 import { useAuthStore } from '@/shared/store/auth'
 
 const aiNavigation = { name: 'Chat IA', href: '/ai', icon: Sparkles }
@@ -83,11 +84,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
             collapsed ? 'justify-center px-2 py-5' : 'gap-3 px-5 py-5'
           )}
         >
-          <img
-            src="/gnosis-mark-transparent.png"
-            alt="Gnosis IA"
-            className="w-9 h-9 rounded-xl shrink-0 object-contain"
-          />
+          <AnimatedLogo size={36} className="shrink-0" />
           {!collapsed && (
             <span className="text-lg font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent dark:from-primary-300 dark:to-primary-500">
               Gnosis IA

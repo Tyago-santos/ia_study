@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { FileText } from 'lucide-react'
-import { Card, CardContent, CardSkeleton, EmptyState, ErrorState } from '@/shared/components/ui'
+import { CardSkeleton, ErrorState } from '@/shared/components/ui'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
 import { useSummaries } from '@/features/summaries/hooks/useSummaries'
 import { countBySourceType } from '@/features/summaries/lib/sourceTypes'
 import { CreateSummaryModal } from '../components/CreateSummaryModal'
+import { SummariesEmptyState } from '../components/SummariesEmptyState'
 import { SummariesHeader } from '../components/SummariesHeader'
 import { SummaryCard } from '../components/SummaryCard'
 
@@ -49,15 +49,7 @@ export function SummariesPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent>
-            <EmptyState
-              icon={<FileText className="w-12 h-12" />}
-              title="Nenhum resumo criado"
-              description="Clique em 'Criar Resumo' para começar!"
-            />
-          </CardContent>
-        </Card>
+        <SummariesEmptyState onCreate={() => setIsCreating(true)} />
       )}
     </div>
   )

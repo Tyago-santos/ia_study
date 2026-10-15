@@ -196,8 +196,30 @@ body {
   75% { text-shadow: -2px 0 rgba(63, 185, 80, 1), 2px 0 rgba(63, 185, 80, 0.5); }
 }
 
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.04); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-logo-float {
+  animation: logo-float 3.5s ease-in-out infinite;
+}
+
+/* texto com brilho varrendo (usado no titulo do estado vazio) */
+.animate-shimmer {
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
 }
 
 .animate-slide-in {
