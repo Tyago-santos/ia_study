@@ -110,13 +110,14 @@ export function MindMapNodeCard({ id, data, selected }: NodeProps<MindMapFlowNod
         </button>
       )}
 
-      {/* Acoes rapidas: aparecem no hover ou quando o no esta selecionado. */}
+      {/* Acoes rapidas: no toque (sem hover) ficam sempre visiveis; no desktop
+          aparecem no hover ou com o no selecionado. */}
       <div
         className={cn(
           'absolute -top-3 right-1.5 flex items-center gap-0.5 rounded-lg border px-1 py-0.5',
           'border-[var(--glass-border)] bg-[var(--card-bg)] shadow-sm',
-          'opacity-0 transition-opacity duration-150 group-hover:opacity-100',
-          selected && 'opacity-100'
+          'opacity-100 sm:opacity-0 sm:group-hover:opacity-100',
+          selected && 'sm:opacity-100'
         )}
       >
         {data.childCount > 0 && (

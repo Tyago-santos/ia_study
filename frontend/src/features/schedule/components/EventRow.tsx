@@ -89,7 +89,7 @@ export function EventRow({ event, subjectName, subjectColor }: EventRowProps) {
         type="button"
         onClick={() => deleteEvent({ id: event.id, label: event.title })}
         aria-label={`Remover evento ${event.title}`}
-        className="opacity-0 group-hover:opacity-100 flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-secondary)] hover:bg-error-500/15 hover:text-[var(--danger)] transition-all shrink-0"
+        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-secondary)] hover:bg-error-500/15 hover:text-[var(--danger)] transition-all shrink-0"
       >
         <Trash2 className="w-4 h-4" />
       </button>

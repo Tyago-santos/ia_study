@@ -23,7 +23,9 @@ export function SummariesHeader({ total, pdfCount, imageCount, onCreate }: Summa
             <p className="text-[var(--text-secondary)] text-sm">Reúna e organize o que você estudou</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* flex-wrap: em 360px os 2 botoes nao cabem numa linha e o rótulo
+            quebrava em "Enviar / arquivo" */}
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="secondary"
             className="flex-1 sm:flex-none"

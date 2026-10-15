@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import {
   LayoutDashboard,
@@ -50,6 +50,21 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
   const navigate = useNavigate()
   const logout = useAuthStore((s) => s.logout)
   const [collapsed, setCollapsed] = useState(false)
+  // `collapsed` so vale no desktop: abaixo de lg o toggle nao existe, entao
+  // quem recolhe no desktop (ou redimensiona a janela) ficaria sem rotulos
+  // e sem como reverter se aplicassemos o estado no drawer mobile
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window === 'undefined' ? true : window.matchMedia('(min-width: 1024px)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  const isCollapsed = collapsed && isDesktop
 
   const handleLogout = async () => {
     onClose?.()
@@ -71,7 +86,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
           'backdrop-blur-xl border-r',
           'fixed inset-y-0 left-0 z-50 lg:static lg:z-auto',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-          collapsed ? 'lg:w-[72px]' : 'lg:w-64',
+          isCollapsed ? 'lg:w-[72px]' : 'lg:w-64',
           'w-64',
           'bg-[var(--sidebar-bg)] border-[var(--glass-border)]',
           'shadow-[var(--glass-shadow)]',
@@ -81,11 +96,11 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
         <div
           className={cn(
             'flex items-center border-b border-[var(--glass-border)] transition-all duration-300',
-            collapsed ? 'justify-center px-2 py-5' : 'gap-3 px-5 py-5'
+            isCollapsed ? 'justify-center px-2 py-5' : 'gap-3 px-5 py-5'
           )}
         >
           <AnimatedLogo size={36} className="shrink-0" />
-          {!collapsed && (
+          {!isCollapsed && (
             <span className="text-lg font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent dark:from-primary-300 dark:to-primary-500">
               Gnosis IA
             </span>
@@ -105,17 +120,17 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
             className={cn(
               'group relative flex items-center gap-3 rounded-xl text-sm font-semibold mb-3',
               'transition-all duration-300 ease-out',
-              collapsed ? 'justify-center px-2 py-3' : 'px-3 py-3',
+              isCollapsed ? 'justify-center px-2 py-3' : 'px-3 py-3',
               'bg-gradient-to-r from-primary-500 to-primary-600 text-white',
               'shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:scale-[1.02]',
               location.pathname.startsWith(aiNavigation.href) &&
                 'ring-2 ring-primary-300/60 ring-offset-2 ring-offset-[var(--sidebar-bg)]'
             )}
-            title={collapsed ? aiNavigation.name : undefined}
+            title={isCollapsed ? aiNavigation.name : undefined}
           >
             <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <Sparkles className="w-[18px] h-[18px] shrink-0 relative" />
-            {!collapsed && (
+            {!isCollapsed && (
               <>
                 <span className="relative">{aiNavigation.name}</span>
                 <span className="relative ml-auto text-[10px] font-bold bg-white/25 px-1.5 py-0.5 rounded-md tracking-wide">
@@ -125,7 +140,7 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
             )}
           </Link>
 
-          {!collapsed && (
+          {!isCollapsed && (
             <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]/70">
               Menu
             </p>
@@ -140,16 +155,16 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
                 onClick={onClose}
                 className={cn(
                   'flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200',
-                  collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
+                  isCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
                   isActive
                     ? 'bg-gradient-to-r from-primary-500/10 to-primary-400/10 text-[var(--accent-text)] shadow-sm'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)]'
                 )}
-                title={collapsed ? item.name : undefined}
+                title={isCollapsed ? item.name : undefined}
               >
                 <item.icon className={cn('w-[18px] h-[18px] shrink-0', isActive && 'text-[var(--accent-text)]')} />
-                {!collapsed && <span>{item.name}</span>}
-                {isActive && !collapsed && (
+                {!isCollapsed && <span>{item.name}</span>}
+                {isActive && !isCollapsed && (
                   <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500" />
                 )}
               </Link>
@@ -167,15 +182,15 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
                 onClick={onClose}
                 className={cn(
                   'flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200',
-                  collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
+                  isCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
                   isActive
                     ? 'bg-gradient-to-r from-primary-500/10 to-primary-400/10 text-[var(--accent-text)]'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)]'
                 )}
-                title={collapsed ? item.name : undefined}
+                title={isCollapsed ? item.name : undefined}
               >
                 <item.icon className={cn('w-[18px] h-[18px] shrink-0', isActive && 'text-[var(--accent-text)]')} />
-                {!collapsed && <span>{item.name}</span>}
+                {!isCollapsed && <span>{item.name}</span>}
               </Link>
             )
           })}
@@ -184,24 +199,24 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
             onClick={handleLogout}
             className={cn(
               'flex items-center gap-3 w-full rounded-xl text-sm font-medium transition-all duration-200',
-              collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
+              isCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
               'text-[var(--text-secondary)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)]'
             )}
-            title={collapsed ? 'Sair' : undefined}
+            title={isCollapsed ? 'Sair' : undefined}
           >
             <LogOut className="w-[18px] h-[18px] shrink-0" />
-            {!collapsed && <span>Sair</span>}
+            {!isCollapsed && <span>Sair</span>}
           </button>
 
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
               'hidden lg:flex items-center gap-3 w-full rounded-xl text-sm font-medium transition-all duration-200',
-              collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
+              isCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
               'text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text)]'
             )}
           >
-            {collapsed ? (
+            {isCollapsed ? (
               <ChevronRight className="w-[18px] h-[18px]" />
             ) : (
               <>

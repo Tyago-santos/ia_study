@@ -43,7 +43,7 @@ export function MindMapCard({ mindMap, subject, index, onOpen, onDelete }: MindM
             event.stopPropagation()
             onDelete()
           }}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] opacity-0 transition-all hover:bg-error-50 hover:text-[var(--danger)] group-hover:opacity-100"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] opacity-100 transition-all hover:bg-error-50 hover:text-[var(--danger)] sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
           title="Excluir mapa mental"
         >
           <Trash2 className="h-3.5 w-3.5" />

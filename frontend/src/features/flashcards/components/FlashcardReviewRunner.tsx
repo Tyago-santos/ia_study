@@ -46,7 +46,7 @@ export function FlashcardReviewRunner({
   const SubjectIcon = subject ? getSubjectIcon(subject.icon) : null
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-12rem)] animate-fade-in">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
@@ -106,14 +106,16 @@ export function FlashcardReviewRunner({
             )}
           </button>
 
-          <div className="mt-6 flex items-center justify-between gap-3">
+          {/* flex-wrap: em 360px "Sair + 3 botoes" nao cabe numa linha e a Card
+              (overflow-hidden) cortaria o ultimo botao */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
             <Button variant="ghost" onClick={onExit}>
               <LogOut className="w-4 h-4 mr-2" />
               Sair
             </Button>
 
             {flipped ? (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {RATING_OPTIONS.map((option) => (
                   <Button
                     key={option.difficulty}

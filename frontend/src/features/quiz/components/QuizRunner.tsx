@@ -31,7 +31,7 @@ export function QuizRunner({
   const isLastQuestion = currentQuestion === quiz.questions.length - 1
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-12rem)] animate-fade-in">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">

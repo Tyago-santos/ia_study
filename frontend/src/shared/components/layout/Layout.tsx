@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, useLocation } from '@tanstack/react-router'
 import { PomodoroEngine } from '@/features/pomodoro/components/PomodoroEngine'
 import { Sidebar } from './Sidebar'
@@ -8,6 +8,12 @@ export function Layout() {
   const location = useLocation()
   const isImmersive = location.pathname.startsWith('/ai')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Fecha o drawer em QUALQUER navegacao — nao so nos links da sidebar
+  // (voltar do navegador, link do Pomodoro/Notificacoes etc.)
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location.pathname])
 
   return (
     <div className="flex h-dvh overflow-hidden">

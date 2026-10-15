@@ -24,7 +24,7 @@ export function QuizResult({
   const { icon: Icon, message } = scoreFeedback(percentage)
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-12rem)] animate-fade-in">
       <Card className="w-full max-w-md text-center">
         <CardHeader>
           <div className="mx-auto flex items-center justify-center w-12 h-12 rounded-xl bg-[var(--bg-secondary)] mb-2">

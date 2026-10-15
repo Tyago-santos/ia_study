@@ -30,7 +30,8 @@ export function ChatBubble({ content, role, createdAt, pending }: ChatBubbleProp
           pending && 'opacity-70'
         )}
       >
-        <p className="text-sm leading-relaxed">{content}</p>
+        {/* break-words: URL/token longo estourava a bolha e era cortado pelo shell */}
+        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{content}</p>
         {createdAt && (
           <span
             className={cn(

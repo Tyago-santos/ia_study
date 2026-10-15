@@ -19,7 +19,7 @@ export function FlashcardsHeader({ total, onCreate, onReview }: FlashcardsHeader
           <p className="text-[var(--text-secondary)]">{total} flashcards criados</p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button
           variant="secondary"
           className="flex-1 sm:flex-none"

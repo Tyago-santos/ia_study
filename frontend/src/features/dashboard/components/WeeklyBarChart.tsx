@@ -19,7 +19,9 @@ interface BarChartProps {
 export function WeeklyBarChart({ data, title = 'Horas estudadas' }: BarChartProps) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      {/* flex-wrap: em 360px titulo + 2 legendas nao cabem na mesma linha e a
+          Card (overflow-hidden) cortaria a legenda da direita */}
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle>{title}</CardTitle>
         <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
           <div className="flex items-center gap-1.5">

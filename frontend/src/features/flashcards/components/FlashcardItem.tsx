@@ -31,7 +31,9 @@ export function FlashcardItem({
       <div
         className={cn(
           'relative w-full h-full transition-transform duration-500 ease-out [transform-style:preserve-3d] cursor-pointer',
-          'group-hover:[transform:rotateY(180deg)]',
+          // hover so vira o card em aparelhos COM mouse; no toque, so o clique
+          // (estado `flipped`) controla — antes o :hover grudava e travava
+          '[@media(hover:hover)]:group-hover:[transform:rotateY(180deg)]',
           flipped && '[transform:rotateY(180deg)]'
         )}
         onClick={onFlip}
@@ -73,7 +75,7 @@ export function FlashcardItem({
           </div>
           <div className="flex items-center justify-between mt-4">
             <span className="text-[11px] text-[var(--text-secondary)] italic">
-              passe o mouse para virar
+              toque ou clique para virar
             </span>
             <div className="flex gap-1">
               <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
@@ -108,7 +110,7 @@ export function FlashcardItem({
             <p className="text-base font-medium text-[var(--text)] leading-snug">{flashcard.back}</p>
           </div>
           <span className="text-[11px] text-[var(--text-secondary)] italic">
-            tire o mouse para ver a pergunta
+            toque ou clique para ver a pergunta
           </span>
         </div>
       </div>

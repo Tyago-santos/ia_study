@@ -32,7 +32,7 @@ export function TopicRow({ topic }: TopicRowProps) {
         type="button"
         onClick={() => deleteTopic({ id: topic.id, label: topic.name })}
         aria-label={`Remover assunto ${topic.name}`}
-        className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity shrink-0"
       >
         <Trash2 className="w-3.5 h-3.5 text-[var(--text-secondary)] hover:text-[var(--danger)]" />
       </button>

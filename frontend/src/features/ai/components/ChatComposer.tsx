@@ -33,11 +33,13 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           rows={1}
           className="w-full resize-none bg-transparent px-4 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none disabled:opacity-50"
         />
-        <div className="flex items-center justify-between px-3 pb-2.5">
-          <span className="text-[11px] text-[var(--text-secondary)]">
+        <div className="flex items-center justify-between gap-2 px-3 pb-2.5">
+          {/* min-w-0 + truncate: em 360px o texto + 2 botoes nao cabem e o
+              span empurrava/botao estourava */}
+          <span className="min-w-0 truncate text-[11px] text-[var(--text-secondary)]">
             Enter envia · Shift+Enter quebra linha
           </span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <Button variant="ghost" size="sm" onClick={() => setValue('')} disabled={!value}>
               <Eraser className="w-3.5 h-3.5 mr-1.5" />
               Limpar
