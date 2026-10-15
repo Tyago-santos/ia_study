@@ -62,6 +62,26 @@ export function useDeleteConversation() {
 }
 
 /**
+ * Apaga todas as mensagens de uma conversa sem remove-la da lista — o caminho
+ * para "limpar o chat" sem perder a conversa em si. Invalida as mensagens da
+ * conversa e a lista (o titulo/updatedAt podem mudar no servidor).
+ */
+export function useClearMessages() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (conversationId: string) => aiService.clearMessages(conversationId),
+    onSuccess: (_data, conversationId) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.ai.messages(conversationId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.ai.conversations() })
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erro ao limpar a conversa')
+    },
+  })
+}
+
+/**
  * Nao amarra o `conversationId` no momento em que o hook e' montado: a
  * conversa ativa pode nascer (criacao preguicosa da primeira pergunta) entre
  * a montagem e o envio, e um `conversationId` capturado cedo demais mandaria

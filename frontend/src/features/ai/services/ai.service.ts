@@ -58,6 +58,12 @@ export const aiService = {
 
   deleteConversation: (id: string) => conversationsApi.remove(id),
 
+  /** Esvazia a conversa mantendo-a na lista: apaga so' as mensagens. */
+  clearMessages: async (id: string) => {
+    await conversationsApi.clearMessages(id)
+    return id
+  },
+
   sendMessage: async (conversationId: string, data: { content: string }) => {
     const history = (await conversationsApi.listMessages(conversationId)).map(toChatMessage)
 

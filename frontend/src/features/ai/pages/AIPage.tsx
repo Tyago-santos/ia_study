@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { MessageSquareText, Sparkles } from 'lucide-react'
-import { ErrorState } from '@/shared/components/ui'
+import { Eraser, MessageSquareText, Sparkles } from 'lucide-react'
+import { ConfirmDialog, ErrorState } from '@/shared/components/ui'
 import { useChatSession } from '@/features/ai/hooks/useChatSession'
 import { ChatBubble, TypingIndicator } from '../components/ChatBubble'
 import { ChatComposer } from '../components/ChatComposer'
@@ -11,6 +11,7 @@ export function AIPage() {
   const chat = useChatSession()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [sessionsOpen, setSessionsOpen] = useState(false)
+  const [clearOpen, setClearOpen] = useState(false)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -37,6 +38,16 @@ export function AIPage() {
             Tire dúvidas, peça resumos e planos personalizados
           </p>
         </div>
+        {hasMessages ? (
+          <button
+            onClick={() => setClearOpen(true)}
+            disabled={chat.isClearing}
+            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-[var(--text-secondary)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)] disabled:opacity-50"
+            title="Limpar conversa"
+          >
+            <Eraser className="w-[18px] h-[18px]" />
+          </button>
+        ) : null}
         <button
           onClick={() => setSessionsOpen(true)}
           className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text)]"
@@ -100,6 +111,19 @@ export function AIPage() {
 
         <ChatComposer disabled={!chat.activeConversation || chat.isSending} onSend={chat.send} />
       </div>
+
+      <ConfirmDialog
+        open={clearOpen}
+        onClose={() => setClearOpen(false)}
+        onConfirm={() => {
+          chat.clearConversationMessages()
+          setClearOpen(false)
+        }}
+        title="Limpar conversa"
+        description="Todas as mensagens desta conversa serão apagadas. A conversa continua na lista, mas o histórico não pode ser recuperado."
+        confirmLabel="Limpar"
+        isPending={chat.isClearing}
+      />
     </div>
   )
 }

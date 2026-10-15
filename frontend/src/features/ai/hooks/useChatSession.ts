@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  useClearMessages,
   useConversations,
   useCreateConversation,
   useDeleteConversation,
@@ -39,6 +40,7 @@ export function useChatSession() {
   const createConversation = useCreateConversation()
   const renameConversation = useRenameConversation()
   const deleteConversation = useDeleteConversation()
+  const clearMessages = useClearMessages()
   const sendMessage = useSendMessage()
 
   useEffect(() => {
@@ -87,6 +89,14 @@ export function useChatSession() {
     switchConversation: (id: string) => setActiveId(id),
     newChat: () => setActiveId(null),
     renameConversation: renameConversation.mutate,
+    /** Apaga as mensagens da conversa ativa, mantendo-a na lista. */
+    clearConversationMessages: () => {
+      if (!activeConversation) return
+      clearMessages.mutate(activeConversation, {
+        onSuccess: () => setPendingText(null),
+      })
+    },
+    isClearing: clearMessages.isPending,
     deleteConversation: (id: string) => {
       deleteConversation.mutate(id, {
         onSuccess: () => {
