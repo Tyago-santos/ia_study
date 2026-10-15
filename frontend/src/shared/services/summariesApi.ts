@@ -34,7 +34,7 @@ export function toSummary(remote: RemoteSummary): Summary {
 
 export const summariesApi = {
   list: (subjectId?: string) =>
-    api.get<RemoteSummary[]>(`/resume${subjectId ? `?subjectId=${subjectId}` : ''}`),
+    api.get<RemoteSummary[]>(`/resumes${subjectId ? `?subjectId=${subjectId}` : ''}`),
 
-  create: (input: CreateSummaryInput) => api.post<RemoteSummary>('/resume', input),
+  create: (input: CreateSummaryInput) => api.post<RemoteSummary>('/resumes', input),
 }
