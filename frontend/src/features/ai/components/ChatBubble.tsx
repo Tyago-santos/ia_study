@@ -1,6 +1,7 @@
 import { Bot, User } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import { formatMessageTime } from '@/features/ai/lib/quickPrompts'
+import { MarkdownContent } from './MarkdownContent'
 
 interface ChatBubbleProps {
   content: string
@@ -30,8 +31,13 @@ export function ChatBubble({ content, role, createdAt, pending }: ChatBubbleProp
           pending && 'opacity-70'
         )}
       >
-        {/* break-words: URL/token longo estourava a bolha e era cortado pelo shell */}
-        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{content}</p>
+        {/* IA: renderiza markdown formatado; usuário: texto puro como digitou.
+            break-words: URL/token longo estourava a bolha e era cortado pelo shell */}
+        {isUser ? (
+          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{content}</p>
+        ) : (
+          <MarkdownContent content={content} className="text-sm leading-relaxed" />
+        )}
         {createdAt && (
           <span
             className={cn(
