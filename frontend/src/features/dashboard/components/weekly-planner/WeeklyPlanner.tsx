@@ -2,14 +2,18 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   KeyboardSensor,
+  closestCenter,
   pointerWithin,
   useSensor,
   useSensors,
+  type Announcements,
   type DragStartEvent,
   type DragOverEvent,
   type DragEndEvent,
+  type CollisionDetection,
 } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { CalendarDays, Sparkles } from 'lucide-react'
@@ -49,9 +53,20 @@ export function WeeklyPlanner() {
   const pendingEvents = useMemo(() => unplacedEvents(events ?? []), [events])
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    // Mouse: comeca a arrastar depois de 4px (um clique simples ainda abre o editor)
+    useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+    // Touch: segurar 200ms inicia o arrasto; movimento antes disso rola a pagina.
+    // Isso permite arrastar no celular SEM travar o scroll (nao usamos touch-action:none)
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
+
+  // pointerWithin e' preciso com o mouse, mas no touch o "pointer" some ao soltar;
+  // closestCenter cobre os buracos (soltar numa coluna vazia, por exemplo)
+  const collisionDetection: CollisionDetection = (args) => {
+    const pointerHits = pointerWithin(args)
+    return pointerHits.length > 0 ? pointerHits : closestCenter(args)
+  }
 
   const resolveContainer = useCallback(
     (id: string): number | 'subjects' | null => {
@@ -184,6 +199,43 @@ export function WeeklyPlanner() {
     [addBlock, days, moveBlock, moveEventToWeekday, resolveContainer, subjects]
   )
 
+  // Leitor de tela: descreve o arrasto em portugues (dnd-kit nao anuncia nada sozinho)
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => {
+      const data = active.data.current as DraggableData | undefined
+      if (data?.type === 'subject') {
+        const name = subjects?.find((s) => s.id === data.subjectId)?.name ?? 'matéria'
+        return `Você pegou a matéria ${name}.`
+      }
+      if (data?.type === 'block') {
+        const block = days
+          .find((d) => d.dayIndex === data.dayIndex)
+          ?.blocks.find((b) => b.id === data.blockId)
+        return `Você pegou o bloco de ${block?.subjectName ?? 'estudo'}.`
+      }
+      if (data?.type === 'event') {
+        const ev = (events ?? []).find((e) => e.id === data.eventId)
+        return `Você pegou o compromisso ${ev?.title ?? ''}`.trim() + '.'
+      }
+      return 'Você pegou um item.'
+    },
+    onDragOver: ({ over }) => {
+      const data = over?.data.current as DraggableData | undefined
+      if (data?.type === 'day') {
+        return `Está sobre a coluna ${DAY_LABELS[data.dayIndex] ?? ''}.`
+      }
+      return 'Está sobre uma área válida.'
+    },
+    onDragEnd: ({ over }) => {
+      const data = over?.data.current as DraggableData | undefined
+      if (data?.type === 'day') {
+        return `Solto na coluna ${DAY_LABELS[data.dayIndex] ?? ''}.`
+      }
+      return 'Solto.'
+    },
+    onDragCancel: () => 'Arrasto cancelado.',
+  }
+
   const handlePostponeEvent = useCallback(
     (event: ScheduleEvent) => {
       postponeEvent.mutate({ id: event.id, date: event.date })
@@ -224,7 +276,8 @@ export function WeeklyPlanner() {
       <CardContent className="relative">
         <DndContext
           sensors={sensors}
-          collisionDetection={pointerWithin}
+          collisionDetection={collisionDetection}
+          accessibility={{ announcements }}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
@@ -237,7 +290,10 @@ export function WeeklyPlanner() {
 
           <EventPalette events={pendingEvents} />
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+          {/* Mobile: faixa horizontal com scroll — colunas largas o bastante pra
+              arrastar sem erro. md+: grade como antes (4/7 colunas). Sem snap
+              obrigatório pra não brigar com o auto-scroll do dnd-kit no arrasto. */}
+          <div className="-mx-2 px-2 flex md:grid gap-2 overflow-x-auto pb-2 md:overflow-visible md:mx-0 md:px-0 md:pb-0 grid-cols-none md:grid-cols-4 lg:grid-cols-7">
             {DAY_LABELS.map((name, index) => (
               <DayColumn
                 key={name}

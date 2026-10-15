@@ -54,10 +54,15 @@ export function StudyBlock({ block, dayIndex }: StudyBlockProps) {
           <div
             {...attributes}
             {...listeners}
-            style={{ touchAction: 'none' }}
-            className="flex items-center justify-center w-5 h-5 rounded cursor-grab active:cursor-grabbing hover:bg-[var(--bg-secondary)] shrink-0 transition-colors opacity-0 group-hover:opacity-100"
+            className={cn(
+              'flex items-center justify-center w-7 h-7 sm:w-6 sm:h-6 rounded cursor-grab active:cursor-grabbing',
+              'hover:bg-[var(--bg-secondary)] shrink-0 transition-colors',
+              // no toque nao existe hover: alca fica sempre visivel. So esconde no
+              // desktop (sm+) onde o mouse revela no hover.
+              'opacity-60 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100'
+            )}
           >
-            <GripVertical className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+            <GripVertical className="w-4 h-4 text-[var(--text-secondary)]" />
           </div>
 
           <span className="flex-1 min-w-0 truncate">

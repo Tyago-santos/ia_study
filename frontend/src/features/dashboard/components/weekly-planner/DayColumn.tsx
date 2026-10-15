@@ -43,6 +43,8 @@ export function DayColumn({
       ref={setNodeRef}
       className={cn(
         'group relative flex flex-col gap-1.5 p-2 rounded-xl border-2 transition-all min-h-[170px]',
+        // no mobile (faixa horizontal) cada coluna tem largura propria
+        'w-[42vw] max-w-[220px] shrink-0 md:w-auto md:max-w-none md:shrink',
         isEmpty
           ? 'border-dashed border-[var(--glass-border)] bg-[var(--bg-secondary)]/40'
           : 'border-transparent bg-[var(--bg-secondary)]/20',

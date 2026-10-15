@@ -37,10 +37,9 @@ export function ScheduleEventBlock({ event, onPostpone }: ScheduleEventBlockProp
         <div
           {...attributes}
           {...listeners}
-          style={{ touchAction: 'none' }}
-          className="flex items-center justify-center w-5 h-5 shrink-0 cursor-grab active:cursor-grabbing"
+          className="flex items-center justify-center w-7 h-7 sm:w-6 sm:h-6 shrink-0 cursor-grab active:cursor-grabbing"
         >
-          <Icon className="w-3.5 h-3.5" style={{ color }} />
+          <Icon className="w-4 h-4" style={{ color }} />
         </div>
 
         <span className="flex-1 min-w-0 truncate">
@@ -60,9 +59,9 @@ export function ScheduleEventBlock({ event, onPostpone }: ScheduleEventBlockProp
           type="button"
           onClick={onPostpone}
           title="Adiar uma semana"
-          className="flex items-center justify-center w-5 h-5 rounded shrink-0 text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"
+          className="flex items-center justify-center w-6 h-6 rounded shrink-0 text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-opacity opacity-60 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
         >
-          <X className="w-3.5 h-3.5" />
+          <X className="w-4 h-4" />
         </button>
       </div>
     </div>
