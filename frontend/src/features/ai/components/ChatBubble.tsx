@@ -26,7 +26,7 @@ export function ChatBubble({ content, role, createdAt, pending }: ChatBubbleProp
         className={cn(
           'max-w-[85%] sm:max-w-[70%] px-4 py-2.5 shadow-sm',
           isUser
-            ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-[var(--on-accent)] rounded-2xl rounded-br-sm'
+            ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl rounded-br-sm'
             : 'bg-[var(--bg-secondary)] text-[var(--text)] rounded-2xl rounded-bl-sm',
           pending && 'opacity-70'
         )}
@@ -42,7 +42,7 @@ export function ChatBubble({ content, role, createdAt, pending }: ChatBubbleProp
           <span
             className={cn(
               'block mt-1 text-[10px]',
-              isUser ? 'text-[var(--on-accent)] opacity-70' : 'text-[var(--text-secondary)]'
+              isUser ? 'text-white opacity-80' : 'text-[var(--text-secondary)]'
             )}
           >
             {formatMessageTime(createdAt)}
