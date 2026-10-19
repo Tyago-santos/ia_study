@@ -24,7 +24,7 @@ export function SummariesEmptyState({ onCreate }: SummariesEmptyStateProps) {
 
       <div className="relative flex flex-col items-center justify-center px-6 py-16 text-center">
         <div className="relative mb-6">
-          <div className="flex h-20 w-20 animate-logo-float items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-xl shadow-primary-500/30">
+          <div className="flex h-20 w-20 animate-logo-float items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-xl shadow-primary-500/30">
             <FileText className="h-10 w-10 text-[var(--on-accent)]" />
           </div>
           <span className="absolute -bottom-2 -right-2 flex h-7 w-7 animate-pulse-glow items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--card-bg)]">
@@ -33,7 +33,7 @@ export function SummariesEmptyState({ onCreate }: SummariesEmptyStateProps) {
         </div>
 
         <h3 className="mb-2 text-xl font-bold">
-          <span className="animate-shimmer bg-gradient-to-r from-primary-400 via-primary-500 to-cyan-500 bg-clip-text text-transparent">
+          <span className="animate-shimmer bg-gradient-to-r from-primary-400 via-primary-500 to-secondary-500 bg-clip-text text-transparent">
             Comece seu primeiro resumo
           </span>
         </h3>

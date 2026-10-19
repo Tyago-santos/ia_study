@@ -22,11 +22,11 @@ export function QuizPerformanceCard({ average, completed, total }: QuizPerforman
             <p className="text-sm text-[var(--text-secondary)]">Média de acerto</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-success-500">{completed}</p>
+            <p className="text-3xl font-bold text-[var(--secondary-accent)]">{completed}</p>
             <p className="text-sm text-[var(--text-secondary)]">Quizzes realizados</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-warning-500">{total}</p>
+            <p className="text-3xl font-bold text-[var(--warning)]">{total}</p>
             <p className="text-sm text-[var(--text-secondary)]">Quizzes criados</p>
           </div>
         </div>

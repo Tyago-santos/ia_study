@@ -1,46 +1,70 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /*
+   * Cognitive Flow (Stitch): Plus Jakarta Sans em toda a hierarquia, escala
+   * indigo com destaque cyan de gamificacao.
+   */
+  --font-sans: 'Plus Jakarta Sans', 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'Space Mono', 'Courier New', monospace;
-  
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-300: #86efac;
-  --color-primary-400: #4ade80;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
-  --color-primary-800: #166534;
-  --color-primary-900: #14532d;
-  --color-primary-950: #052e16;
 
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
-  --color-gray-950: #030712;
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #4f46e5;
+  --color-primary-600: #4338ca;
+  --color-primary-700: #3730a3;
+  --color-primary-800: #312e81;
+  --color-primary-900: #26235c;
+  --color-primary-950: #0b1326;
 
-  --color-success-50: #f0fdf4;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
+  --color-gray-50: #f7f8fc;
+  --color-gray-100: #eef1f8;
+  --color-gray-200: #e3e7f2;
+  --color-gray-300: #cdd3e3;
+  --color-gray-400: #a3a9c0;
+  --color-gray-500: #7d849e;
+  --color-gray-600: #5f6680;
+  --color-gray-700: #474d66;
+  --color-gray-800: #313750;
+  --color-gray-900: #1d2340;
+  --color-gray-950: #0b1326;
+
+  --color-success-50: #ecfdf5;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
   --color-warning-50: #fffbeb;
   --color-warning-500: #f59e0b;
   --color-error-50: #fef2f2;
   --color-error-500: #ef4444;
 
-  --color-violet-500: #907fe8;
+  --color-violet-500: #8b5cf6;
   --color-rose-500: #f43f5e;
   --color-amber-500: #f59e0b;
-  --color-emerald-500: #22a06b;
-  --color-cyan-500: #2596be;
+  --color-emerald-500: #10b981;
+  --color-cyan-500: #06b6d4;
+
+  /* Violeta secundario e cyan terciario do Cognitive Flow (gamificacao). */
+  --color-secondary-300: #c4b5fd;
+  --color-secondary-400: #a78bfa;
+  --color-secondary-500: #8b5cf6;
+  --color-secondary-600: #7c3aed;
+  --color-secondary-700: #6d28d9;
+  --color-tertiary-300: #67e8f9;
+  --color-tertiary-400: #4cd7f6;
+  --color-tertiary-500: #06b6d4;
+  --color-tertiary-600: #0891b2;
+  --color-tertiary-700: #0e7490;
+
+  /* Raios maiores e macios, como no Stitch (cards 24px, controles 16px). */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.75rem;
 }
 
 :root {
@@ -53,25 +77,26 @@
   --app-chrome-h: 4.5rem;
 
   /*
-   * Mesma paleta do app mobile (mobile/src/shared/constants/theme.ts): verde
-   * rebaixado em vez de neon puro sobre preto — satura menos em sessao longa
-   * de estudo.
+   * Cognitive Flow em superficie clara: mesmo indigo de marca do tema escuro,
+   * camadas frias e bordas violeta-azuladas no lugar do verde sobre cinza.
    */
-  --bg: #f3f6fa;
-  --bg-secondary: #e9eff5;
-  --text: #16202d;
-  --text-secondary: #515f70;
-  --border: #dbe3ec;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --sidebar-bg: rgba(255, 255, 255, 0.7);
+  --bg: #f6f7fc;
+  --bg-secondary: #eceffb;
+  --text: #171f33;
+  --text-secondary: #5b6379;
+  --border: #dfe3f2;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --sidebar-bg: rgba(255, 255, 255, 0.72);
   --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(21, 128, 61, 0.15);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-  --gradient-start: #f0fdf4;
-  --gradient-mid: #f3f6fa;
-  --gradient-end: #f0fdf4;
-  --accent: #15803d;
-  --accent-glow: rgba(21, 128, 61, 0.2);
+  --glass-border: rgba(79, 70, 229, 0.16);
+  --glass-shadow: 0 8px 32px rgba(23, 31, 51, 0.07);
+  --gradient-start: #eef2ff;
+  --gradient-mid: #f6f7fc;
+  --gradient-end: #f5f3ff;
+  --accent: #4f46e5;
+  --accent-glow: rgba(79, 70, 229, 0.2);
+  --secondary-accent: #8b5cf6;
+  --tertiary-accent: #06b6d4;
 
   /*
    * Tokens de primeiro plano, validados contra a superficie de cada tema.
@@ -79,8 +104,8 @@
    * unico atinge 4.5:1 nos tres temas, por isso estes variam junto com o tema.
    * Os contrastes anotados sao medidos sobre --card-bg composto sobre --bg.
    */
-  --accent-text: #146b33;
-  --focus-ring: #146b33;
+  --accent-text: #4338ca;
+  --focus-ring: #6366f1;
   --danger: #c62f2f;
   --warning: #a45c07;
   --negative: #e11d48;
@@ -90,28 +115,34 @@
 }
 
 .dark {
-  --bg: #0a0e13;
-  --bg-secondary: #111821;
-  --text: #e3e9f0;
-  --text-secondary: #95a3b2;
-  --border: #253041;
-  --card-bg: rgba(23, 31, 42, 0.95);
-  --sidebar-bg: rgba(10, 14, 19, 0.85);
-  --glass-bg: rgba(17, 24, 33, 0.85);
-  --glass-border: rgba(63, 185, 80, 0.25);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --gradient-start: #0a0e13;
-  --gradient-mid: #111821;
-  --gradient-end: #0a0e13;
-  --accent: #3fb950;
-  --accent-glow: rgba(63, 185, 80, 0.35);
+  /*
+   * Surface stack do designMd Cognitive Flow: fundo #0b1326, containers
+   * #131b2e / #171f33 / #222a3d, texto #dae2fd e bordas #2d3449.
+   */
+  --bg: #0b1326;
+  --bg-secondary: #131b2e;
+  --text: #dae2fd;
+  --text-secondary: #a8b0c9;
+  --border: #2d3449;
+  --card-bg: rgba(23, 31, 51, 0.92);
+  --sidebar-bg: rgba(6, 14, 32, 0.88);
+  --glass-bg: rgba(19, 27, 46, 0.85);
+  --glass-border: rgba(99, 102, 241, 0.28);
+  --glass-shadow: 0 8px 32px rgba(2, 6, 23, 0.45);
+  --gradient-start: #0b1326;
+  --gradient-mid: #131b2e;
+  --gradient-end: #0b1326;
+  --accent: #4f46e5;
+  --accent-glow: rgba(79, 70, 229, 0.38);
+  --secondary-accent: #8b5cf6;
+  --tertiary-accent: #4cd7f6;
 
-  --accent-text: #56d364;
-  --focus-ring: #3fb950;
-  --danger: #ff7b72;
+  --accent-text: #c3c0ff;
+  --focus-ring: #818cf8;
+  --danger: #ff8a80;
   --warning: #e3b341;
   --negative: #f43f5e;
-  --on-accent: #08110c;
+  --on-accent: #ffffff;
 }
 
 .reading {
@@ -123,16 +154,18 @@
   --card-bg: rgba(255, 255, 255, 0.8);
   --sidebar-bg: rgba(255, 255, 255, 0.6);
   --glass-bg: rgba(255, 255, 255, 0.5);
-  --glass-border: rgba(154, 107, 18, 0.3);
-  --glass-shadow: 0 8px 32px rgba(133, 77, 14, 0.08);
+  --glass-border: rgba(79, 70, 229, 0.25);
+  --glass-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
   --gradient-start: #f8f2e3;
   --gradient-mid: #f0e7d2;
   --gradient-end: #f8f2e3;
-  --accent: #9a6b12;
-  --accent-glow: rgba(154, 107, 18, 0.2);
+  --accent: #4f46e5;
+  --accent-glow: rgba(79, 70, 229, 0.2);
+  --secondary-accent: #8b5cf6;
+  --tertiary-accent: #0891b2;
 
-  --accent-text: #14622f;
-  --focus-ring: #9a6b12;
+  --accent-text: #4338ca;
+  --focus-ring: #4f46e5;
   --danger: #c62f2f;
   --warning: #a45c07;
   --negative: #e11d48;
@@ -185,15 +218,15 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4); }
-  50% { box-shadow: 0 0 20px 4px rgba(63, 185, 80, 0.15); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  50% { box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.15); }
 }
 
 @keyframes glitch {
-  0%, 100% { text-shadow: 2px 0 rgba(63, 185, 80, 1), -2px 0 rgba(63, 185, 80, 0.5); }
-  25% { text-shadow: -2px -2px rgba(63, 185, 80, 1), 2px 2px rgba(63, 185, 80, 0.5); }
-  50% { text-shadow: 2px 2px rgba(63, 185, 80, 1), -2px -2px rgba(63, 185, 80, 0.5); }
-  75% { text-shadow: -2px 0 rgba(63, 185, 80, 1), 2px 0 rgba(63, 185, 80, 0.5); }
+  0%, 100% { text-shadow: 2px 0 rgba(99, 102, 241, 1), -2px 0 rgba(99, 102, 241, 0.5); }
+  25% { text-shadow: -2px -2px rgba(99, 102, 241, 1), 2px 2px rgba(99, 102, 241, 0.5); }
+  50% { text-shadow: 2px 2px rgba(99, 102, 241, 1), -2px -2px rgba(99, 102, 241, 0.5); }
+  75% { text-shadow: -2px 0 rgba(99, 102, 241, 1), 2px 0 rgba(99, 102, 241, 0.5); }
 }
 
 @keyframes logo-float {
@@ -206,8 +239,110 @@ body {
   100% { background-position: 200% center; }
 }
 
+/* entrada suave ao trocar de pagina (usada no wrapper do <Outlet />) */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* entrada "subindo" para grids de cards, com atraso escalonado */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* pop curto para badges/pills que surgem (ex.: pomodoro rodando) */
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.85); }
+  70% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* brilho diagonal varrendo o botao do Chat IA de tempos em tempos */
+@keyframes sheen-sweep {
+  0% { transform: translateX(-140%) skewX(-18deg); }
+  55%, 100% { transform: translateX(240%) skewX(-18deg); }
+}
+
+/* cintilacao do icone de sparkles */
+@keyframes sparkle-twinkle {
+  0%, 100% { transform: rotate(-6deg) scale(1); }
+  50% { transform: rotate(8deg) scale(1.18); }
+}
+
+/* halo suave atras do FAB do Tutor IA (mobile) */
+@keyframes halo-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.35); opacity: 0; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-page {
+  animation: page-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-rise {
+  animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pop {
+  animation: pop-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* varredura de brilho no botao do Chat IA — o elemento precisa de overflow-hidden */
+.animate-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: sheen-sweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.animate-sparkle {
+  animation: sparkle-twinkle 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.animate-halo {
+  animation: halo-pulse 2.6s ease-out infinite;
+}
+
+/*
+ * Escalonamento: os N primeiros filhos de um container `.stagger` entram em
+ * sequencia, com 60ms de diferenca. Fora disso entram juntos (nao passa de
+ * ~0.5s no total, para nao parecer lento).
+ */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(7) { animation-delay: 360ms; }
+.stagger > *:nth-child(8) { animation-delay: 420ms; }
+.stagger > *:nth-child(n + 9) { animation-delay: 480ms; }
+
+/*
+ * Camada de brilho atras do app (Cognitive Flow): manchas indigo/violeta/cyan
+ * bem suaves. Como os cards sao translucidos com backdrop-blur, o que passa
+ * por tras deles aparece desfocado em vez de um fundo chapado.
+ */
+.app-glow {
+  background:
+    radial-gradient(38% 42% at 12% 8%, rgba(79, 70, 229, 0.32), transparent 70%),
+    radial-gradient(34% 38% at 88% 88%, rgba(139, 92, 246, 0.26), transparent 70%),
+    radial-gradient(30% 30% at 72% 18%, rgba(76, 215, 246, 0.14), transparent 70%);
+  filter: blur(28px);
 }
 
 .animate-logo-float {
@@ -235,11 +370,11 @@ body {
 }
 
 .text-glow {
-  text-shadow: 0 0 10px rgba(63, 185, 80, 0.6);
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
 }
 
 .box-glow {
-  box-shadow: 0 0 15px rgba(63, 185, 80, 0.25);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
 }
 
 /*

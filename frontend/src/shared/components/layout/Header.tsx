@@ -1,4 +1,5 @@
 import { Moon, Sun, BookOpen, Menu } from 'lucide-react'
+import { useLocation } from '@tanstack/react-router'
 import { Button } from '@/shared/components/ui'
 import { useThemeStore } from '@/shared/store/theme'
 import type { Theme } from '@/shared/types'
@@ -12,15 +13,32 @@ interface HeaderProps {
 
 const THEME_ORDER: Theme[] = ['light', 'dark', 'reading']
 
-/** Nomes dos temas na lingua da interface; `theme` é identificador interno. */
+/** Nomes dos temas na lingua da interface; `theme` e' identificador interno. */
 const THEME_LABELS: Record<Theme, string> = {
   light: 'Claro',
   dark: 'Escuro',
   reading: 'Leitura',
 }
 
+/** Titulo da tela atual — o Stitch mostra produto + pagina no topo. */
+const PAGE_TITLES: Record<string, string> = {
+  '/dashboard': 'Dashboard',
+  '/ai': 'Tutor IA',
+  '/flashcards': 'Flashcards',
+  '/quiz': 'Quiz',
+  '/resumos': 'Resumos',
+  '/mapas-mentais': 'Mapas Mentais',
+  '/cronograma': 'Cronograma',
+  '/biblioteca': 'Biblioteca',
+  '/estatisticas': 'Estatisticas',
+  '/perfil': 'Perfil',
+  '/configuracoes': 'Configuracoes',
+}
+
 export function Header({ onMenuClick, immersive }: HeaderProps) {
   const { theme, setTheme } = useThemeStore()
+  const location = useLocation()
+  const pageTitle = PAGE_TITLES[location.pathname] ?? 'StudyHub AI'
 
   const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length]
 
@@ -40,7 +58,7 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
   if (immersive) {
     return (
       <header
-        className="relative z-30 flex items-center gap-3 px-4 py-3 bg-[var(--bg)] lg:hidden"
+        className="relative z-30 flex items-center gap-3 px-4 py-3 border-b border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-2xl lg:hidden"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 0.75rem)' }}
       >
         <button
@@ -57,7 +75,7 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
 
   return (
     <header
-      className="relative z-30 flex items-center justify-between gap-3 px-3 sm:px-6 py-3 bg-[var(--bg)]"
+      className="relative z-30 flex items-center justify-between gap-3 border-b border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 backdrop-blur-2xl sm:px-6 py-3"
       style={{ paddingTop: 'max(env(safe-area-inset-top), 0.75rem)' }}
     >
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -67,6 +85,12 @@ export function Header({ onMenuClick, immersive }: HeaderProps) {
         >
           <Menu className="w-[18px] h-[18px]" />
         </button>
+
+        {/* produto + pagina, como no topo das telas do Stitch */}
+        <div className="min-w-0 leading-tight">
+          <p className="truncate text-sm font-bold text-[var(--text)]">Gnosis IA</p>
+          <p className="truncate text-xs text-[var(--text-secondary)]">{pageTitle}</p>
+        </div>
       </div>
 
       {/* shrink-0 nos itens fixos + widget do pomodoro pode encolher em 320px */}

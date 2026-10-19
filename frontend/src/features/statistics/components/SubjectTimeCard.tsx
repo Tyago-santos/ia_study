@@ -34,9 +34,9 @@ export function SubjectTimeCard({ stats, isLoading }: SubjectTimeCardProps) {
                     {formatMinutes(stat.totalMinutes)}
                   </span>
                 </div>
-                <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2">
+                <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-primary-500 h-2 rounded-full"
+                    className="h-2 rounded-full bg-gradient-to-r from-primary-500 via-primary-400 to-tertiary-400"
                     style={{ width: `${(stat.totalMinutes / maxMinutes) * 100}%` }}
                   />
                 </div>

@@ -13,7 +13,7 @@ interface QuizCardProps {
 
 export function QuizCard({ quiz, subject, onStart }: QuizCardProps) {
   const Icon = subject ? getSubjectIcon(subject.icon) : HelpCircle
-  const color = subject?.color ?? '#64748b'
+  const color = subject?.color ?? '#4f46e5'
   const completed = quiz.score !== undefined
 
   return (
@@ -24,10 +24,10 @@ export function QuizCard({ quiz, subject, onStart }: QuizCardProps) {
       />
       <div className="relative flex items-start gap-3">
         <div
-          className="flex items-center justify-center w-11 h-11 rounded-xl shrink-0 shadow-sm"
-          style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)` }}
+          className="flex items-center justify-center w-11 h-11 rounded-xl shrink-0"
+          style={{ backgroundColor: `${color}1f` }}
         >
-          <Icon className="w-5 h-5 text-[var(--on-accent)]" />
+          <Icon className="w-5 h-5" style={{ color }} />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-[var(--text)] truncate">{quiz.title}</h3>

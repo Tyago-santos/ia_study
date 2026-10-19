@@ -39,9 +39,9 @@ export function QuizRunner({
               {subject && SubjectIcon && (
                 <span
                   className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                  style={{ background: `linear-gradient(135deg, ${subject.color}, ${subject.color}cc)` }}
+                  style={{ backgroundColor: `${subject.color}1f` }}
                 >
-                  <SubjectIcon className="w-4 h-4 text-[var(--on-accent)]" />
+                  <SubjectIcon className="w-4 h-4" style={{ color: subject.color }} />
                 </span>
               )}
               <CardTitle className="truncate">{quiz.title}</CardTitle>
@@ -52,7 +52,7 @@ export function QuizRunner({
           </div>
           <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2 mt-4 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-primary-500 to-cyan-500 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-primary-500 via-primary-400 to-tertiary-400 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
             />
           </div>

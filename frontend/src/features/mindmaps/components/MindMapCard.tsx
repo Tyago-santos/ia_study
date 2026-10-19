@@ -12,7 +12,7 @@ interface MindMapCardProps {
 }
 
 export function MindMapCard({ mindMap, subject, index, onOpen, onDelete }: MindMapCardProps) {
-  const color = subject?.color ?? '#2fa35c'
+  const color = subject?.color ?? '#4f46e5'
   const stats = getMindMapStats(mindMap.nodes)
   const root = getRootNode(mindMap.nodes)
   const branchLabels = mindMap.nodes.filter((node) => node.parentId === root?.id).slice(0, 3)
@@ -43,7 +43,7 @@ export function MindMapCard({ mindMap, subject, index, onOpen, onDelete }: MindM
             event.stopPropagation()
             onDelete()
           }}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] opacity-100 transition-all hover:bg-error-50 hover:text-[var(--danger)] sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] opacity-100 transition-all hover:bg-error-500/15 hover:text-[var(--danger)] sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
           title="Excluir mapa mental"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -60,8 +60,8 @@ export function MindMapCard({ mindMap, subject, index, onOpen, onDelete }: MindM
         {branchLabels.map((node) => (
           <span
             key={node.id}
-            className="rounded-lg border px-2 py-0.5 text-[10px] font-medium"
-            style={{ borderColor: `${color}55`, color: 'var(--text-secondary)' }}
+            className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+            style={{ backgroundColor: `${color}1f`, color }}
           >
             {node.label}
           </span>

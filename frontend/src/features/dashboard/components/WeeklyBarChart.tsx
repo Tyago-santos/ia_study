@@ -29,7 +29,7 @@ export function WeeklyBarChart({ data, title = 'Horas estudadas' }: BarChartProp
             Minutos
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-sm bg-primary-300 dark:bg-primary-700" />
+            <div className="w-2.5 h-2.5 rounded-sm bg-secondary-500/40" />
             Pomodoros
           </div>
         </div>

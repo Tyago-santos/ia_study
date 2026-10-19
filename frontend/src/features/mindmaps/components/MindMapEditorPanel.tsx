@@ -24,7 +24,7 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
   const editor = useMindMapEditor(mindMap.nodes)
   const updateNodes = useUpdateMindMapNodes()
 
-  const rootColor = subject?.color ?? '#2fa35c'
+  const rootColor = subject?.color ?? '#4f46e5'
   const stats = getMindMapStats(editor.nodes)
   const currentMap: MindMap = { ...mindMap, nodes: editor.nodes }
 
@@ -65,12 +65,12 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
         </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <span className="flex items-center gap-1.5 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2.5 py-1.5">
+          <span className="flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2.5 py-1.5">
             <Layers className="h-3.5 w-3.5 text-[var(--accent-text)]" />
             <span className="text-xs font-bold text-[var(--text)]">{stats.total}</span>
             <span className="text-[10px] text-[var(--text-secondary)]">topicos</span>
           </span>
-          <span className="flex items-center gap-1.5 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2.5 py-1.5">
+          <span className="flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2.5 py-1.5">
             <GitBranch className="h-3.5 w-3.5 text-[var(--accent-text)]" />
             <span className="text-xs font-bold text-[var(--text)]">{stats.branches}</span>
             <span className="text-[10px] text-[var(--text-secondary)]">ramos</span>

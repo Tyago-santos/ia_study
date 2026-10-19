@@ -52,7 +52,7 @@ export function CreateEventModal({ open, onClose }: CreateEventModalProps) {
       className="max-w-lg"
       title={
         <span className="flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-md shadow-primary-500/25 shrink-0">
+          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-md shadow-primary-500/25 shrink-0">
             <CalendarClock className="w-4 h-4 text-[var(--on-accent)]" />
           </span>
           <span>
@@ -85,12 +85,12 @@ export function CreateEventModal({ open, onClose }: CreateEventModalProps) {
                   type="button"
                   onClick={() => setType(key)}
                   className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors',
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-colors',
                     active
-                      ? 'text-white border-transparent'
+                      ? 'border-transparent'
                       : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)]'
                   )}
-                  style={active ? { backgroundColor: style.color } : undefined}
+                  style={active ? { backgroundColor: `${style.color}26`, color: style.color } : undefined}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {style.label}

@@ -5,9 +5,9 @@ import type { Activity } from '@/shared/types'
 
 const typeConfig: Record<string, { icon: typeof Clock; color: string; bg: string; label: string }> = {
   pomodoro: { icon: Timer, color: 'text-[var(--accent-text)]', bg: 'bg-primary-500/15', label: 'Foco' },
-  quiz: { icon: Trophy, color: 'text-[var(--accent-text)]', bg: 'bg-emerald-500/15', label: 'Quiz' },
+  quiz: { icon: Trophy, color: 'text-emerald-500', bg: 'bg-emerald-500/15', label: 'Quiz' },
   flashcard: { icon: Layers, color: 'text-[var(--warning)]', bg: 'bg-amber-500/15', label: 'Flashcard' },
-  summary: { icon: FileText, color: 'text-primary-400', bg: 'bg-primary-400/15', label: 'Resumo' },
+  summary: { icon: FileText, color: 'text-[var(--accent-text)]', bg: 'bg-primary-400/15', label: 'Resumo' },
 }
 
 function getDayGroup(dateStr: string): string {
@@ -49,7 +49,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
           <Sparkles className="w-4 h-4 text-[var(--accent-text)]" />
           <CardTitle>Atividades recentes</CardTitle>
         </div>
-        <span className="text-xs font-medium text-[var(--text-secondary)] bg-[var(--glass-bg)] px-2.5 py-1 rounded-full border border-[var(--glass-border)]">
+        <span className="text-[11px] font-bold text-[var(--accent-text)] bg-primary-500/15 px-2.5 py-1 rounded-full">
           {activities.length} atividades
         </span>
       </CardHeader>
@@ -106,7 +106,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                             </p>
                             <span
                               className={cn(
-                                'text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-md',
+                                'text-[11px] font-bold uppercase px-2 py-0.5 rounded-full',
                                 config.bg,
                                 config.color
                               )}

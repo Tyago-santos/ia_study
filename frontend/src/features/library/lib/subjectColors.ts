@@ -1,12 +1,12 @@
 import type { Topic } from '@/shared/types'
 
 export const SUBJECT_COLORS = [
-  '#2fa35c',
+  '#4f46e5',
+  '#8b5cf6',
+  '#06b6d4',
   '#f59e0b',
   '#10b981',
   '#ef4444',
-  '#3b82f6',
-  '#a855f7',
   '#ec4899',
   '#14b8a6',
 ]

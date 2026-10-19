@@ -29,10 +29,10 @@ export function SubjectCard({ subject, topics, isSelected, onSelect, onDelete }:
       <div className="relative flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-            style={{ background: `linear-gradient(135deg, ${subject.color}, ${subject.color}cc)` }}
+            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: `${subject.color}1f` }}
           >
-            <Icon className="w-6 h-6 text-[var(--on-accent)]" />
+            <Icon className="w-6 h-6" style={{ color: subject.color }} />
           </div>
           <div className="min-w-0">
             <h3 className="font-semibold text-[var(--text)] truncate">{subject.name}</h3>

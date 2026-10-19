@@ -1,4 +1,4 @@
-import { Bot, User } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import { formatMessageTime } from '@/features/ai/lib/quickPrompts'
 import { MarkdownContent } from './MarkdownContent'
@@ -13,61 +13,67 @@ interface ChatBubbleProps {
 export function ChatBubble({ content, role, createdAt, pending }: ChatBubbleProps) {
   const isUser = role === 'user'
 
-  return (
-    <div
-      className={cn('flex items-end gap-2 animate-fade-in', isUser ? 'justify-end' : 'justify-start')}
-    >
-      {!isUser && (
-        <div className="flex w-7 h-7 rounded-full bg-primary-500/15 text-[var(--accent-text)] items-center justify-center shrink-0">
-          <Bot className="w-4 h-4" />
-        </div>
-      )}
-      <div
-        className={cn(
-          'max-w-[85%] sm:max-w-[70%] px-4 py-2.5 shadow-sm',
-          isUser
-            ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl rounded-br-sm'
-            : 'bg-[var(--bg-secondary)] text-[var(--text)] rounded-2xl rounded-bl-sm',
-          pending && 'opacity-70'
-        )}
-      >
-        {/* IA: renderiza markdown formatado; usuário: texto puro como digitou.
-            break-words: URL/token longo estourava a bolha e era cortado pelo shell */}
-        {isUser ? (
-          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{content}</p>
-        ) : (
-          <MarkdownContent content={content} className="text-sm leading-relaxed" />
-        )}
-        {createdAt && (
-          <span
+  /* Usuario: bolha em gradiente de marca, canto superior direito "cortado"
+     (assimetrico como no Stitch) e horario solto abaixo, alinhado a direita. */
+  if (isUser) {
+    return (
+      <div className="flex justify-end animate-fade-in">
+        <div className="flex flex-col items-end gap-1 max-w-[85%] sm:max-w-[70%]">
+          <div
             className={cn(
-              'block mt-1 text-[10px]',
-              isUser ? 'text-white opacity-80' : 'text-[var(--text-secondary)]'
+              'px-4 py-2.5 text-sm leading-relaxed break-words whitespace-pre-wrap text-white bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl rounded-tr-none shadow-md',
+              pending && 'opacity-70'
             )}
           >
-            {formatMessageTime(createdAt)}
-          </span>
-        )}
-      </div>
-      {isUser && (
-        <div className="flex w-7 h-7 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] items-center justify-center shrink-0">
-          <User className="w-4 h-4" />
+            {content}
+          </div>
+          {createdAt && (
+            <span className="pr-1 text-[10px] text-[var(--text-secondary)]">
+              {formatMessageTime(createdAt)}
+            </span>
+          )}
         </div>
-      )}
+      </div>
+    )
+  }
+
+  /* IA: linha de autoria (avatar violeta, nome e hora em cyan) + card de
+     resposta com borda fina, como o "Tutor IA 14:33" da referencia. */
+  return (
+    <div className="flex justify-start animate-fade-in">
+      <div className="flex flex-col items-start gap-1.5 max-w-[96%]">
+        <div className="flex items-center gap-2 pl-1">
+          <span className="flex w-5 h-5 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 items-center justify-center shrink-0">
+            <Sparkles className="w-3 h-3 text-white" />
+          </span>
+          <span className="text-[11px] font-bold text-[var(--text-secondary)]">Tutor IA</span>
+          {createdAt && (
+            <span className="text-[11px] font-bold text-[var(--tertiary-accent)]">
+              {formatMessageTime(createdAt)}
+            </span>
+          )}
+        </div>
+        <div
+          className={cn(
+            'w-full px-4 py-3 rounded-2xl rounded-tl-none border border-[var(--border)] bg-[var(--card-bg)] shadow-[var(--glass-shadow)]',
+            pending && 'opacity-70'
+          )}
+        >
+          {/* IA: renderiza markdown formatado. break-words: URL/token longo
+              estourava a bolha e era cortado pelo shell */}
+          <MarkdownContent content={content} className="text-sm leading-relaxed" />
+        </div>
+      </div>
     </div>
   )
 }
 
 export function TypingIndicator() {
   return (
-    <div className="flex items-end gap-2 justify-start animate-fade-in">
-      <div className="flex w-7 h-7 rounded-full bg-primary-500/15 text-[var(--accent-text)] items-center justify-center shrink-0">
-        <Bot className="w-4 h-4" />
-      </div>
-      <div className="bg-[var(--bg-secondary)] rounded-2xl rounded-bl-sm px-4 py-3.5 flex gap-1 items-center">
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-secondary)] animate-bounce [animation-delay:-0.3s]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-secondary)] animate-bounce [animation-delay:-0.15s]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-secondary)] animate-bounce" />
+    <div className="flex justify-start animate-fade-in">
+      <div className="flex items-center gap-2 rounded-2xl rounded-tl-none border border-[var(--border)] bg-[var(--card-bg)] shadow-[var(--glass-shadow)] px-4 py-3">
+        <span className="w-2.5 h-2.5 rounded-full bg-primary-500 animate-pulse" />
+        <span className="text-xs text-[var(--text-secondary)]">Tutor IA formulando resposta...</span>
       </div>
     </div>
   )

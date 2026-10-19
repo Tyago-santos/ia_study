@@ -103,7 +103,7 @@ export function CreateQuizModal({ open, onClose }: CreateQuizModalProps) {
       className="max-w-2xl max-h-[88vh] overflow-y-auto"
       title={
         <span className="flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-md shadow-primary-500/25 shrink-0">
+          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-md shadow-primary-500/25 shrink-0">
             <ListChecks className="w-4 h-4 text-[var(--on-accent)]" />
           </span>
           <span>

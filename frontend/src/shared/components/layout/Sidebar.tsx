@@ -119,18 +119,19 @@ export function Sidebar({ className, mobileOpen = false, onClose }: SidebarProps
             to={aiNavigation.href}
             onClick={onClose}
             className={cn(
-              'group relative flex items-center gap-3 rounded-xl text-sm font-semibold mb-3',
+              'group relative flex items-center gap-3 rounded-xl text-sm font-semibold mb-3 overflow-hidden',
               'transition-all duration-300 ease-out',
               isCollapsed ? 'justify-center px-2 py-3' : 'px-3 py-3',
               'bg-gradient-to-r from-primary-500 to-primary-600 text-white',
               'shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:scale-[1.02]',
+              'animate-sheen',
               location.pathname.startsWith(aiNavigation.href) &&
                 'ring-2 ring-primary-300/60 ring-offset-2 ring-offset-[var(--sidebar-bg)]'
             )}
             title={isCollapsed ? aiNavigation.name : undefined}
           >
             <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <Sparkles className="w-[18px] h-[18px] shrink-0 relative" />
+            <Sparkles className="w-[18px] h-[18px] shrink-0 relative animate-sparkle" />
             {!isCollapsed && (
               <>
                 <span className="relative">{aiNavigation.name}</span>

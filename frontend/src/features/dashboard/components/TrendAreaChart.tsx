@@ -13,7 +13,7 @@ interface TrendChartProps {
 export function TrendAreaChart({
   data,
   title = 'Tendencia',
-  color = '#15803d',
+  color = '#4f46e5',
   valueLabel = 'minutos',
   gradientId = 'colorTrend',
 }: TrendChartProps) {
@@ -56,7 +56,7 @@ export function TrendAreaChart({
               strokeWidth={2.5}
               fill={`url(#${gradientId})`}
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, stroke: color, fill: 'white' }}
+              activeDot={{ r: 5, strokeWidth: 2, stroke: color, fill: 'var(--card-bg)' }}
             />
           </AreaChart>
         </ResponsiveContainer>

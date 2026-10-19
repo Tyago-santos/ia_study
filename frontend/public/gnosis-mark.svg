@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Gnosis IA">
+  <defs>
+    <linearGradient id="gnosisBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="55%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <radialGradient id="gnosisGlow" cx="0.78" cy="0.86" r="0.7">
+      <stop offset="0%" stop-color="#4cd7f6" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#4cd7f6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#4cd7f6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gnosisMark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dbe4ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- base: quadrado arredondado da marca -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#gnosisBg)"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#gnosisGlow)"/>
+
+  <g fill="none" stroke="url(#gnosisMark)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cerebro / nuvem de conhecimento -->
+    <path d="M256 92
+             C214 58 146 74 138 130
+             C96 148 90 206 124 234
+             C106 268 130 314 172 314
+             L340 314
+             C382 314 406 268 388 234
+             C422 206 416 148 374 130
+             C366 74 298 58 256 92 Z"/>
+
+    <!-- circuito interno: hemisferio central + ramos -->
+    <path d="M256 104 V298" stroke-width="12"/>
+    <path d="M256 156 H206 V212" stroke-width="12"/>
+    <path d="M256 198 H314 V164" stroke-width="12"/>
+    <path d="M256 252 H196 V284" stroke-width="12"/>
+    <path d="M256 274 H318 V300" stroke-width="12"/>
+
+    <!-- livro aberto -->
+    <path d="M88 350 C142 328 210 336 252 364 L252 424 C210 396 142 388 88 410 Z"/>
+    <path d="M424 350 C370 328 302 336 260 364 L260 424 C302 396 370 388 424 410 Z"/>
+  </g>
+
+  <!-- nós do circuito -->
+  <g fill="#4cd7f6">
+    <circle cx="206" cy="212" r="13"/>
+    <circle cx="314" cy="164" r="13"/>
+    <circle cx="196" cy="284" r="13"/>
+    <circle cx="318" cy="300" r="13"/>
+  </g>
+</svg>

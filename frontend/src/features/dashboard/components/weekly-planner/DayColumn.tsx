@@ -79,7 +79,9 @@ export function DayColumn({
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500',
-            isToday ? 'bg-gradient-to-r from-primary-500 to-cyan-500' : 'bg-primary-500/40'
+            isToday
+              ? 'bg-gradient-to-r from-primary-500 via-primary-400 to-tertiary-400'
+              : 'bg-primary-500/40'
           )}
           style={{ width: `${loadPct}%` }}
         />

@@ -75,7 +75,7 @@ export function EventRow({ event, subjectName, subjectColor }: EventRowProps) {
               'text-[11px] font-semibold px-2 py-0.5 rounded-full',
               dateInfo.tone === 'overdue' && 'bg-error-500/15 text-[var(--danger)]',
               dateInfo.tone === 'today' && 'bg-primary-500/15 text-[var(--accent-text)]',
-              dateInfo.tone === 'soon' && 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+              dateInfo.tone === 'soon' && 'bg-warning-500/15 text-[var(--warning)]',
               dateInfo.tone === 'neutral' && 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
             )}
           >

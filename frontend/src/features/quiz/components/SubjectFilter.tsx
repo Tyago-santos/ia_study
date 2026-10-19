@@ -18,9 +18,9 @@ export function SubjectFilter({ subjects, value, onChange }: SubjectFilterProps)
         type="button"
         onClick={() => onChange(null)}
         className={cn(
-          'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors',
+          'flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-colors',
           value === null
-            ? 'border-primary-500 bg-primary-500/10 text-[var(--accent-text)]'
+            ? 'border-primary-500/40 bg-primary-500/15 text-[var(--accent-text)]'
             : 'border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
         )}
       >
@@ -36,12 +36,12 @@ export function SubjectFilter({ subjects, value, onChange }: SubjectFilterProps)
             type="button"
             onClick={() => onChange(active ? null : subject.id)}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors',
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-colors',
               active
-                ? 'border-transparent text-white'
+                ? 'border-transparent'
                 : 'border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
             )}
-            style={active ? { backgroundColor: subject.color } : undefined}
+            style={active ? { backgroundColor: `${subject.color}26`, color: subject.color } : undefined}
           >
             <Icon className="w-3.5 h-3.5" />
             {subject.name}

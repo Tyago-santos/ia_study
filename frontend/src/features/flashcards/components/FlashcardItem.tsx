@@ -42,40 +42,46 @@ export function FlashcardItem({
         <div
           className={cn(
             'absolute inset-0 [backface-visibility:hidden] rounded-2xl border p-5 flex flex-col justify-between',
-            'bg-[var(--card-bg)] border-[var(--glass-border)] backdrop-blur-sm shadow-[var(--glass-shadow)]',
+            'bg-[var(--card-bg)] border-[var(--border)] backdrop-blur-sm shadow-[var(--glass-shadow)]',
             'transition-shadow duration-300 group-hover:shadow-lg'
           )}
         >
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between gap-2">
+              {subject && (
+                <span
+                  className="max-w-[60%] truncate rounded-full px-2.5 py-1 text-[11px] font-bold"
+                  style={{ backgroundColor: `${subject.color}26`, color: subject.color }}
+                >
+                  {subject.name}
+                </span>
+              )}
               <span
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full border',
+                  'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold',
                   difficulty.badge
                 )}
               >
                 <span className={cn('w-1.5 h-1.5 rounded-full', difficulty.dot)} />
                 {difficulty.label}
               </span>
-              <span className="text-xs text-[var(--text-secondary)]">
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+                Pergunta
+              </span>
+              <span className="text-[11px] text-[var(--text-secondary)]">
                 {flashcard.reviewCount} revisões
               </span>
             </div>
-            {subject && (
-              <span className="inline-block text-[11px] font-medium text-[var(--accent-text)] bg-primary-500/10 px-2 py-0.5 rounded-md mb-3">
-                {subject.name}
-              </span>
-            )}
-            <div className="flex items-start gap-2">
-              <HelpCircle className="w-4 h-4 text-[var(--text-secondary)] mt-0.5 shrink-0" />
-              <p className="text-base font-medium text-[var(--text)] leading-snug">
-                {flashcard.front}
-              </p>
-            </div>
+            <p className="mt-1.5 text-base font-medium text-[var(--text)] leading-snug">
+              {flashcard.front}
+            </p>
           </div>
           <div className="flex items-center justify-between mt-4">
-            <span className="text-[11px] text-[var(--text-secondary)] italic">
-              toque ou clique para virar
+            <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+              <HelpCircle className="w-3.5 h-3.5" />
+              Toque para ver a resposta
             </span>
             <div className="flex gap-1">
               <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
@@ -99,18 +105,21 @@ export function FlashcardItem({
         <div
           className={cn(
             'absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl border p-5 flex flex-col justify-between',
-            'bg-primary-500/5 border-primary-500/20 backdrop-blur-sm shadow-[var(--glass-shadow)]'
+            'bg-primary-500/10 border-primary-500/25 backdrop-blur-sm shadow-[var(--glass-shadow)]'
           )}
         >
           <div>
-            <div className="flex items-center gap-1.5 mb-3 text-[var(--accent-text)]">
+            <span className="flex items-center gap-1.5 text-[var(--accent-text)]">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Resposta</span>
-            </div>
-            <p className="text-base font-medium text-[var(--text)] leading-snug">{flashcard.back}</p>
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Resposta</span>
+            </span>
+            <p className="mt-3 text-base font-medium text-[var(--text)] leading-snug">
+              {flashcard.back}
+            </p>
           </div>
-          <span className="text-[11px] text-[var(--text-secondary)] italic">
-            toque ou clique para ver a pergunta
+          <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+            <HelpCircle className="w-3.5 h-3.5" />
+            Toque para ver a pergunta
           </span>
         </div>
       </div>

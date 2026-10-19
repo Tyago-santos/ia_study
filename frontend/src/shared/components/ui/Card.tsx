@@ -9,7 +9,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-2xl border backdrop-blur-sm p-6 overflow-hidden transition-all duration-200',
+          'rounded-2xl border backdrop-blur-md p-6 overflow-hidden transition-all duration-200',
           'bg-[var(--card-bg)] border-[var(--glass-border)]',
           'shadow-[var(--glass-shadow)]',
           'hover:shadow-lg hover:-translate-y-0.5',

@@ -73,11 +73,23 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-          Acompanhe seu progresso de estudos
-        </p>
+      {/* Saudacao em card elevado, como o "Ola, Sofia!" da referencia do Stitch */}
+      <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] shadow-[var(--glass-shadow)] p-6">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-secondary-500/10 pointer-events-none" />
+        <div className="relative flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">Dashboard</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              Acompanhe seu progresso de estudos
+            </p>
+          </div>
+          {(stats?.streak ?? 0) > 0 && (
+            <span className="flex items-center gap-1.5 rounded-full bg-warning-500/15 px-3 py-1.5 text-xs font-bold text-[var(--warning)]">
+              <Flame className="w-3.5 h-3.5" />
+              {stats?.streak ?? 0} dias
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -90,7 +102,7 @@ export function DashboardPage() {
           label="Horas hoje"
           value={formatMinutes(stats?.todayMinutes ?? 0)}
           icon={Clock}
-          gradient="from-primary-500 to-cyan-500"
+          gradient="bg-primary-500/15 text-[var(--accent-text)]"
           trend={todayTrend}
           sparkline={dailyMinutes}
         />
@@ -98,21 +110,22 @@ export function DashboardPage() {
           label="Esta semana"
           value={formatMinutes(stats?.weekMinutes ?? 0)}
           icon={TrendingUp}
-          gradient="from-emerald-500 to-teal-500"
+          gradient="bg-secondary-500/15 text-[var(--secondary-accent)]"
           trend={periodTrend}
         />
         <StatsCard
           label="Ofensiva"
           value={`${stats?.streak ?? 0} dias`}
           icon={Flame}
-          gradient="from-amber-500 to-orange-500"
+          gradient="bg-warning-500/15 text-[var(--warning)]"
         />
         <StatsCard
           label="Meta semanal"
           value={`${stats?.weeklyGoalProgress ?? 0}%`}
           icon={Target}
-          gradient="from-primary-500 to-primary-700"
+          gradient="bg-tertiary-500/15 text-tertiary-600"
           sparkline={goalProgressSeries}
+          progress={stats?.weeklyGoalProgress}
         />
       </div>
 
@@ -135,7 +148,7 @@ export function DashboardPage() {
         <TrendAreaChart
           data={trendData}
           title="Tendencia semanal"
-          color="#15803d"
+          color="#4f46e5"
           valueLabel="minutos"
           gradientId="colorTrend"
         />

@@ -5,6 +5,7 @@ import { useDeleteFlashcard, useFlashcards } from '@/features/flashcards/hooks/u
 import { useFlashcardReviewSession } from '@/features/flashcards/hooks/useFlashcardReviewSession'
 import { useSubjects } from '@/features/library/hooks/useSubjects'
 import { CreateFlashcardModal } from '../components/CreateFlashcardModal'
+import { FlashcardDeckRow } from '../components/FlashcardDeckRow'
 import { FlashcardItem } from '../components/FlashcardItem'
 import { FlashcardReviewComplete } from '../components/FlashcardReviewComplete'
 import { FlashcardReviewRunner } from '../components/FlashcardReviewRunner'
@@ -26,6 +27,13 @@ export function FlashcardsPage() {
 
   const flashcards = data?.flashcards ?? []
   const getSubject = (subjectId: string) => subjects?.find((s) => s.id === subjectId)
+
+  // Agrupamento apenas de apresentacao: linhas da lista "Seus Decks de Estudo".
+  const deckSubjectIds = Array.from(new Set(flashcards.map((card) => card.subjectId)))
+  const decks = deckSubjectIds.map((subjectId) => ({
+    subjectId,
+    cards: flashcards.filter((card) => card.subjectId === subjectId),
+  }))
 
   const review = useFlashcardReviewSession(flashcards)
 
@@ -78,25 +86,46 @@ export function FlashcardsPage() {
         </div>
       ) : flashcards.length > 0 ? (
         <>
-          <p className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Passe o mouse sobre um card (ou toque nele) para virar e ver a resposta
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {flashcards.map((flashcard, i) => (
-              <FlashcardItem
-                key={flashcard.id}
-                flashcard={flashcard}
-                subject={getSubject(flashcard.subjectId)}
-                index={i}
-                flipped={flippedId === flashcard.id}
-                onFlip={() => setFlippedId(flippedId === flashcard.id ? null : flashcard.id)}
-                onDelete={() =>
-                  deleteFlashcard({ id: flashcard.id, label: toCardLabel(flashcard.front) })
-                }
-              />
-            ))}
-          </div>
+          <section className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-lg font-bold text-[var(--text)]">Seus Decks de Estudo</h2>
+              <span className="rounded-full bg-primary-500/15 px-2.5 py-1 text-[11px] font-bold text-primary-300">
+                {decks.length}
+              </span>
+            </div>
+            <div className="space-y-4">
+              {decks.map((deck) => (
+                <FlashcardDeckRow
+                  key={deck.subjectId}
+                  subject={getSubject(deck.subjectId)}
+                  cards={deck.cards}
+                  onReview={review.start}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <p className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-secondary-300" />
+              Passe o mouse sobre um card (ou toque nele) para virar e ver a resposta
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {flashcards.map((flashcard, i) => (
+                <FlashcardItem
+                  key={flashcard.id}
+                  flashcard={flashcard}
+                  subject={getSubject(flashcard.subjectId)}
+                  index={i}
+                  flipped={flippedId === flashcard.id}
+                  onFlip={() => setFlippedId(flippedId === flashcard.id ? null : flashcard.id)}
+                  onDelete={() =>
+                    deleteFlashcard({ id: flashcard.id, label: toCardLabel(flashcard.front) })
+                  }
+                />
+              ))}
+            </div>
+          </section>
         </>
       ) : (
         <Card>

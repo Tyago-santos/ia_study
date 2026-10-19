@@ -81,7 +81,7 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
       className="max-w-lg"
       title={
         <span className="flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-500/10 border border-primary-500/20 text-[var(--accent-text)] shrink-0">
+          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-500/15 border border-primary-500/25 text-primary-300 shrink-0">
             <Layers className="w-4 h-4" />
           </span>
           <span>
@@ -110,7 +110,7 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
           <select
             value={subjectId}
             onChange={(e) => setSubjectId(e.target.value)}
-            className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent"
+            className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent"
           >
             <option value="">Selecione uma matéria</option>
             {subjects?.map((s) => (
@@ -128,7 +128,7 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
               <div className="relative">
                 <HelpCircle className="absolute left-3 top-3 w-4 h-4 text-[var(--text-secondary)]" />
                 <textarea
-                  className="w-full h-20 pl-9 pr-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent resize-none"
+                  className="w-full h-20 pl-9 pr-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent resize-none"
                   placeholder="Pergunta ou conceito"
                   value={front}
                   onChange={(e) => setFront(e.target.value)}
@@ -140,7 +140,7 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
               <div className="relative">
                 <CheckCircle2 className="absolute left-3 top-3 w-4 h-4 text-[var(--text-secondary)]" />
                 <textarea
-                  className="w-full h-20 pl-9 pr-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent resize-none"
+                  className="w-full h-20 pl-9 pr-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:border-transparent resize-none"
                   placeholder="Resposta ou definição"
                   value={back}
                   onChange={(e) => setBack(e.target.value)}
@@ -149,13 +149,17 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
             </div>
             <div className="flex gap-2 pt-1">
               <Button
-                className="flex-1"
+                className="flex-1 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 font-semibold text-white hover:shadow-lg hover:shadow-primary-500/40"
                 onClick={handleCreate}
                 disabled={createFlashcard.isPending || !subjectId || !front.trim() || !back.trim()}
               >
                 {createFlashcard.isPending ? 'Salvando...' : 'Salvar Flashcard'}
               </Button>
-              <Button variant="secondary" onClick={resetAndClose}>
+              <Button
+                variant="secondary"
+                className="rounded-xl border border-[var(--border)]"
+                onClick={resetAndClose}
+              >
                 Cancelar
               </Button>
             </div>
@@ -174,7 +178,7 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
             </p>
 
             <Button
-              className="w-full"
+              className="w-full rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 font-semibold text-white hover:shadow-lg hover:shadow-primary-500/40"
               onClick={handleGenerate}
               disabled={!subjectId || generateFlashcards.isPending}
             >
@@ -219,7 +223,11 @@ export function CreateFlashcardModal({ open, onClose }: CreateFlashcardModalProp
             )}
 
             <div className="pt-1">
-              <Button variant="secondary" className="w-full" onClick={resetAndClose}>
+              <Button
+                variant="secondary"
+                className="w-full rounded-xl border border-[var(--border)]"
+                onClick={resetAndClose}
+              >
                 Fechar
               </Button>
             </div>

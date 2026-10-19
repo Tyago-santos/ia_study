@@ -152,7 +152,7 @@ export function MindMapNodeCard({ id, data, selected }: NodeProps<MindMapFlowNod
               event.stopPropagation()
               actions.onRemove(id)
             }}
-            className="flex items-center justify-center w-7 h-7 rounded text-[var(--text-secondary)] hover:bg-error-50 hover:text-[var(--danger)]"
+            className="flex items-center justify-center w-7 h-7 rounded text-[var(--text-secondary)] hover:bg-error-500/15 hover:text-[var(--danger)]"
             title="Excluir topico e subtopicos"
           >
             <Trash2 className="w-3 h-3" />

@@ -38,7 +38,7 @@ export function CreateSubjectModal({ open, onClose }: CreateSubjectModalProps) {
       className="max-w-lg"
       title={
         <span className="flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-md shadow-primary-500/25 shrink-0">
+          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-md shadow-primary-500/25 shrink-0">
             <Layers className="w-4 h-4 text-[var(--on-accent)]" />
           </span>
           <span>
@@ -53,10 +53,10 @@ export function CreateSubjectModal({ open, onClose }: CreateSubjectModalProps) {
       <div className="space-y-4">
         <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
           <div
-            className="flex items-center justify-center w-14 h-14 rounded-2xl shrink-0 shadow-sm transition-colors duration-200"
-            style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)` }}
+            className="flex items-center justify-center w-14 h-14 rounded-2xl shrink-0 transition-colors duration-200"
+            style={{ backgroundColor: `${color}1f` }}
           >
-            <PreviewIcon className="w-7 h-7 text-[var(--on-accent)]" />
+            <PreviewIcon className="w-7 h-7" style={{ color }} />
           </div>
           <div className="min-w-0">
             <p className="text-xs text-[var(--text-secondary)]">Pré-visualização</p>
@@ -87,10 +87,10 @@ export function CreateSubjectModal({ open, onClose }: CreateSubjectModalProps) {
                   className={cn(
                     'flex items-center justify-center w-9 h-9 rounded-lg border transition-all',
                     active
-                      ? 'border-transparent text-white scale-105 shadow-sm'
+                      ? 'border-primary-500/60 scale-105 shadow-sm'
                       : 'border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                   )}
-                  style={active ? { backgroundColor: color } : undefined}
+                  style={active ? { backgroundColor: `${color}1f`, color } : undefined}
                 >
                   <Icon className="w-4 h-4" />
                 </button>

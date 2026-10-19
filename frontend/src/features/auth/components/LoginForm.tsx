@@ -26,6 +26,7 @@ export function LoginForm() {
         type="email"
         id="email"
         placeholder="seu@email.com"
+        className="h-12 rounded-xl bg-[var(--bg-secondary)]"
         error={errors.email?.message}
         {...register('email')}
       />
@@ -34,6 +35,7 @@ export function LoginForm() {
         type="password"
         id="password"
         placeholder="••••••••"
+        className="h-12 rounded-xl bg-[var(--bg-secondary)]"
         error={errors.password?.message}
         {...register('password')}
       />
@@ -47,12 +49,16 @@ export function LoginForm() {
           type="button"
           disabled
           title={`Recuperação de senha: ${PENDING_BACKEND_HINT.toLowerCase()}`}
-          className="text-sm text-[var(--text-secondary)] cursor-not-allowed opacity-60"
+          className="text-sm font-medium text-tertiary-400 hover:text-tertiary-300 cursor-not-allowed opacity-60"
         >
           Esqueceu a senha?
         </button>
       </div>
-      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+      <Button
+        type="submit"
+        className="w-full h-12 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 font-semibold text-white hover:shadow-lg hover:shadow-primary-500/40"
+        disabled={loginMutation.isPending}
+      >
         {loginMutation.isPending ? 'Entrando...' : 'Entrar'}
       </Button>
     </form>

@@ -5,14 +5,14 @@ import type { MindMapNode } from '@/shared/types'
  * paleta comeca no nivel 1.
  */
 export const BRANCH_COLORS = [
-  '#2fa35c',
-  '#3b82f6',
+  '#8b5cf6',
+  '#4cd7f6',
   '#f59e0b',
-  '#a855f7',
-  '#14b8a6',
   '#ec4899',
+  '#14b8a6',
+  '#a855f7',
   '#ef4444',
-  '#0ea5e9',
+  '#6366f1',
 ] as const
 
 export type ChildrenMap = Map<string | null, MindMapNode[]>

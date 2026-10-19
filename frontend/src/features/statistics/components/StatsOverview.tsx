@@ -10,10 +10,10 @@ interface StatsOverviewProps {
 }
 
 const CARDS = [
-  { key: 'time', label: 'Tempo total', icon: Clock, bg: 'bg-primary-100 dark:bg-primary-900/30', color: 'text-[var(--accent-text)]' },
-  { key: 'pomodoros', label: 'Pomodoros', icon: BookOpen, bg: 'bg-success-100 dark:bg-success-900/30', color: 'text-success-500' },
-  { key: 'flashcards', label: 'Flashcards', icon: Layers, bg: 'bg-warning-100 dark:bg-warning-900/30', color: 'text-warning-500' },
-  { key: 'quizzes', label: 'Quizzes', icon: HelpCircle, bg: 'bg-error-100 dark:bg-error-900/30', color: 'text-[var(--danger)]' },
+  { key: 'time', label: 'Tempo total', icon: Clock, bg: 'bg-primary-500/15', color: 'text-primary-300' },
+  { key: 'pomodoros', label: 'Pomodoros', icon: BookOpen, bg: 'bg-secondary-500/15', color: 'text-secondary-300' },
+  { key: 'flashcards', label: 'Flashcards', icon: Layers, bg: 'bg-tertiary-500/15', color: 'text-tertiary-400' },
+  { key: 'quizzes', label: 'Quizzes', icon: HelpCircle, bg: 'bg-warning-500/15', color: 'text-[var(--warning)]' },
 ] as const
 
 export function StatsOverview({
@@ -34,7 +34,7 @@ export function StatsOverview({
       {CARDS.map(({ key, label, icon: Icon, bg, color }) => (
         <Card key={key}>
           <CardContent className="flex items-center gap-4">
-            <div className={`p-3 rounded-lg ${bg}`}>
+            <div className={`p-3 rounded-full ${bg}`}>
               <Icon className={`w-6 h-6 ${color}`} />
             </div>
             <div>

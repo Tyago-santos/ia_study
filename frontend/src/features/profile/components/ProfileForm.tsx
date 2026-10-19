@@ -24,8 +24,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-20 h-20 shrink-0 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <UserIcon className="w-10 h-10 text-[var(--accent-text)]" />
+          <div className="w-20 h-20 shrink-0 rounded-full bg-primary-500/15 flex items-center justify-center">
+            <UserIcon className="w-10 h-10 text-primary-300" />
           </div>
           <div className="min-w-0">
             <CardTitle className="truncate">{user?.name}</CardTitle>

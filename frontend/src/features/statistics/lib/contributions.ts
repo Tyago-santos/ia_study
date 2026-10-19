@@ -9,10 +9,10 @@ export const WEEKS = 53
 
 export const LEVEL_CLASSES = [
   'bg-[var(--bg-secondary)]',
-  'bg-primary-200 dark:bg-primary-900',
-  'bg-primary-400 dark:bg-primary-700',
-  'bg-primary-600 dark:bg-primary-500',
-  'bg-primary-800 dark:bg-primary-400',
+  'bg-primary-500/25',
+  'bg-primary-500/50',
+  'bg-primary-500/75',
+  'bg-primary-500',
 ]
 
 export interface CalendarDay {

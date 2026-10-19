@@ -11,7 +11,7 @@ export function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
         Não tem uma conta?{' '}
-        <Link to="/cadastro" className="text-[var(--accent-text)] font-medium hover:underline">
+        <Link to="/cadastro" className="text-tertiary-400 hover:text-tertiary-300 font-semibold">
           Cadastre-se
         </Link>
       </p>

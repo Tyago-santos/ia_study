@@ -45,13 +45,13 @@ function DraggableEventChip({ event }: { event: ScheduleEvent }) {
         border: `1px solid ${color}30`,
       }}
       className={cn(
-        'flex items-center gap-2 pl-1.5 pr-3 py-2 rounded-lg text-sm font-medium cursor-grab active:cursor-grabbing select-none',
+        'flex items-center gap-2 pl-1.5 pr-3 py-2 rounded-full text-sm font-medium cursor-grab active:cursor-grabbing select-none',
         !isDragging && 'transition-all hover:-translate-y-0.5 hover:shadow-md',
         isDragging && 'shadow-lg scale-105 rotate-2 z-10 relative'
       )}
     >
       <div
-        className="flex items-center justify-center w-6 h-6 rounded-md shrink-0"
+        className="flex items-center justify-center w-6 h-6 rounded-full shrink-0"
         style={{ backgroundColor: color + '22' }}
       >
         <Icon className="w-3.5 h-3.5" style={{ color }} />

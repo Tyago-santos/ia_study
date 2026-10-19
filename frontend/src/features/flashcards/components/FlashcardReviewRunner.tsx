@@ -1,5 +1,5 @@
-import { CheckCircle2, HelpCircle, LogOut } from 'lucide-react'
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui'
+import { Hand, LogOut } from 'lucide-react'
+import { Button, Card, CardContent, CardHeader } from '@/shared/components/ui'
 import { getSubjectIcon } from '@/shared/constants/subjectIcons'
 import { cn } from '@/shared/lib/utils'
 import type { Flashcard, Subject } from '@/shared/types'
@@ -19,17 +19,17 @@ const RATING_OPTIONS: { difficulty: Flashcard['difficulty']; label: string; clas
   {
     difficulty: 'hard',
     label: 'Difícil',
-    className: 'border-error-500/30 text-error-600 hover:bg-error-500/10',
+    className: 'border-error-500/40 text-error-500 hover:bg-error-500/15',
   },
   {
     difficulty: 'medium',
     label: 'Médio',
-    className: 'border-warning-500/30 text-warning-600 hover:bg-warning-500/10',
+    className: 'border-warning-500/40 text-warning-500 hover:bg-warning-500/15',
   },
   {
     difficulty: 'easy',
     label: 'Fácil',
-    className: 'border-success-500/30 text-success-600 hover:bg-success-500/10',
+    className: 'border-success-500/40 text-success-500 hover:bg-success-500/15',
   },
 ]
 
@@ -47,27 +47,27 @@ export function FlashcardReviewRunner({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-12rem)] animate-fade-in">
-      <Card className="w-full max-w-2xl">
+      <Card className="w-full max-w-2xl border-[var(--border)]">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              {subject && SubjectIcon && (
-                <span
-                  className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                  style={{ background: `linear-gradient(135deg, ${subject.color}, ${subject.color}cc)` }}
-                >
-                  <SubjectIcon className="w-4 h-4 text-[var(--on-accent)]" />
-                </span>
-              )}
-              <CardTitle className="truncate">{subject?.name ?? 'Revisão'}</CardTitle>
-            </div>
-            <span className="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-primary-500/10 text-[var(--accent-text)]">
-              {index + 1} / {total}
+            {subject && SubjectIcon ? (
+              <span
+                className="inline-flex min-w-0 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
+                style={{ backgroundColor: `${subject.color}26`, color: subject.color }}
+              >
+                <SubjectIcon className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{subject.name}</span>
+              </span>
+            ) : (
+              <span className="truncate text-base font-semibold text-[var(--text)]">Revisão</span>
+            )}
+            <span className="shrink-0 rounded-full bg-secondary-500/15 px-2.5 py-1 text-[11px] font-bold text-secondary-300">
+              Card {index + 1} de {total}
             </span>
           </div>
-          <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2 mt-4 overflow-hidden">
+          <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
             <div
-              className="bg-gradient-to-r from-primary-500 to-cyan-500 h-2 rounded-full transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-primary-500 via-primary-400 to-tertiary-400 transition-all duration-300"
               style={{ width: `${((index + 1) / total) * 100}%` }}
             />
           </div>
@@ -77,30 +77,33 @@ export function FlashcardReviewRunner({
             type="button"
             onClick={onFlip}
             className={cn(
-              'w-full min-h-[14rem] rounded-2xl border p-6 flex flex-col items-center justify-center text-center gap-4',
+              'w-full min-h-[14rem] rounded-2xl border p-6 flex flex-col items-start justify-center text-left gap-3',
               'transition-colors duration-200',
               flipped
-                ? 'bg-primary-500/5 border-primary-500/20'
+                ? 'bg-primary-500/10 border-primary-500/25'
                 : 'bg-[var(--bg-secondary)] border-[var(--border)] hover:border-primary-500/40'
             )}
           >
             {flipped ? (
               <>
-                <span className="flex items-center gap-1.5 text-[var(--accent-text)]">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wide">Resposta</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-secondary-300">
+                  Resposta
                 </span>
                 <p className="text-lg font-medium text-[var(--text)] leading-snug">{card.back}</p>
+                <span className="mt-1 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+                  <Hand className="w-3.5 h-3.5" />
+                  Toque para ver a pergunta
+                </span>
               </>
             ) : (
               <>
-                <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                  <HelpCircle className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wide">Pergunta</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+                  Pergunta
                 </span>
-                <p className="text-lg font-medium text-[var(--text)] leading-snug">{card.front}</p>
-                <span className="text-[11px] text-[var(--text-secondary)] italic">
-                  toque para ver a resposta
+                <p className="text-xl font-semibold text-[var(--text)] leading-snug">{card.front}</p>
+                <span className="mt-1 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+                  <Hand className="w-3.5 h-3.5" />
+                  Toque para ver a resposta
                 </span>
               </>
             )}

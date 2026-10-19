@@ -6,10 +6,10 @@ export const TYPE_STYLES: Record<
   { label: string; icon: typeof ClipboardList; color: string }
 > = {
   prova: { label: 'Prova', icon: ClipboardList, color: '#ef4444' },
-  estudo: { label: 'Estudo', icon: BookOpen, color: '#00cc66' },
+  estudo: { label: 'Estudo', icon: BookOpen, color: '#4f46e5' },
   trabalho: { label: 'Trabalho', icon: Briefcase, color: '#f59e0b' },
-  aula: { label: 'Aula', icon: GraduationCap, color: '#3b82f6' },
-  outro: { label: 'Outro', icon: CalendarDays, color: '#6b7280' },
+  aula: { label: 'Aula', icon: GraduationCap, color: '#06b6d4' },
+  outro: { label: 'Outro', icon: CalendarDays, color: '#8b5cf6' },
 }
 
 export type DateTone = 'overdue' | 'today' | 'soon' | 'neutral'

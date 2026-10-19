@@ -11,7 +11,7 @@ export function RegisterPage() {
 
       <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
         Já tem uma conta?{' '}
-        <Link to="/login" className="text-[var(--accent-text)] font-medium hover:underline">
+        <Link to="/login" className="text-tertiary-400 hover:text-tertiary-300 font-semibold">
           Faça login
         </Link>
       </p>

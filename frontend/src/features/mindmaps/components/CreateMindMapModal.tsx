@@ -73,7 +73,7 @@ export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapMo
       className="max-w-lg"
       title={
         <span className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-md shadow-primary-500/25">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-md shadow-primary-500/25">
             <Network className="h-4 w-4 text-[var(--on-accent)]" />
           </span>
           <span>

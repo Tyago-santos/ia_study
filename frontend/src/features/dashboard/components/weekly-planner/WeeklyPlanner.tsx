@@ -254,8 +254,8 @@ export function WeeklyPlanner() {
       <CardHeader className="relative">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-500 shadow-lg shadow-primary-500/25">
-              <CalendarDays className="w-5 h-5 text-[var(--on-accent)]" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-500/15">
+              <CalendarDays className="w-5 h-5 text-[var(--accent-text)]" />
             </div>
             <div>
               <CardTitle>Planejamento Semanal</CardTitle>
@@ -264,12 +264,12 @@ export function WeeklyPlanner() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--glass-bg)] border border-[var(--glass-border)]">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--accent-text)]" />
-            <span className="text-xs font-bold bg-gradient-to-r from-primary-500 to-cyan-500 bg-clip-text text-transparent">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-500/15">
+            <Sparkles className="w-3.5 h-3.5 text-[var(--secondary-accent)]" />
+            <span className="text-xs font-bold text-[var(--secondary-accent)]">
               {formatDuration(totalWeeklyMinutes)}
             </span>
-            <span className="text-[10px] text-[var(--text-secondary)]">esta semana</span>
+            <span className="text-[10px] font-medium text-[var(--text-secondary)]">esta semana</span>
           </div>
         </div>
       </CardHeader>

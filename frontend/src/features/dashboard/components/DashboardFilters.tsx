@@ -73,10 +73,10 @@ export function DashboardFilters({
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] backdrop-blur-sm p-4 space-y-4">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] backdrop-blur-sm shadow-[var(--glass-shadow)] p-4 space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-500/15 shrink-0">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary-500/15 shrink-0">
             <Filter className="w-3.5 h-3.5 text-[var(--accent-text)]" />
           </div>
           <span className="text-sm font-semibold text-[var(--text)]">Filtros</span>
@@ -103,15 +103,15 @@ export function DashboardFilters({
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
             Periodo
           </span>
-          <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--glass-bg)] overflow-hidden w-fit">
+          <div className="flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] w-fit">
             {dateRanges.map((range) => (
               <button
                 key={range.value}
                 onClick={() => onDateRangeChange(range.value)}
                 className={cn(
-                  'px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap',
+                  'px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap',
                   dateRange === range.value
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-[var(--on-accent)] shadow-sm'
+                    ? 'bg-primary-500 text-[var(--on-accent)] shadow-sm shadow-primary-500/40'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--card-bg)]'
                 )}
               >
@@ -153,10 +153,10 @@ export function DashboardFilters({
                   key={subject.id}
                   onClick={() => toggleSubject(subject.id)}
                   className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all',
+                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all',
                     active
                       ? 'border-current shadow-sm'
-                      : 'border-transparent bg-[var(--glass-bg)] text-[var(--text-secondary)] hover:text-[var(--text)]'
+                      : 'border-transparent bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text)]'
                   )}
                   style={
                     active
@@ -189,9 +189,9 @@ export function DashboardFilters({
                 key={type.value}
                 onClick={() => toggleType(type.value)}
                 className={cn(
-                  'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all',
+                  'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all',
                   selectedTypes.includes(type.value)
-                    ? 'bg-[var(--glass-bg)] border-[var(--border)] text-[var(--text)]'
+                    ? 'bg-primary-500/15 border-primary-500/30 text-[var(--accent-text)]'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text)]'
                 )}
               >

@@ -6,18 +6,21 @@ interface StatsCardProps {
   label: string
   value: string
   icon: LucideIcon
+  /** Classes do icone em fundo tintado (ex: `bg-primary-500/15 text-[var(--accent-text)]`). */
   gradient: string
   /** Omita quando nao houver base real de comparacao. */
   trend?: MetricTrend
   /** Omita quando nao houver serie real; nunca preencha com valores de exemplo. */
   sparkline?: number[]
+  /** Percentual 0-100 de uma meta; barra em gradiente quando informado. */
+  progress?: number
 }
 
-export function StatsCard({ label, value, icon: Icon, gradient, trend, sparkline }: StatsCardProps) {
+export function StatsCard({ label, value, icon: Icon, gradient, trend, sparkline, progress }: StatsCardProps) {
   const max = sparkline && sparkline.length > 0 ? Math.max(...sparkline) : 0
 
   return (
-    <div className="relative rounded-2xl border backdrop-blur-sm bg-[var(--card-bg)] border-[var(--glass-border)] shadow-[var(--glass-shadow)] p-5 overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 group">
+    <div className="relative rounded-2xl border backdrop-blur-sm bg-[var(--card-bg)] border-[var(--border)] shadow-[var(--glass-shadow)] p-5 overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 group">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
@@ -46,13 +49,22 @@ export function StatsCard({ label, value, icon: Icon, gradient, trend, sparkline
         </div>
         <div
           className={cn(
-            'p-2.5 rounded-xl bg-gradient-to-br shadow-lg transition-transform group-hover:scale-110',
+            'flex items-center justify-center p-2.5 rounded-full transition-transform group-hover:scale-110',
             gradient
           )}
         >
-          <Icon className="w-5 h-5 text-[var(--on-accent)]" />
+          <Icon className="w-5 h-5" />
         </div>
       </div>
+
+      {typeof progress === 'number' && (
+        <div className="mt-3 h-1.5 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary-500 via-primary-400 to-tertiary-400 transition-all duration-500"
+            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+          />
+        </div>
+      )}
 
       {sparkline && sparkline.length > 0 && (
         <div className="mt-3 flex items-end gap-[3px] h-8">
@@ -64,8 +76,8 @@ export function StatsCard({ label, value, icon: Icon, gradient, trend, sparkline
                 className={cn(
                   'flex-1 rounded-sm transition-all duration-300',
                   i === sparkline.length - 1
-                    ? 'bg-gradient-to-t from-primary-500 to-primary-400'
-                    : 'bg-primary-200 dark:bg-primary-800/50'
+                    ? 'bg-gradient-to-t from-primary-500 to-tertiary-400'
+                    : 'bg-primary-500/25'
                 )}
                 style={{ height: `${Math.max(height, 8)}%` }}
               />

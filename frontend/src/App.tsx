@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
@@ -18,6 +19,13 @@ const queryClient = new QueryClient({
 
 function App() {
   const { theme } = useThemeStore()
+
+  // O wrapper do app ja carrega a classe, mas <body> fica fora dele: sem esta
+  // espelhagem o scroll e o overscroll continuam na superficie do :root.
+  useEffect(() => {
+    document.documentElement.classList.remove('light', 'dark', 'reading')
+    document.documentElement.classList.add(theme)
+  }, [theme])
 
   return (
     <div className={`${theme} min-h-dvh bg-[var(--bg)] text-[var(--text)]`}>
