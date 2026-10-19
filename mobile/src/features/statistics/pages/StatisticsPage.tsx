@@ -69,7 +69,7 @@ export function StatisticsPage() {
           label="Média quiz"
           value={`${quizStats?.average ?? 0}%`}
           icon="stats-chart"
-          tint={Tints.emerald}
+          tint={Tints.sky}
         />
       </S.Tiles>
 

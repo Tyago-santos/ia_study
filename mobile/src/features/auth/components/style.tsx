@@ -9,16 +9,15 @@ export const Brand = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing.lg}px;
 `
 
-/* O emblema fica num badge escuro proprio: e neon desenhado sobre preto e
-   perderia contraste direto nos temas Claro e Leitura. */
+/* O emblema ja' traz o proprio quadrado indigo com cantos arredondados,
+   entao o badge atras dele e' transparente e sem radius proprio — qualquer
+   radius aqui cortaria os cantos da imagem. */
 export const LogoBadge = styled.View`
   width: 88px;
   height: 88px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
   background-color: ${LOGO_BACKDROP};
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 `
 
 export const LogoImage = styled.Image`

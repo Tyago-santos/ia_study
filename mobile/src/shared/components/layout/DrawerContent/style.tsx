@@ -18,16 +18,15 @@ export const Header = styled.View<{ $topInset: number }>`
   border-bottom-color: ${({ theme }) => theme.colors.border};
 `
 
-/* A marca e neon sobre preto, entao vive num badge escuro proprio para nao
-   sumir nos temas Claro e Leitura. */
+/* A marca ja' traz o proprio quadrado indigo com cantos arredondados, entao
+   o badge atras dela e' transparente e sem radius proprio — qualquer radius
+   aqui cortaria os cantos da imagem. */
 export const LogoBadge = styled.View`
   width: 38px;
   height: 38px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
   background-color: ${LOGO_BACKDROP};
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 `
 
 export const LogoImage = styled.Image`

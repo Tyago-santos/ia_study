@@ -5,7 +5,7 @@ import type { ScheduleEvent } from '@/shared/types'
 /** Cor e icone por tipo de compromisso, iguais nos tres temas. */
 export const EVENT_COLORS: Record<ScheduleEvent['type'], string> = {
   prova: Tints.red,
-  estudo: Tints.green,
+  estudo: Tints.indigo,
   trabalho: Tints.amber,
   aula: Tints.violet,
   outro: Tints.cyan,

@@ -1,44 +1,44 @@
 /**
- * Paleta unica dos tres temas.
+ * Paleta unica dos tres temas — Cognitive Flow.
  *
- * A identidade continua verde, mas fora do neon: verde saturado ao maximo sobre
- * preto puro brilha ("halation") e cansa em sessao longa de estudo, que e o uso
- * real do app. Por isso o escuro parte de um cinza-azulado e o verde vem
- * rebaixado, com texto secundario neutro em vez de esverdeado.
+ * Identidade indigo (#4F46E5) + cyan (#4CD7F6), a mesma do app web, para o
+ * usuario reconhecer o produto ao alternar de dispositivo. O escuro parte de
+ * um azul-marinho (#0b1326) em vez de preto puro: sobre indigo saturado, preto
+ * gera "halation" e cansa em sessao longa de estudo, que e' o uso real do app.
  *
  * Todos os pares texto/fundo daqui ficam acima de 4.5:1 (WCAG AA), inclusive
- * `onAccent` sobre `accent`, que e o caso dos botoes primarios.
+ * `onAccent` sobre `accent`, que e' o caso dos botoes primarios.
  */
 export const Colors = {
   light: {
     // Fundo um passo mais frio que o branco do card: a borda do card aparece
     // por tom, nao por linha, e a tela fica menos "cinza claro chapado".
-    bg: '#f3f6fa',
-    bgSecondary: '#e9eff5',
-    text: '#16202d',
-    textSecondary: '#515f70',
-    border: '#dbe3ec',
+    bg: '#f6f7fc',
+    bgSecondary: '#eceffb',
+    text: '#171f33',
+    textSecondary: '#5b6379',
+    border: '#dfe3f2',
     card: '#ffffff',
-    accent: '#15803d',
-    accentText: '#146b33',
+    accent: '#4f46e5',
+    accentText: '#4338ca',
     onAccent: '#ffffff',
     danger: '#c62f2f',
     warning: '#a45c07',
   },
   dark: {
-    // Escala de cinza-azulado em degraus maiores que a de antes: fundo quase
-    // preto, card visivelmente elevado e borda so' sugerindo o limite — e' o
-    // que da profundidade sem voltar ao contorno aceso.
-    bg: '#0a0e13',
-    bgSecondary: '#111821',
-    card: '#171f2a',
-    border: '#253041',
-    text: '#e3e9f0',
-    textSecondary: '#95a3b2',
-    accent: '#3fb950',
-    accentText: '#56d364',
-    onAccent: '#08110c',
-    danger: '#ff7b72',
+    // Escala de azul-marinho em degraus: fundo quase preto, card visivelmente
+    // elevado e borda so' sugerindo o limite — e' o que da profundidade sem
+    // voltar ao contorno aceso.
+    bg: '#0b1326',
+    bgSecondary: '#131b2e',
+    card: '#171f33',
+    border: '#2d3449',
+    text: '#dae2fd',
+    textSecondary: '#a8b0c9',
+    accent: '#4f46e5',
+    accentText: '#c3c0ff',
+    onAccent: '#ffffff',
+    danger: '#ff8a80',
     warning: '#e3b341',
   },
   // Papel ambar: luminancia proxima do branco, entao o texto de acento repete
@@ -50,8 +50,8 @@ export const Colors = {
     textSecondary: '#685e4e',
     border: '#e1d4b8',
     card: '#fffdf8',
-    accent: '#9a6b12',
-    accentText: '#14622f',
+    accent: '#4f46e5',
+    accentText: '#4338ca',
     onAccent: '#fffdf8',
     danger: '#c62f2f',
     warning: '#a45c07',
@@ -66,16 +66,19 @@ export type ThemeColors = typeof Colors.light
  * Sao as mesmas nos tres temas — dai os tons medios: claros demais somem no
  * papel, escuros demais somem no escuro. Ficam sempre em area pequena (icone
  * dentro de badge, pontinho, barra), nunca como fundo de texto corrido.
+ *
+ * A identidade mudou de verde para indigo, entao as chaves `green`/`emerald`
+ * viraram `indigo`/`sky` — os chamadores foram atualizados junto.
  */
 export const Tints = {
-  green: '#2fa35c',
-  emerald: '#22a06b',
+  indigo: '#4f46e5',
+  violet: '#8b5cf6',
   amber: '#d08a1e',
   red: '#e05a52',
   // Um passo mais claros que o padrao: aparecem sobre card escuro e sobre o
-  // papel ambar sem sumir, que e onde eles realmente aparecem.
+  // papel ambar sem sumir, que e' onde eles realmente aparecem.
   cyan: '#2596be',
-  violet: '#907fe8',
+  sky: '#06b6d4',
 } as const
 
 export const Spacing = {
@@ -86,9 +89,11 @@ export const Spacing = {
   xl: 32,
 } as const
 
+/** Mesmos raios do app web (rounded-xl = 12, rounded-2xl = 16, 3xl = 24). */
 export const Radius = {
   sm: 8,
   md: 12,
   lg: 16,
+  xl: 24,
   full: 999,
 } as const

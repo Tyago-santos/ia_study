@@ -94,7 +94,7 @@ export function DashboardPage() {
           label="Esta semana"
           value={formatMinutes(stats?.weekMinutes ?? 0)}
           icon="trending-up"
-          tint={Tints.emerald}
+          tint={Tints.sky}
         />
         <StatTile
           label="Ofensiva"

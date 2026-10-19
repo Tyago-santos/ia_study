@@ -8,7 +8,7 @@ export const DIFFICULTY_LABELS: Record<Flashcard['difficulty'], string> = {
 }
 
 export const DIFFICULTY_COLORS: Record<Flashcard['difficulty'], string> = {
-  easy: Tints.emerald,
+  easy: Tints.sky,
   medium: Tints.amber,
   hard: Tints.red,
 }

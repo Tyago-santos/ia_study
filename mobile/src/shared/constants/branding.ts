@@ -7,5 +7,6 @@ export const APP_NAME = 'Gnosis IA'
 
 export const LOGO_MARK = require('../../../assets/images/gnosis-mark.png')
 
-/** Fundo escuro do badge da marca: o neon foi desenhado sobre preto. */
-export const LOGO_BACKDROP = '#05070a'
+/** A logo ja' vem com o proprio quadrado arredondado indigo, entao o badge
+ *  atras dela e' transparente em qualquer tema. */
+export const LOGO_BACKDROP = 'transparent'

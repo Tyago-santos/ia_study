@@ -14,12 +14,12 @@ export const CANVAS_PADDING = 40
  * Cada ramo direto da raiz pega a proxima cor; os descendentes herdam.
  */
 export const BRANCH_PALETTE = [
-  Tints.green,
+  Tints.indigo,
   Tints.amber,
   Tints.cyan,
   Tints.violet,
   Tints.red,
-  Tints.emerald,
+  Tints.sky,
 ]
 
 /**

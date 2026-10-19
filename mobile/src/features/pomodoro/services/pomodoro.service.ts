@@ -1,10 +1,10 @@
 import { Tints } from '@/shared/constants/theme'
 import type { PomodoroMode } from '../libs/timer'
 
-/** Cor por modo: foco em vermelho, pausas em verde/azul. */
+/** Cor por modo: foco em vermelho, pausas em violeta/ciano. */
 export const MODE_COLORS: Record<PomodoroMode, string> = {
   focus: Tints.red,
-  shortBreak: Tints.emerald,
+  shortBreak: Tints.violet,
   longBreak: Tints.cyan,
 }
 

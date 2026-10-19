@@ -87,7 +87,7 @@ const ANDROID_CHANNEL_ID = 'estudos'
  * pelo plugin `expo-notifications` no app.json. Os dois precisam combinar, por
  * isso o valor esta escrito aqui em vez de sair do tema (que muda de cor).
  */
-const BRAND_COLOR = '#3fb950'
+const BRAND_COLOR = '#4f46e5'
 
 let permissionGranted: boolean | null = null
 

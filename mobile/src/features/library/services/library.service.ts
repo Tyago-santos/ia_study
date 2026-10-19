@@ -3,9 +3,9 @@ import type { DayPlan, Subject, Topic } from '@/shared/types'
 
 /** Paleta oferecida ao criar uma materia. */
 export const SUBJECT_COLORS = [
-  Tints.green,
+  Tints.indigo,
   Tints.amber,
-  Tints.emerald,
+  Tints.sky,
   Tints.red,
   Tints.cyan,
   Tints.violet,
