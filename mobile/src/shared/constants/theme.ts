@@ -89,11 +89,18 @@ export const Spacing = {
   xl: 32,
 } as const
 
-/** Mesmos raios do app web (rounded-xl = 12, rounded-2xl = 16, 3xl = 24). */
+/**
+ * Mesmos raios do app web (rounded-lg = 16, rounded-xl = 20, 2xl = 24).
+ *
+ * `card` e' o passo de 20px que faltava entre `lg` e `xl`: e' o `rounded-xl`
+ * do Stitch, o raio dos paineis "pillowy" — os de 16 ficavam retos demais ao
+ * lado dos botoes e inputs, que agora tambem rodam mais.
+ */
 export const Radius = {
   sm: 8,
   md: 12,
   lg: 16,
+  card: 20,
   xl: 24,
   full: 999,
 } as const

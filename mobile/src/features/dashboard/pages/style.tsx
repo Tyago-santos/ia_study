@@ -5,9 +5,12 @@ export const Intro = styled.View`
   gap: 2px;
 `
 
+/** Saudacao da tela: mesma apertagem de tracking do display do Stitch, para a
+ *  frase grande ganhar peso sem subir de corpo. */
 export const Title = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
   color: ${({ theme }) => theme.colors.text};
 `
 
@@ -59,7 +62,10 @@ export const ChartValue = styled.Text`
 export const Bar = styled.View<{ $height: number }>`
   width: 70%;
   height: ${({ $height }) => $height}px;
-  border-radius: ${({ theme }) => theme.radius.sm}px;
+  /* Topo arredondado e base reta: e' como a referencia desenha as colunas —
+     o canto em cima e' o que separa a barra de um bloco chapado. */
+  border-top-left-radius: ${({ theme }) => theme.radius.md}px;
+  border-top-right-radius: ${({ theme }) => theme.radius.md}px;
   background-color: ${({ theme }) => theme.colors.accent};
 `
 
@@ -101,13 +107,21 @@ export const ActivityRow = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing.xs}px;
 `
 
+/** Icone de atividade em circulo cheio — o Stitch usa circulo para tudo que e'
+ *  um marcador pontual, e o quadrado com raio so competia com o card. */
 export const ActivityIcon = styled.View<{ $color: string }>`
   width: 34px;
   height: 34px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.full}px;
   align-items: center;
   justify-content: center;
   background-color: ${({ $color }) => `${$color}22`};
+
+  shadow-color: ${({ $color }) => $color};
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.3;
+  shadow-radius: 7px;
+  elevation: 2;
 `
 
 export const ActivityInfo = styled.View`

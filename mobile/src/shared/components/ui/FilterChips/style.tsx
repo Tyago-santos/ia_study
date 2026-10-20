@@ -20,6 +20,13 @@ export const Chip = styled.Pressable<{ $tint: string; $active: boolean }>`
   background-color: ${({ theme, $tint, $active }) =>
     $active ? `${$tint}22` : theme.colors.card};
   border-color: ${({ theme, $tint, $active }) => ($active ? $tint : theme.colors.border)};
+
+  /* So' o filtro ativo acende — se todos brilhassem, nenhum diria qual e'. */
+  shadow-color: ${({ $tint }) => $tint};
+  shadow-offset: 0px 3px;
+  shadow-opacity: ${({ $active }) => ($active ? 0.35 : 0)};
+  shadow-radius: 9px;
+  elevation: ${({ $active }) => ($active ? 3 : 0)};
 `
 
 export const ChipLabel = styled.Text<{ $tint: string; $active: boolean }>`

@@ -5,22 +5,37 @@ export const OptionRow = styled.View`
   gap: ${({ theme }) => theme.spacing.sm}px;
 `
 
+/* Opção selecionada ganha halo indigo: o estado ativo precisa se destacar por
+   profundidade, não só por borda — no papel ambar a borda sozinha quase não
+   muda de tom. Raio 16 é o mesmo de inputs e botões. */
 export const Option = styled.Pressable<{ $active: boolean; $tall?: boolean }>`
   flex: 1;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs}px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   padding-vertical: ${({ theme, $tall }) =>
     $tall ? theme.spacing.md : theme.spacing.sm + 2}px;
   background-color: ${({ theme, $active }) =>
     $active ? `${theme.colors.accent}22` : theme.colors.bgSecondary};
-  border-color: ${({ theme, $active }) => ($active ? theme.colors.accent : theme.colors.border)};
+  border-color: ${({ theme, $active }) =>
+    $active
+      ? theme.colors.accent
+      : theme.name === 'dark'
+        ? 'rgba(255, 255, 255, 0.07)'
+        : theme.colors.border};
+
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 4px;
+  shadow-opacity: ${({ $active }) => ($active ? 0.3 : 0)};
+  shadow-radius: 10px;
+  elevation: ${({ $active }) => ($active ? 3 : 0)};
 `
 
 export const OptionLabel = styled.Text<{ $active: boolean }>`
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.1px;
   color: ${({ theme, $active }) =>
     $active ? theme.colors.accentText : theme.colors.textSecondary};
 `
@@ -44,7 +59,8 @@ export const SettingInfo = styled.View`
 
 export const SettingName = styled.Text`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.1px;
   color: ${({ theme }) => theme.colors.text};
 `
 

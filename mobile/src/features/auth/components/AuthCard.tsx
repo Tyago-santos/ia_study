@@ -11,13 +11,21 @@ interface AuthCardProps extends PropsWithChildren {
 }
 
 export function AuthCard({ title, subtitle, children }: AuthCardProps) {
+  // O nome e' uma string unica de branding; aqui so' separamos a ultima palavra
+  // para dar a cor de destaque da marca. O texto renderizado nao muda.
+  const nameParts = APP_NAME.split(' ')
+  const brandHead = nameParts.slice(0, -1).join(' ')
+  const brandTail = nameParts[nameParts.length - 1] ?? ''
+
   return (
     <Screen scroll centered safeTop>
       <S.Brand>
         <S.LogoBadge>
           <S.LogoImage source={LOGO_MARK} resizeMode="contain" />
         </S.LogoBadge>
-        <S.BrandName>{APP_NAME}</S.BrandName>
+        <S.BrandName>
+          {brandHead} <S.BrandAccent>{brandTail}</S.BrandAccent>
+        </S.BrandName>
       </S.Brand>
 
       <Card style={{ gap: Spacing.md }}>

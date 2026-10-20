@@ -1,5 +1,6 @@
 import { Pressable } from 'react-native'
 import { LOGO_BACKDROP } from '@/shared/constants/branding'
+import { Tints } from '@/shared/constants/theme'
 import { styled } from '@/shared/styles'
 
 export const Container = styled.View`
@@ -29,14 +30,23 @@ export const LogoBadge = styled.View`
   justify-content: center;
 `
 
+/** Aura da marca no drawer — mesmo recurso do login, para o app inteiro
+ *  respirar a mesma identidade. O halo nasce nos cantos do PNG, nao no badge. */
 export const LogoImage = styled.Image`
   width: 100%;
   height: 100%;
+
+  shadow-color: ${Tints.violet};
+  shadow-offset: 0px 0px;
+  shadow-opacity: 0.5;
+  shadow-radius: 12px;
+  elevation: 6;
 `
 
 export const LogoText = styled.Text`
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.3px;
   color: ${({ theme }) => theme.colors.accentText};
 `
 
@@ -85,8 +95,8 @@ export const AiTextGroup = styled.View`
   flex: 1;
 `
 
-/* Cor fixa em branco (nao `onAccent`): no tema escuro esse token e quase
-   preto, o que sumia com o texto em cima do verde. */
+/* Cor fixa em branco (nao `onAccent`): o fundo do item e' o accent solido, e
+   em claro/leitura esse token e' branco — o texto sumiria em cima dele. */
 export const AiLabel = styled.Text`
   font-size: 15px;
   font-weight: 800;
@@ -142,6 +152,14 @@ export const Item = styled.Pressable<{ $active?: boolean }>`
   padding-vertical: ${({ theme }) => theme.spacing.sm + theme.spacing.xs}px;
   background-color: ${({ theme, $active }) =>
     $active ? `${theme.colors.accent}1A` : 'transparent'};
+
+  /* A luz so' aparece no item selecionado: e' ela que diz "voce esta' aqui"
+     quando o fundo tintado nao basta sobre o card do drawer. */
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 4px;
+  shadow-opacity: ${({ $active }) => ($active ? 0.3 : 0)};
+  shadow-radius: 10px;
+  elevation: ${({ $active }) => ($active ? 4 : 0)};
 `
 
 export const ItemLabel = styled.Text<{ $active?: boolean; $danger?: boolean }>`

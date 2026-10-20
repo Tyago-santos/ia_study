@@ -15,17 +15,18 @@ export const Banner = styled(Animated.View)<{ $tint: string }>`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm}px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;
   padding-vertical: ${({ theme }) => theme.spacing.md}px;
   background-color: ${({ theme }) => theme.colors.card};
   border-color: ${({ $tint }) => $tint};
-  /* Sombra para o banner descolar do conteudo da tela por baixo. */
+  /* Halo na cor do proprio aviso: sombra preta sumiria no fundo marinho e
+     ainda competiria com o tint da borda, que e' a informacao aqui. */
   elevation: 6;
-  shadow-color: #000;
-  shadow-opacity: 0.2;
-  shadow-radius: 8px;
-  shadow-offset: 0px 3px;
+  shadow-color: ${({ $tint }) => $tint};
+  shadow-opacity: 0.4;
+  shadow-radius: 14px;
+  shadow-offset: 0px 4px;
 `
 
 export const Content = styled.View`

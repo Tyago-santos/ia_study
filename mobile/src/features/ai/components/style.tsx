@@ -25,8 +25,9 @@ export const Code = styled.Text`
 `
 
 export const Heading = styled.Text`
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
+  letter-spacing: -0.2px;
   margin-top: ${({ theme }) => theme.spacing.xs}px;
   color: ${({ theme }) => theme.colors.text};
 `
@@ -97,12 +98,24 @@ export const BubbleRow = styled.View<{ $mine: boolean }>`
 export const Bubble = styled.View<{ $mine: boolean }>`
   max-width: 82%;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
+  border-radius: ${({ theme }) => theme.radius.card}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;
   padding-vertical: ${({ theme }) => theme.spacing.sm + 2}px;
   gap: ${({ theme }) => theme.spacing.xs}px;
   background-color: ${({ theme, $mine }) => ($mine ? theme.colors.accent : theme.colors.card)};
-  border-color: ${({ theme, $mine }) => ($mine ? theme.colors.accent : theme.colors.border)};
+  border-color: ${({ theme, $mine }) =>
+    $mine
+      ? theme.colors.accent
+      : theme.name === 'dark'
+        ? 'rgba(255, 255, 255, 0.07)'
+        : theme.colors.border};
+  /* Halo indigo em vez de sombra preta: a profundidade vem da cor da marca,
+     nao de um cinza chapado em cima do card. */
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 6px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.12 : 0.08)};
+  shadow-radius: 14px;
+  elevation: 2;
 `
 
 export const BubbleText = styled.Text`
@@ -126,10 +139,16 @@ export const Welcome = styled.View`
 
 export const WelcomeCard = styled.View`
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
-  padding: ${({ theme }) => theme.spacing.md}px;
+  border-radius: ${({ theme }) => theme.radius.card}px;
+  padding: ${({ theme }) => theme.spacing.lg}px;
   background-color: ${({ theme }) => theme.colors.card};
-  border-color: ${({ theme }) => theme.colors.border};
+  border-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'rgba(255, 255, 255, 0.07)' : theme.colors.border};
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 6px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.12 : 0.08)};
+  shadow-radius: 14px;
+  elevation: 2;
 `
 
 export const WelcomeText = styled.Text`
@@ -150,16 +169,24 @@ export const PromptCard = styled.Pressable`
   flex-grow: 1;
   flex-basis: 45%;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   padding: ${({ theme }) => theme.spacing.md}px;
   gap: ${({ theme }) => theme.spacing.xs}px;
   background-color: ${({ theme }) => theme.colors.card};
-  border-color: ${({ theme }) => theme.colors.border};
+  /* Tinta indigo fraca no fundo: o card "emite" a cor da marca em vez de
+     apenas repousar sobre o mesmo branco da tela. */
+  border-color: ${({ theme }) => `${theme.colors.accent}33`};
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 4px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.1 : 0.06)};
+  shadow-radius: 10px;
+  elevation: 2;
 `
 
 export const PromptTitle = styled.Text`
   font-size: 13px;
   font-weight: 600;
+  letter-spacing: -0.1px;
   color: ${({ theme }) => theme.colors.text};
 `
 
@@ -177,12 +204,15 @@ export const Composer = styled.View`
   padding: ${({ theme }) => theme.spacing.xs}px;
   border-width: 1px;
   border-radius: ${({ theme }) => theme.radius.full}px;
-  border-color: ${({ theme }) => theme.colors.border};
+  border-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'rgba(255, 255, 255, 0.07)' : theme.colors.border};
   background-color: ${({ theme }) => theme.colors.card};
-  shadow-color: #000;
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.15;
-  shadow-radius: 12px;
+  /* Halo indigo no lugar da sombra preta: no escuro sombra preta some, e o
+     halo reforça a identidade da marca. */
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 8px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.18 : 0.14)};
+  shadow-radius: 16px;
   elevation: 6;
 `
 
@@ -216,6 +246,13 @@ export const MicButton = styled.Pressable<{ $recording: boolean }>`
   justify-content: center;
   background-color: ${({ theme, $recording }) => ($recording ? theme.colors.danger : 'transparent')};
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  /* Gravando: o botao "pulsa" de vermelho com halo proprio, sinal visivel de
+     que o microfone esta' aberto. */
+  shadow-color: ${({ theme }) => theme.colors.danger};
+  shadow-offset: 0px 0px;
+  shadow-opacity: ${({ $recording }) => ($recording ? 0.6 : 0)};
+  shadow-radius: 8px;
+  elevation: 3;
 `
 
 export const SendButton = styled.Pressable<{ $enabled: boolean }>`
@@ -226,6 +263,11 @@ export const SendButton = styled.Pressable<{ $enabled: boolean }>`
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.accent};
   opacity: ${({ $enabled }) => ($enabled ? 1 : 0.5)};
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.4;
+  shadow-radius: 8px;
+  elevation: 3;
 `
 
 /* --------------------------------- Aviso --------------------------------- */
@@ -235,13 +277,17 @@ export const Banner = styled.View<{ $tint: string }>`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm}px;
   padding-horizontal: ${({ theme }) => theme.spacing.lg}px;
-  padding-vertical: ${({ theme }) => theme.spacing.sm}px;
+  padding-vertical: ${({ theme }) => theme.spacing.sm + 2}px;
   background-color: ${({ $tint }) => `${$tint}22`};
+  border-top-width: 1px;
+  /* Filete na cor do aviso: separa o banner do fundo sem um bloco chapado. */
+  border-top-color: ${({ $tint }) => `${$tint}44`};
 `
 
 export const BannerText = styled.Text<{ $tint: string }>`
   flex: 1;
   font-size: 12px;
+  font-weight: 600;
   line-height: 16px;
   color: ${({ $tint }) => $tint};
 `
@@ -257,10 +303,15 @@ export const GenerateButton = styled.Pressable<{ $disabled: boolean }>`
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;
   padding-vertical: ${({ theme }) => theme.spacing.sm + 2}px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
-  border-color: ${({ theme }) => theme.colors.accent};
-  background-color: ${({ theme }) => `${theme.colors.accent}18`};
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+  border-color: ${({ theme }) => `${theme.colors.accent}55`};
+  background-color: ${({ theme }) => `${theme.colors.accent}1f`};
   opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 4px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.14 : 0.1)};
+  shadow-radius: 12px;
+  elevation: 2;
 `
 
 export const GenerateText = styled.View`
@@ -287,18 +338,26 @@ export const MenuOption = styled.Pressable<{ $active?: boolean }>`
   gap: ${({ theme }) => theme.spacing.md}px;
   padding: ${({ theme }) => theme.spacing.md}px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
+  border-radius: ${({ theme }) => theme.radius.card}px;
   background-color: ${({ theme, $active }) => ($active ? `${theme.colors.accent}14` : theme.colors.card)};
-  border-color: ${({ theme, $active }) => ($active ? theme.colors.accent : theme.colors.border)};
+  border-color: ${({ theme, $active }) =>
+    $active ? `${theme.colors.accent}55` : theme.colors.border};
 `
 
+/* Ícone circular com glow: mesmo badge dos cards do app, com halo indigo
+   para o item ativo saltar da lista. */
 export const MenuOptionIcon = styled.View<{ $active?: boolean }>`
   width: 40px;
   height: 40px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.full}px;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.accent : `${theme.colors.accent}18`)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.accent : `${theme.colors.accent}22`)};
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 0px;
+  shadow-opacity: ${({ $active }) => ($active ? 0.35 : 0.15)};
+  shadow-radius: 8px;
+  elevation: 3;
 `
 
 export const MenuOptionText = styled.View`
@@ -352,10 +411,12 @@ export const SessionsSheet = styled.View`
   border-top-width: 1px;
   border-left-width: 1px;
   border-right-width: 1px;
-  border-top-left-radius: ${({ theme }) => theme.radius.lg}px;
-  border-top-right-radius: ${({ theme }) => theme.radius.lg}px;
+  /* Cantos xl como o restante dos paineis elevados do app. */
+  border-top-left-radius: ${({ theme }) => theme.radius.xl}px;
+  border-top-right-radius: ${({ theme }) => theme.radius.xl}px;
   background-color: ${({ theme }) => theme.colors.card};
-  border-color: ${({ theme }) => theme.colors.border};
+  border-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'rgba(255, 255, 255, 0.07)' : theme.colors.border};
 `
 
 export const SessionsHeader = styled.View`
@@ -369,8 +430,9 @@ export const SessionsHeader = styled.View`
 `
 
 export const SessionsTitle = styled.Text`
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
   color: ${({ theme }) => theme.colors.text};
 `
 
@@ -383,13 +445,17 @@ export const NewSessionButton = styled.Pressable`
   padding: ${({ theme }) => theme.spacing.md}px;
   border-width: 1px;
   border-style: dashed;
-  border-radius: ${({ theme }) => theme.radius.md}px;
-  border-color: ${({ theme }) => theme.colors.accent};
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+  /* Tracejado com tinta indigo fraca: destaca sem competir com as sessoes
+     reais da lista. */
+  border-color: ${({ theme }) => `${theme.colors.accent}55`};
+  background-color: ${({ theme }) => `${theme.colors.accent}14`};
 `
 
 export const NewSessionText = styled.Text`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.1px;
   color: ${({ theme }) => theme.colors.accentText};
 `
 
@@ -408,9 +474,14 @@ export const SessionRow = styled.Pressable<{ $active: boolean }>`
   gap: ${({ theme }) => theme.spacing.sm}px;
   padding: ${({ theme }) => theme.spacing.md}px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   background-color: ${({ theme, $active }) => ($active ? `${theme.colors.accent}14` : 'transparent')};
-  border-color: ${({ theme, $active }) => ($active ? theme.colors.accent : theme.colors.border)};
+  border-color: ${({ theme, $active }) =>
+    $active
+      ? `${theme.colors.accent}55`
+      : theme.name === 'dark'
+        ? 'rgba(255, 255, 255, 0.07)'
+        : theme.colors.border};
 `
 
 export const SessionRowText = styled.View`

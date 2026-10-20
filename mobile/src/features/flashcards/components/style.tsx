@@ -3,12 +3,19 @@ import { styled } from '@/shared/styles'
 
 export const Card = styled.Pressable<{ $borderColor: string }>`
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
-  padding: ${({ theme }) => theme.spacing.md}px;
+  border-radius: ${({ theme }) => theme.radius.card}px;
+  padding: ${({ theme }) => theme.spacing.lg}px;
   margin-bottom: ${({ theme }) => theme.spacing.sm}px;
   gap: ${({ theme }) => theme.spacing.sm}px;
   background-color: ${({ theme }) => theme.colors.card};
   border-color: ${({ $borderColor }) => $borderColor};
+  /* Halo indigo sob o cartao: mesma profundidade dos cards do app, sem sombra
+     preta que some no tema escuro. */
+  shadow-color: ${({ theme }) => theme.colors.accent};
+  shadow-offset: 0px 6px;
+  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.12 : 0.08)};
+  shadow-radius: 14px;
+  elevation: 2;
 `
 
 export const CardHeader = styled.View`
@@ -38,15 +45,16 @@ export const FlipFace = styled(Animated.View)`
 `
 
 export const CardSide = styled.Text`
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  letter-spacing: 0.6px;
+  color: ${({ theme }) => theme.colors.accentText};
 `
 
 export const CardContent = styled.Text`
   font-size: 15px;
   line-height: 21px;
+  letter-spacing: -0.1px;
   color: ${({ theme }) => theme.colors.text};
 `
 

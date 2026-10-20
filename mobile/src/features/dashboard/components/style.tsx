@@ -124,7 +124,7 @@ export const EventChipLabel = styled.Text<{ $color: string }>`
    por isso nao esta declarada aqui. */
 export const DayContainer = styled(Animated.View)`
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   padding: ${({ theme }) => theme.spacing.sm}px;
   margin-bottom: ${({ theme }) => theme.spacing.xs}px;
 `
@@ -229,7 +229,7 @@ export const BlockTopRow = styled.View`
 export const BlockIcon = styled.View<{ $color: string }>`
   width: 22px;
   height: 22px;
-  border-radius: ${({ theme }) => theme.radius.sm}px;
+  border-radius: ${({ theme }) => theme.radius.full}px;
   align-items: center;
   justify-content: center;
   background-color: ${({ $color }) => `${$color}26`};
@@ -314,17 +314,22 @@ export const TimeRow = styled.View`
   gap: ${({ theme }) => theme.spacing.sm}px;
 `
 
+/** Mesma geometria dos demais campos do app: fundo tintado, sem contorno
+ *  fechado. Aqui o campo e' pequeno (78px), entao o contorno pesava ainda mais. */
 export const TimeInput = styled.TextInput`
   outline-style: none;
   width: 78px;
   border-width: 1px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
   padding-horizontal: ${({ theme }) => theme.spacing.sm}px;
   padding-vertical: ${({ theme }) => theme.spacing.xs}px;
   font-size: 14px;
+  font-weight: 600;
   text-align: center;
   color: ${({ theme }) => theme.colors.text};
-  border-color: ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.bgSecondary};
+  border-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'rgba(255, 255, 255, 0.06)' : theme.colors.border};
 `
 
 export const TimeEnd = styled.Text`
