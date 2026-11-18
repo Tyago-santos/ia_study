@@ -4,26 +4,30 @@ export const QUICK_PROMPTS = [
   {
     icon: BookOpen,
     title: 'Explicar conceito',
-    description: 'Entenda um tema de forma simples',
-    prompt: 'Explique um conceito de forma simples',
+    description: 'Veja uma explicação com exemplo',
+    prompt:
+      'Explique a diferença entre mitose e meiose de forma simples, usando uma analogia e um exemplo.',
   },
   {
     icon: FileText,
     title: 'Criar resumo',
-    description: 'Resuma um assunto que você está estudando',
-    prompt: 'Crie um resumo sobre um tema',
+    description: 'Confira um resumo organizado',
+    prompt:
+      'Faça um resumo claro e organizado sobre a Revolução Industrial, destacando causas, mudanças e consequências.',
   },
   {
     icon: ListChecks,
     title: 'Plano de estudos',
-    description: 'Organize sua semana de estudos',
-    prompt: 'Monte um plano de estudos para a semana',
+    description: 'Monte uma rotina semanal de exemplo',
+    prompt:
+      'Monte um plano de estudos de exemplo para 5 dias, com 1 hora por dia, incluindo pausas e revisão. Indique que posso personalizar se eu informar minhas matérias e horários.',
   },
   {
     icon: GraduationCap,
     title: 'Revisão para prova',
-    description: 'Revise os pontos principais antes da prova',
-    prompt: 'Me ajude a revisar para a prova',
+    description: 'Pratique com perguntas e respostas',
+    prompt:
+      'Crie 5 perguntas de revisão sobre o ciclo da água, começando pelas mais simples. Mostre o gabarito separado no final.',
   },
 ]
 
