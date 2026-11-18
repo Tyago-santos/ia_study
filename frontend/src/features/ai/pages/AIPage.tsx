@@ -40,7 +40,7 @@ export function AIPage() {
     <div className="flex flex-col h-full bg-[var(--bg)]">
       <div className="shrink-0 border-b border-[var(--border)]">
         {/* Cabeçalho do conversador: avatar do tutor, nome, status online e pills */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-3 bg-[var(--bg-secondary)]">
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 bg-[var(--bg-secondary)]">
           <div className="relative shrink-0">
             <div className="flex w-10 h-10 rounded-full bg-gradient-to-tr from-primary-500 via-secondary-500 to-tertiary-500 items-center justify-center shadow-[0_0_16px_rgba(79,70,229,0.35)]">
               <Sparkles className="w-5 h-5 text-white" />
@@ -55,7 +55,7 @@ export function AIPage() {
             </div>
             <p className="text-xs truncate">
               <span className="font-bold text-[var(--tertiary-accent)]">Online</span>
-              <span className="text-[var(--text-secondary)]">
+              <span className="hidden sm:inline text-[var(--text-secondary)]">
                 {' '}
                 • Tire dúvidas, peça resumos e planos personalizados
               </span>
@@ -66,7 +66,7 @@ export function AIPage() {
             {/* Pill de contexto: o tema da conversa ativa */}
             {activeTitle && (
               <span
-                className="flex items-center gap-1.5 min-w-0 max-w-[110px] sm:max-w-[220px] rounded-full border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 shadow-sm"
+                className="hidden sm:flex items-center gap-1.5 min-w-0 max-w-[220px] rounded-full border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 shadow-sm"
                 title={activeTitle}
               >
                 <Tag className="w-3.5 h-3.5 shrink-0 text-[var(--secondary-accent)]" />

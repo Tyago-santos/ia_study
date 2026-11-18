@@ -22,7 +22,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
    * mantem o scroll do historico por tras funcionando.
    */
   return (
-    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex justify-center px-4 sm:px-6 pt-10 pb-6 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/90 to-transparent">
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex justify-center px-3 sm:px-6 pt-10 pb-[max(env(safe-area-inset-bottom),1.5rem)] bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/90 to-transparent">
       <div className="pointer-events-auto w-full max-w-3xl flex flex-col gap-1.5">
         <div className="flex items-end gap-1.5 p-1.5 rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] backdrop-blur-xl shadow-[var(--glass-shadow)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)] focus-within:border-primary-500/60 transition-all">
           <textarea
@@ -40,9 +40,17 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
             className="flex-1 min-w-0 resize-none bg-transparent px-3 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] focus:outline-none disabled:opacity-50"
           />
           <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
-            <Button variant="ghost" size="sm" onClick={() => setValue('')} disabled={!value}>
-              <Eraser className="w-3.5 h-3.5 mr-1.5" />
-              Limpar
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setValue('')}
+              disabled={!value}
+              aria-label="Limpar mensagem"
+              title="Limpar mensagem"
+              className="w-9 px-0 sm:w-auto sm:px-3"
+            >
+              <Eraser className="w-3.5 h-3.5 sm:mr-1.5" />
+              <span className="hidden sm:inline">Limpar</span>
             </Button>
             <Button
               size="sm"

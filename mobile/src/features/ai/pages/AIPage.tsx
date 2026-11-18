@@ -52,8 +52,8 @@ export function AIPage() {
           <Ionicons name="sparkles" size={17} color={colors.onAccent} />
         </S.HeaderIcon>
         <S.HeaderText>
-          <S.HeaderTitle>Assistente de Estudos</S.HeaderTitle>
-          <S.HeaderSubtitle>Conhece suas matérias e responde sobre elas</S.HeaderSubtitle>
+          <S.HeaderTitle numberOfLines={1}>Assistente de Estudos</S.HeaderTitle>
+          <S.HeaderSubtitle numberOfLines={1}>Conhece suas matérias e responde sobre elas</S.HeaderSubtitle>
         </S.HeaderText>
 
         <Pressable onPress={() => setSessionsOpen(true)} hitSlop={8}>

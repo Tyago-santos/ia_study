@@ -38,7 +38,7 @@ export function Layout() {
                 'flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 pb-[max(env(safe-area-inset-bottom),5rem)] lg:pb-6'
           }
         >
-          <div key={location.pathname} className="animate-page min-h-full">
+          <div key={location.pathname} className="animate-page h-full">
             <Outlet />
           </div>
         </main>
