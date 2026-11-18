@@ -10,6 +10,7 @@ import { AppError } from "@/shared/error/app-error.js";
 const ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const CHAT_TIMEOUT_MS = 30_000;
+const TRANSCRIPTION_TIMEOUT_MS = 120_000;
 const GENERATION_TIMEOUT_MS = 120_000;
 
 function getApiKeys(): string[] {
@@ -214,7 +215,7 @@ export async function transcribeAudio(input: TranscribeAudioInput): Promise<stri
       ],
       generationConfig: { temperature: 0 },
     },
-    CHAT_TIMEOUT_MS,
+    TRANSCRIPTION_TIMEOUT_MS,
   );
 
   const text = parts
