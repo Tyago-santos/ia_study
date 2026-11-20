@@ -238,6 +238,16 @@ export const ComposerMenuButton = styled.Pressable<{ $active: boolean }>`
   background-color: ${({ theme, $active }) => ($active ? `${theme.colors.accent}22` : 'transparent')};
 `
 
+export const ClearButton = styled.Pressable`
+  width: 36px;
+  height: 36px;
+  border-radius: ${({ theme }) => theme.radius.full}px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => `${theme.colors.danger}12`};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+`
+
 export const MicButton = styled.Pressable<{ $recording: boolean }>`
   width: 36px;
   height: 36px;

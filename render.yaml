@@ -31,3 +31,33 @@ services:
         value: gemini-2.5-flash
       - key: FRONTEND_URL
         value: https://ia-study-wheat.vercel.app
+
+  - type: web
+    name: estudy-ia-mcp
+    runtime: docker
+    dockerfilePath: ./mcp/Dockerfile
+    dockerContext: ./mcp
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: TZ
+        value: America/Bahia
+      - key: BACKEND_URL
+        value: https://estudy-ia-backend.onrender.com
+      - key: DATABASE_URL
+        sync: false
+      - key: MCP_ACCESS_TOKEN
+        sync: false
+      - key: MCP_SESSION_SECRET
+        sync: false
+      - key: MCP_PUBLIC_HOST
+        value: estudy-ia-mcp.onrender.com
+      - key: MCP_TOOL_PROFILE
+        value: full
+      - key: MCP_SESSION_TTL_HOURS
+        value: "12"

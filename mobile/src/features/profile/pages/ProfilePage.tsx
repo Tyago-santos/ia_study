@@ -1,4 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
+import { Pressable } from 'react-native'
 import { Button } from '@/shared/components/ui/Button'
 import { PageHeader } from '@/shared/components/ui/PageHeader'
 import { Screen } from '@/shared/components/ui/Screen'
@@ -74,6 +76,23 @@ export function ProfilePage() {
           />
         </S.Tiles>
       )}
+
+      <S.Section>
+        <SectionCard title="Preferências">
+          <Pressable
+            onPress={() => router.navigate('/(app)/configuracoes')}
+            style={({ pressed }) => (pressed ? { opacity: 0.7 } : null)}
+          >
+            <S.SettingsRow>
+              <S.SettingsIcon>
+                <Ionicons name="settings-outline" size={18} color={colors.accentText} />
+              </S.SettingsIcon>
+              <S.SettingsLabel>Configurações</S.SettingsLabel>
+              <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
+            </S.SettingsRow>
+          </Pressable>
+        </SectionCard>
+      </S.Section>
 
       <S.Section>
         <Button title="Sair da conta" variant="secondary" onPress={logout} />

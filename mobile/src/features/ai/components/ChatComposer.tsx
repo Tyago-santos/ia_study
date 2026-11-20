@@ -14,11 +14,21 @@ const AUDIO_FALLBACK_ERROR = 'Não consegui entender o áudio. Tente novamente.'
 interface ChatComposerProps {
   /** Bloqueia o envio e vira o botao de enviar num botao de cancelar. */
   disabled: boolean
+  clearing: boolean
+  canClear: boolean
+  onClear: () => void
   onSend: (content: string, webSearch: boolean) => void
   onCancel: () => void
 }
 
-export function ChatComposer({ disabled, onSend, onCancel }: ChatComposerProps) {
+export function ChatComposer({
+  disabled,
+  clearing,
+  canClear,
+  onClear,
+  onSend,
+  onCancel,
+}: ChatComposerProps) {
   const { colors } = useTheme()
   const { addFile } = useReferenceFiles()
   const voice = useVoiceRecorder()
@@ -44,9 +54,15 @@ export function ChatComposer({ disabled, onSend, onCancel }: ChatComposerProps) 
     setComposerError(null)
 
     if (!voice.isRecording) {
-      const started = await voice.start()
-      if (!started) {
-        Alert.alert('Permissão negada', 'Ative o microfone nas configurações para gravar áudio.')
+      try {
+        const started = await voice.start()
+        if (!started) {
+          Alert.alert('Permissão negada', 'Ative o microfone nas configurações para gravar áudio.')
+        }
+      } catch {
+        setComposerError(
+          'Não foi possível iniciar o microfone. Verifique a permissão nas configurações do aparelho e tente novamente.'
+        )
       }
       return
     }
@@ -112,6 +128,21 @@ export function ChatComposer({ disabled, onSend, onCancel }: ChatComposerProps) 
           multiline
           onSubmitEditing={send}
         />
+
+        {canClear ? (
+          <S.ClearButton
+            onPress={onClear}
+            disabled={disabled || clearing}
+            accessibilityLabel="Apagar mensagens da conversa"
+            hitSlop={4}
+          >
+            <Ionicons
+              name="trash-outline"
+              size={17}
+              color={disabled ? colors.textSecondary : colors.danger}
+            />
+          </S.ClearButton>
+        ) : null}
 
         <S.MicButton
           onPress={toggleRecording}

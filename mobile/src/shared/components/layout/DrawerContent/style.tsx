@@ -1,4 +1,3 @@
-import { Pressable } from 'react-native'
 import { LOGO_BACKDROP } from '@/shared/constants/branding'
 import { Tints } from '@/shared/constants/theme'
 import { styled } from '@/shared/styles'
@@ -54,82 +53,6 @@ export const Menu = styled.View`
   flex: 1;
   padding-horizontal: ${({ theme }) => theme.spacing.sm + theme.spacing.xs}px;
   padding-vertical: ${({ theme }) => theme.spacing.md}px;
-`
-
-/* Sombra fica no wrapper (nao no botao com overflow:hidden), senao o corte
-   das bordas arredondadas some com a sombra junto. */
-export const AiItemShadow = styled.View`
-  border-radius: ${({ theme }) => theme.radius.lg}px;
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-  shadow-color: ${({ theme }) => theme.colors.accent};
-  shadow-opacity: 0.35;
-  shadow-radius: 10px;
-  shadow-offset: 0px 4px;
-  elevation: 6;
-`
-
-/* Mesmo `accent` solido usado nos botoes primarios do app (Button/style.tsx),
-   pra manter o mesmo tom de verde em vez de uma cor propria so' deste item. */
-export const AiItem = styled(Pressable)<{ $active: boolean }>`
-  flex-direction: row;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm}px;
-  border-radius: ${({ theme }) => theme.radius.lg}px;
-  padding-horizontal: ${({ theme }) => theme.spacing.md}px;
-  padding-vertical: ${({ theme }) => theme.spacing.md}px;
-  background-color: ${({ theme }) => theme.colors.accent};
-  border-width: ${({ $active }) => ($active ? '2px' : '0px')};
-  border-color: #ffffff;
-`
-
-export const AiIconBadge = styled.View`
-  width: 32px;
-  height: 32px;
-  border-radius: ${({ theme }) => theme.radius.md}px;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff33;
-`
-
-export const AiTextGroup = styled.View`
-  flex: 1;
-`
-
-/* Cor fixa em branco (nao `onAccent`): o fundo do item e' o accent solido, e
-   em claro/leitura esse token e' branco — o texto sumiria em cima dele. */
-export const AiLabel = styled.Text`
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  color: #ffffff;
-`
-
-export const AiSubLabel = styled.Text`
-  font-size: 10px;
-  font-weight: 600;
-  color: #ffffffcc;
-`
-
-export const AiPulseWrap = styled.View`
-  width: 8px;
-  height: 8px;
-  align-items: center;
-  justify-content: center;
-`
-
-export const AiPulseRing = styled.View`
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: ${({ theme }) => theme.radius.full}px;
-  background-color: #ffffffb3;
-`
-
-export const AiPulseDot = styled.View`
-  width: 8px;
-  height: 8px;
-  border-radius: ${({ theme }) => theme.radius.full}px;
-  background-color: #ffffff;
 `
 
 export const SectionLabel = styled.Text`

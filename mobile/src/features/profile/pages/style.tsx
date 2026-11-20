@@ -4,6 +4,29 @@ export const Section = styled.View`
   margin-top: ${({ theme }) => theme.spacing.lg}px;
 `
 
+export const SettingsRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md}px;
+  min-height: 44px;
+`
+
+export const SettingsIcon = styled.View`
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  background-color: ${({ theme }) => `${theme.colors.accent}1f`};
+`
+
+export const SettingsLabel = styled.Text`
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text};
+`
+
 export const Tiles = styled.View`
   flex-direction: row;
   flex-wrap: wrap;

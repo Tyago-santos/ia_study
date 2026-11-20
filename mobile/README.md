@@ -4,11 +4,12 @@ App mobile do Gnosis IA, feito com [Expo](https://expo.dev) + [Expo Router](http
 
 ## Como rodar
 
-1. Suba o backend (`cd ../backend && npm run dev`) — por padrão ele escuta em `http://localhost:3002`.
-2. Ajuste `mobile/.env` se necessário:
-   - iOS Simulator: `http://localhost:3002` (padrão)
+1. Por padrão, o app usa a API publicada. Para testar com o backend local, suba-o (`cd ../backend && npm run dev`) e ajuste `mobile/.env`:
+   - iOS Simulator: `http://localhost:3002`
    - Emulador Android: `http://10.0.2.2:3002`
    - Dispositivo físico: `http://<IP-da-sua-máquina>:3002`
+
+   Sem um `mobile/.env`, o app usa `https://dev-canil.onrender.com`. Em um celular físico, `localhost` aponta para o próprio aparelho, não para o computador.
 3. Instale dependências e inicie:
 
    ```bash
@@ -20,6 +21,7 @@ App mobile do Gnosis IA, feito com [Expo](https://expo.dev) + [Expo Router](http
 
 ## O que já está implementado
 
+- Navegação inferior para Dashboard, Agenda, Chat IA, Cards e Perfil. O drawer lista apenas Quiz, Resumos, Mapas Mentais, Biblioteca e Estatísticas; Configurações fica dentro de Perfil.
 - Login e cadastro reais contra o backend (`/auth/login`, `/auth/register`), com o token JWT guardado no `expo-secure-store` (sobrevive a fechar o app).
 - Sessão restaurada automaticamente na abertura do app (splash fica visível até a hidratação terminar).
 - Dashboard consumindo `/users/me` autenticado.

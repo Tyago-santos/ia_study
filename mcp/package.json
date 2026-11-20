@@ -1,0 +1,33 @@
+{
+  "name": "estudy-ia-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MCP Tutor do StudyHub AI — expõe as funcionalidades do app como ferramentas MCP",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/server.ts",
+    "build": "tsup src/server.ts --format esm",
+    "start": "node dist/server.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/express": "^2.0.2",
+    "@modelcontextprotocol/node": "^2.1.2",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "express": "^5.2.1",
+    "pg": "^8.22.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.20.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.1",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

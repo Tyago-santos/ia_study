@@ -26,6 +26,7 @@ export function AIPage() {
     messages,
     isEmpty,
     loading,
+    clearing,
     error,
     isConfigured,
     submit,
@@ -60,13 +61,6 @@ export function AIPage() {
           <Ionicons name="chatbubbles-outline" size={20} color={colors.textSecondary} />
         </Pressable>
 
-        <Pressable onPress={() => setConfirmingClear(true)} hitSlop={8} disabled={isEmpty}>
-          <Ionicons
-            name="trash-outline"
-            size={20}
-            color={isEmpty ? colors.textSecondary : colors.danger}
-          />
-        </Pressable>
       </S.Header>
 
       {/* KeyboardAwareScrollView em vez de ScrollView: rola o input do composer
@@ -105,7 +99,14 @@ export function AIPage() {
           <ChatBanner icon="alert-circle-outline" tint={colors.danger} message={error} />
         ) : null}
 
-        <ChatComposer disabled={loading} onSend={submit} onCancel={cancel} />
+        <ChatComposer
+          disabled={loading}
+          clearing={clearing}
+          canClear={!isEmpty}
+          onClear={() => setConfirmingClear(true)}
+          onSend={submit}
+          onCancel={cancel}
+        />
       </KeyboardStickyView>
 
       <ConfirmModal

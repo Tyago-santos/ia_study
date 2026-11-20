@@ -22,8 +22,8 @@ export class ApiError extends Error {
 
 /** Nem chegou a responder: sem rede, servidor fora do ar ou tempo esgotado. */
 export class OfflineError extends Error {
-  constructor() {
-    super('Servidor indisponível')
+  constructor(message = 'Servidor indisponível') {
+    super(message)
     this.name = 'OfflineError'
   }
 }

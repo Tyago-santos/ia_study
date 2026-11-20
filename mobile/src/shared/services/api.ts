@@ -3,9 +3,9 @@ import { resetLocalData } from '@/shared/services/resetLocalData'
 import { useAuthStore } from '@/shared/store/auth'
 
 // EXPO_PUBLIC_* vars are inlined at build time by Expo — see mobile/.env.
-// localhost only resolves from an iOS simulator; Android emulator needs
-// http://10.0.2.2:3002 and a physical device needs your machine's LAN IP.
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3002'
+// The deployed API is the safe fallback for a device build; local development
+// can override it with localhost, 10.0.2.2, or the machine's LAN IP.
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://dev-canil.onrender.com'
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown
@@ -13,15 +13,27 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
   timeoutMs?: number
 }
 
-/** Combina o timeout com um cancelamento externo (ex.: usuário cancelou a pergunta). */
-function mergeSignals(a: AbortSignal, b?: AbortSignal | null): AbortSignal {
-  if (!b) return a
-
+/** Combina timeout e cancelamento sem depender do suporte variável a `AbortSignal.timeout` em runtimes nativos. */
+function createRequestSignal(timeoutMs: number, externalSignal?: AbortSignal | null) {
   const controller = new AbortController()
+  let timedOut = false
+  const timeout = setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, timeoutMs)
   const abort = () => controller.abort()
-  a.addEventListener('abort', abort)
-  b.addEventListener('abort', abort)
-  return controller.signal
+
+  externalSignal?.addEventListener('abort', abort)
+  if (externalSignal?.aborted) abort()
+
+  return {
+    signal: controller.signal,
+    didTimeOut: () => timedOut,
+    cleanup: () => {
+      clearTimeout(timeout)
+      externalSignal?.removeEventListener('abort', abort)
+    },
+  }
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -37,16 +49,23 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers['Authorization'] = `Bearer ${token}`
   }
 
+  const requestSignal = createRequestSignal(timeoutMs, signal)
   let response: Response
   try {
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...rest,
       headers,
       body: body ? JSON.stringify(body) : undefined,
-      signal: mergeSignals(AbortSignal.timeout(timeoutMs), signal),
+      signal: requestSignal.signal,
     })
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error
+    if (requestSignal.didTimeOut()) {
+      throw new OfflineError('O servidor demorou para responder. Tente novamente.')
+    }
     throw new OfflineError()
+  } finally {
+    requestSignal.cleanup()
   }
 
   if (!response.ok) {

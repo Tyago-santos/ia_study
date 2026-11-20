@@ -18,6 +18,9 @@ import type {
 /** Conversa: uma resposta curta por vez, com o usuario esperando na tela. */
 const CHAT_TIMEOUT_MS = 30_000
 
+/** Dá margem ao timeout de 120s do backend para receber e devolver a transcrição. */
+const TRANSCRIPTION_TIMEOUT_MS = 150_000
+
 /**
  * Geracao de material: o modelo escreve resumo, flashcards, mapa e quiz numa
  * tacada. Medido contra a API, isso passa de trinta segundos com folga — o
@@ -146,7 +149,7 @@ export async function transcribeAudio(input: TranscribeAudioInput): Promise<stri
     const { text } = await api.post<{ text: string }>(
       '/ai/transcribe',
       { mimeType: input.mimeType, base64: input.base64 },
-      { signal: input.signal, timeoutMs: CHAT_TIMEOUT_MS },
+      { signal: input.signal, timeoutMs: TRANSCRIPTION_TIMEOUT_MS },
     )
     if (!text) throw new GeminiError('Não consegui entender o áudio. Tente novamente.')
     return text
