@@ -13,22 +13,14 @@ const loginSchema = z.object({
 });
 
 // Rate limiter in-memory por IP: 5 tentativas / 15 min.
-const RATE_WINDOW_MS = 15 * 60 * 1000;
-const RATE_MAX = 5;
-const buckets = new Map<string, { count: number; resetAt: number }>();
+import { createRateLimiter } from "../lib/rate-limit.js";
 
-function rateLimit(ip: string): boolean {
-  const now = Date.now();
-  const b = buckets.get(ip);
-  if (!b || b.resetAt <= now) {
-    buckets.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return true;
-  }
-  if (b.count >= RATE_MAX) return false;
-  b.count += 1;
-  return true;
-}
-
+// Rate limit estrito para autenticação: 5 tentativas / 15 min por IP.
+export const authRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
+});
 const LOGIN_HTML = `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -122,12 +114,7 @@ export function mountLoginRoutes(app: Express, store: SessionStore, backend: Bac
     res.type("html").send(LOGIN_HTML);
   });
 
-  app.post("/login", async (req: Request, res: Response) => {
-    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "unknown";
-    if (!rateLimit(ip)) {
-      return res.status(429).json({ message: "Muitas tentativas. Tente novamente em 15 minutos." });
-    }
-
+  app.post("/login", authRateLimiter, async (req: Request, res: Response) => {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.flatten().fieldErrors });
