@@ -25,7 +25,7 @@ const app = createMcpExpressApp({
 app.use("/mcp", requireBearerAuth({ verifier }));
 
 const handler = createMcpHandler(factory);
-app.all("/mcp", toNodeHandler(handler));
+app.all("/mcp", (req, res) => toNodeHandler(handler)(req, res, (req as any).body));
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true, profile: env.MCP_TOOL_PROFILE });
