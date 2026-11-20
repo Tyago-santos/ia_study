@@ -34,7 +34,35 @@ export class MindMapsRepository {
     return await prisma.mindMap.update({
       where: { id: mindMap.id },
       data,
+      include: { nodes: true },
     });
+  }
+
+  async findMindMap(userId: string, id: string) {
+    return await prisma.mindMap.findFirst({ where: { id, userId } });
+  }
+
+  async createNode(mindMapId: string, data: Omit<Prisma.MindMapNodeCreateInput, "mindMap">) {
+    return await prisma.mindMapNode.create({
+      data: { ...data, mindMap: { connect: { id: mindMapId } } },
+    });
+  }
+
+  async findNode(mindMapId: string, nodeId: string) {
+    return await prisma.mindMapNode.findFirst({
+      where: { id: nodeId, mindMapId },
+    });
+  }
+
+  async updateNode(nodeId: string, data: Prisma.MindMapNodeUpdateInput) {
+    return await prisma.mindMapNode.update({
+      where: { id: nodeId },
+      data,
+    });
+  }
+
+  async deleteNode(nodeId: string) {
+    return await prisma.mindMapNode.delete({ where: { id: nodeId } });
   }
 
   async deleteMindMap(userId: string, id: string) {

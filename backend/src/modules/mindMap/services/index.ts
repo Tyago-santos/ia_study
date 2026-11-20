@@ -5,6 +5,7 @@ import { AppError } from "@/shared/error/app-error.js";
 import { mapPrismaError } from "@/shared/error/prisma-error.js";
 import type { TypeUpdateMindMapSchema } from "../schema/updateMindMap.schema.js";
 import type { TypeCreateMindMapSchema } from "../schema/createMindMap.schema.js";
+import type { TypeCreateMindMapNodeSchema, TypeUpdateMindMapNodeSchema } from "../schema/mindMapNode.schema.js";
 
 export class MindMapsService {
   private repository: MindMapsRepository;
@@ -78,6 +79,72 @@ export class MindMapsService {
     } catch (error) {
       if (error instanceof AppError) throw error;
       throw new AppError("Erro ao deletar mapa mental", 500);
+    }
+  }
+
+  async createNode(userId: string, mindMapId: string, data: TypeCreateMindMapNodeSchema) {
+    try {
+      const mindMap = await this.repository.findMindMap(userId, mindMapId);
+      if (!mindMap) throw new AppError("Mapa mental não encontrado", 404);
+
+      const payload: Omit<Prisma.MindMapNodeCreateInput, "mindMap"> = {
+        label: data.label,
+        collapsed: data.collapsed ?? false,
+      };
+      if (data.note !== undefined) payload.note = data.note;
+      if (data.color !== undefined) payload.color = data.color;
+      if (data.positionX !== undefined) payload.positionX = data.positionX;
+      if (data.positionY !== undefined) payload.positionY = data.positionY;
+
+      if (data.parentId) {
+        payload.parent = { connect: { id: data.parentId } };
+      }
+
+      return await this.repository.createNode(mindMapId, payload);
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError("Erro ao criar nó do mapa mental", 500);
+    }
+  }
+
+  async updateNode(userId: string, mindMapId: string, nodeId: string, data: TypeUpdateMindMapNodeSchema) {
+    try {
+      const mindMap = await this.repository.findMindMap(userId, mindMapId);
+      if (!mindMap) throw new AppError("Mapa mental não encontrado", 404);
+
+      const existing = await this.repository.findNode(mindMapId, nodeId);
+      if (!existing) throw new AppError("Nó não encontrado", 404);
+
+      const payload: Prisma.MindMapNodeUpdateInput = {};
+      if (data.label !== undefined) payload.label = data.label;
+      if (data.note !== undefined) payload.note = data.note;
+      if (data.color !== undefined) payload.color = data.color;
+      if (data.collapsed !== undefined) payload.collapsed = data.collapsed;
+      if (data.positionX !== undefined) payload.positionX = data.positionX;
+      if (data.positionY !== undefined) payload.positionY = data.positionY;
+      if (data.parentId !== undefined) {
+        payload.parent = data.parentId ? { connect: { id: data.parentId } } : { disconnect: true };
+      }
+
+      return await this.repository.updateNode(nodeId, payload);
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError("Erro ao atualizar nó do mapa mental", 500);
+    }
+  }
+
+  async deleteNode(userId: string, mindMapId: string, nodeId: string) {
+    try {
+      const mindMap = await this.repository.findMindMap(userId, mindMapId);
+      if (!mindMap) throw new AppError("Mapa mental não encontrado", 404);
+
+      const existing = await this.repository.findNode(mindMapId, nodeId);
+      if (!existing) throw new AppError("Nó não encontrado", 404);
+
+      return await this.repository.deleteNode(nodeId);
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError("Erro ao deletar nó do mapa mental", 500);
     }
   }
 }

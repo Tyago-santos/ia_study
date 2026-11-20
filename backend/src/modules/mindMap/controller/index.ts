@@ -6,6 +6,7 @@ import { AppError } from "@/shared/error/app-error.js";
 import { paramsSchema } from "@/shared/schema/paramsValidate.js";
 import { updateMindMapSchema } from "../schema/updateMindMap.schema.js";
 import { createMindMapSchema } from "../schema/createMindMap.schema.js";
+import { createMindMapNodeSchema, updateMindMapNodeSchema } from "../schema/mindMapNode.schema.js";
 
 export class MindMapController {
   private service: MindMapsService;
@@ -59,5 +60,43 @@ export class MindMapController {
     const mindMap = await this.service.create(req.user!.id, validBody.data);
 
     return res.status(201).json(mindMap);
+  }
+
+  async createNode(req: Request, res: Response) {
+    const validParams = paramsSchema.safeParse(req.params);
+    if (!validParams.success) throw validParams.error;
+
+    const validBody = createMindMapNodeSchema.safeParse(req.body);
+    if (!validBody.success) throw validBody.error;
+
+    const node = await this.service.createNode(req.user!.id, validParams.data.id, validBody.data);
+
+    return res.status(201).json(node);
+  }
+
+  async updateNode(req: Request, res: Response) {
+    const validParams = paramsSchema.safeParse(req.params);
+    if (!validParams.success) throw validParams.error;
+
+    const validBody = updateMindMapNodeSchema.safeParse(req.body);
+    if (!validBody.success) throw validBody.error;
+
+    const node = await this.service.updateNode(
+      req.user!.id,
+      validParams.data.id,
+      String(req.params.nodeId),
+      validBody.data,
+    );
+
+    return res.status(200).json(node);
+  }
+
+  async deleteNode(req: Request, res: Response) {
+    const validParams = paramsSchema.safeParse(req.params);
+    if (!validParams.success) throw validParams.error;
+
+    await this.service.deleteNode(req.user!.id, validParams.data.id, String(req.params.nodeId));
+
+    return res.status(200).json({ message: "nó deletado com sucesso" });
   }
 }

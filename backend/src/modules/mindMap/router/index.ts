@@ -14,4 +14,8 @@ router.post("/", (req, res) => mindMapController.create(req, res));
 router.patch("/:id", (req, res) => mindMapController.update(req, res));
 router.delete("/:id", (req, res) => mindMapController.delete(req, res));
 
+router.post("/:id/nodes", (req, res) => mindMapController.createNode(req, res));
+router.patch("/:id/nodes/:nodeId", (req, res) => mindMapController.updateNode(req, res));
+router.delete("/:id/nodes/:nodeId", (req, res) => mindMapController.deleteNode(req, res));
+
 export { router as routerMindMap };
