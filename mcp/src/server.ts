@@ -11,7 +11,6 @@ import { SessionStore } from "./lib/session-store.js";
 import { StaticTokenVerifier } from "./lib/auth-verifier.js";
 import { createServerFactory } from "./mcp/build-server.js";
 import { mountLoginRoutes } from "./web/login.js";
-import { createRateLimiter } from "./lib/rate-limit.js";
 
 const pool = new pg.Pool({ connectionString: env.DATABASE_URL });
 const store = new SessionStore(pool, env.MCP_SESSION_SECRET);
@@ -23,14 +22,6 @@ const app = createMcpExpressApp({
   host: "0.0.0.0",
   allowedHosts: [env.MCP_PUBLIC_HOST],
 });
-
-// Rate limit global: 300 req / 15 min por IP (protege toda a aplicação).
-const globalRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  message: "Muitas requisições. Tente novamente mais tarde.",
-});
-app.use(globalRateLimiter);
 
 mountLoginRoutes(app, store, backend);
 
