@@ -10,17 +10,20 @@ import { BackendClient } from "./lib/backend-client.js";
 import { SessionStore } from "./lib/session-store.js";
 import { StaticTokenVerifier } from "./lib/auth-verifier.js";
 import { createServerFactory } from "./mcp/build-server.js";
+import { mountLoginRoutes } from "./web/login.js";
 
 const pool = new pg.Pool({ connectionString: env.DATABASE_URL });
 const store = new SessionStore(pool, env.MCP_SESSION_SECRET);
 const backend = new BackendClient(env.BACKEND_URL);
 const factory = createServerFactory(store, backend);
-const verifier = new StaticTokenVerifier(env.MCP_ACCESS_TOKEN);
+const verifier = new StaticTokenVerifier(env.MCP_ACCESS_TOKEN, store);
 
 const app = createMcpExpressApp({
   host: "0.0.0.0",
   allowedHosts: [env.MCP_PUBLIC_HOST],
 });
+
+mountLoginRoutes(app, store, backend);
 
 app.use("/mcp", requireBearerAuth({ verifier }));
 

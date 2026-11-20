@@ -7,33 +7,47 @@ import {
   type OAuthTokenVerifier,
 } from "@modelcontextprotocol/server";
 
-/** sha256 do token do endpoint — usada como chave estável da sessão no Supabase. */
+import type { SessionStore } from "./session-store.js";
+
 export function clientIdFromToken(token: string): string {
   return createHash("sha256").update(token, "utf8").digest("hex");
 }
 
 /**
- * Verificador do bearer do endpoint MCP. Não é OAuth de verdade: o token é
- * estático (MCP_ACCESS_TOKEN) e serve só para proteger o endpoint. A identidade
- * do usuário vem da tool `login`; aqui só derivamos um clientId estável.
+ * Verificador do bearer do endpoint MCP. Aceita:
+ *  - o token estático (MCP_ACCESS_TOKEN) — usado pelo admin/CLI;
+ *  - qualquer token gerado pela página web de login (lookup no Supabase).
  */
 export class StaticTokenVerifier implements OAuthTokenVerifier {
-  constructor(private readonly expectedToken: string) {}
+  constructor(
+    private readonly staticToken: string,
+    private readonly store: SessionStore,
+  ) {}
 
   async verifyAccessToken(token: string): Promise<AuthInfo> {
+    // 1) token estático (admin)
     const actual = createHash("sha256").update(token, "utf8").digest();
-    const expected = createHash("sha256").update(this.expectedToken, "utf8").digest();
-    if (!timingSafeEqual(actual, expected)) {
-      throw new OAuthError(OAuthErrorCode.InvalidToken, "Token MCP inválido");
+    const expected = createHash("sha256").update(this.staticToken, "utf8").digest();
+    if (timingSafeEqual(actual, expected)) {
+      return {
+        token,
+        clientId: clientIdFromToken(token),
+        scopes: ["studyhub:all"],
+        expiresAt: Math.floor(Date.now() / 1000) + 3600,
+      };
+    }
+
+    // 2) token gerado pela página web
+    const session = await this.store.get(clientIdFromToken(token));
+    if (!session) {
+      throw new OAuthError(OAuthErrorCode.InvalidToken, "Token MCP inválido ou expirado");
     }
 
     return {
       token,
       clientId: clientIdFromToken(token),
       scopes: ["studyhub:all"],
-      // Bearer-auth exige expiresAt. O token é estático; renovamos a janela
-      // a cada requisição para não expirar um cliente saudável.
-      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+      expiresAt: Math.floor(session.expiresAt.getTime() / 1000),
     };
   }
 }
