@@ -68,6 +68,8 @@ const LOGIN_HTML = `<!doctype html>
       <div class="ok">
         <label>Seu token MCP (copie para o config do cliente):</label>
         <div id="token"></div>
+        <button id="copyBtn" type="button" style="margin-top:.75rem;background:#1f6feb">Copiar token</button>
+        <div class="err" id="copyMsg" style="color:#3fb950"></div>
       </div>
       <p class="hint">Use no OpenCode: <code>"headers": { "Authorization": "Bearer &lt;token&gt;" }</code></p>
     </div>
@@ -94,6 +96,17 @@ const LOGIN_HTML = `<!doctype html>
         document.getElementById('token').textContent = data.token;
         document.getElementById('result').style.display = 'block';
         f.style.display = 'none';
+        const copyBtn = document.getElementById('copyBtn');
+        const copyMsg = document.getElementById('copyMsg');
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(data.token);
+            copyMsg.textContent = 'Token copiado!';
+            setTimeout(() => { copyMsg.textContent = ''; }, 2000);
+          } catch (e) {
+            copyMsg.textContent = 'Falha ao copiar. Selecione e copie manualmente.';
+          }
+        });
       } catch (e) {
         err.textContent = 'Erro de rede';
       } finally {
