@@ -146,8 +146,7 @@ export function CreateMindMapModal({ open, onClose, onCreated }: CreateMindMapMo
             </Button>
             {preview && (
               <p className="text-[11px] text-[var(--text-secondary)]">
-                Estrutura pronta: {preview.total} topicos em {preview.branches} ramos. Salve para
-                abrir no editor.
+                Estrutura pronta: {preview.total} topicos em {preview.branches} ramos.
               </p>
             )}
           </div>

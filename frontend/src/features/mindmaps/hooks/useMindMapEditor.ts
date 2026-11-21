@@ -171,6 +171,29 @@ export function useMindMapEditor(initialNodes: MindMapNode[]) {
     })
   }, [commit])
 
+  /**
+   * Troca ids temporarios pelos ids gerados no backend depois de salvar, para
+   * que a proxima gravacao atualize os mesmos nos em vez de recria-los.
+   */
+  const remapNodeIds = useCallback((idMap: Record<string, string>) => {
+    if (Object.keys(idMap).length === 0) return
+
+    const remap = (nodes: MindMapNode[]) =>
+      nodes.map((node) => ({
+        ...node,
+        id: idMap[node.id] ?? node.id,
+        parentId: node.parentId ? (idMap[node.parentId] ?? node.parentId) : node.parentId,
+      }))
+
+    setHistory((state) => ({
+      past: state.past.map(remap),
+      present: remap(state.present),
+      future: state.future.map(remap),
+    }))
+    setSelectedId((current) => (current ? (idMap[current] ?? current) : current))
+    setEditingId((current) => (current ? (idMap[current] ?? current) : current))
+  }, [])
+
   const markSaved = useCallback(() => setIsDirty(false), [])
 
   const selectedNode = useMemo(() => findNode(nodes, selectedId), [nodes, selectedId])
@@ -200,6 +223,7 @@ export function useMindMapEditor(initialNodes: MindMapNode[]) {
     resetLayout,
     undo,
     redo,
+    remapNodeIds,
     markSaved,
   }
 }

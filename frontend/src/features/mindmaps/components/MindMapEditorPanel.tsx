@@ -1,9 +1,10 @@
+import { useEffect, useRef } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import { ChevronRight, GitBranch, Layers, Network } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
-import type { MindMap, Subject } from '@/shared/types'
+import type { MindMap, MindMapNode, Subject } from '@/shared/types'
 import { useMindMapEditor } from '@/features/mindmaps/hooks/useMindMapEditor'
-import { useUpdateMindMapNodes } from '@/features/mindmaps/hooks/useMindMaps'
+import { useSaveMindMapNodes } from '@/features/mindmaps/hooks/useMindMaps'
 import { exportAsJson, exportAsMarkdown } from '@/features/mindmaps/lib/export'
 import { getMindMapStats } from '@/features/mindmaps/lib/mindmapTree'
 import { MindMapCanvas } from './MindMapCanvas'
@@ -22,16 +23,34 @@ interface MindMapEditorPanelProps {
  */
 export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPanelProps) {
   const editor = useMindMapEditor(mindMap.nodes)
-  const updateNodes = useUpdateMindMapNodes()
+  const saveNodes = useSaveMindMapNodes()
+
+  // Ultima versao confirmada pelo servidor — base do diff ao salvar.
+  const baselineRef = useRef<MindMapNode[]>(mindMap.nodes)
+
+  useEffect(() => {
+    // Refetch em segundo plano so' vira base quando nao ha edicoes pendentes.
+    if (!editor.isDirty) baselineRef.current = mindMap.nodes
+  }, [mindMap.nodes, editor.isDirty])
 
   const rootColor = subject?.color ?? '#4f46e5'
   const stats = getMindMapStats(editor.nodes)
   const currentMap: MindMap = { ...mindMap, nodes: editor.nodes }
 
   const handleSave = () => {
-    updateNodes.mutate(
-      { id: mindMap.id, nodes: editor.nodes },
-      { onSuccess: () => editor.markSaved() }
+    saveNodes.mutate(
+      { mindMapId: mindMap.id, currentNodes: editor.nodes, originalNodes: baselineRef.current },
+      {
+        onSuccess: ({ idMap }) => {
+          editor.remapNodeIds(idMap)
+          baselineRef.current = editor.nodes.map((node) => ({
+            ...node,
+            id: idMap[node.id] ?? node.id,
+            parentId: node.parentId ? (idMap[node.parentId] ?? node.parentId) : node.parentId,
+          }))
+          editor.markSaved()
+        },
+      }
     )
   }
 
@@ -82,7 +101,7 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
         <ReactFlowProvider>
           <MindMapToolbar
             editor={editor}
-            isSaving={updateNodes.isPending}
+            isSaving={saveNodes.isPending}
             onSave={handleSave}
             onExportMarkdown={() => exportAsMarkdown(currentMap)}
             onExportJson={() => exportAsJson(currentMap)}
@@ -103,8 +122,8 @@ export function MindMapEditorPanel({ mindMap, subject, onBack }: MindMapEditorPa
 
       {editor.isDirty && (
         <div className="flex justify-center md:hidden">
-          <Button onClick={handleSave} disabled={updateNodes.isPending}>
-            {updateNodes.isPending ? 'Salvando...' : 'Salvar alteracoes'}
+          <Button onClick={handleSave} disabled={saveNodes.isPending}>
+            {saveNodes.isPending ? 'Salvando...' : 'Salvar alteracoes'}
           </Button>
         </div>
       )}

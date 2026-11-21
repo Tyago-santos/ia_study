@@ -1,18 +1,11 @@
-import { delay } from '@/shared/mocks/helpers'
-import { mindMapsApi, type MindMapApi } from '@/shared/services/mindMapsApi'
+import {
+  mindMapsApi,
+  type MindMapApi,
+  type MindMapNodeApi,
+  type MindMapNodePayload,
+} from '@/shared/services/mindMapsApi'
 import type { MindMap, MindMapNode } from '@/shared/types'
 import { createStarterNodes } from '@/features/mindmaps/lib/generator'
-
-/**
- * Arvore de topicos (`MindMapNode`) mantida so' em memoria, por mapa. O
- * backend tem o model `MindMapNode` no schema do Prisma, mas nenhuma rota
- * (sem controller/router/repository) para criar, editar ou apagar nos — so'
- * `title`/`description` do mapa em si sao reais (`GET/POST/PATCH/DELETE
- * /mind-maps`). Enquanto isso nao existir, qualquer edicao de arvore se
- * perde ao recarregar a pagina.
- * TODO(backend): trocar por persistencia real quando existirem rotas de MindMapNode.
- */
-const localNodes = new Map<string, MindMapNode[]>()
 
 function toMindMap(map: MindMapApi): MindMap {
   return {
@@ -20,10 +13,67 @@ function toMindMap(map: MindMapApi): MindMap {
     subjectId: map.subjectId,
     title: map.title,
     description: map.description ?? undefined,
-    nodes: localNodes.get(map.id) ?? [],
+    nodes: (map.nodes ?? []).map(toNode),
     createdAt: map.createdAt,
     updatedAt: map.updatedAt,
   }
+}
+
+function toNode(node: MindMapNodeApi): MindMapNode {
+  return {
+    id: node.id,
+    label: node.label,
+    note: node.note ?? undefined,
+    color: node.color ?? undefined,
+    collapsed: node.collapsed,
+    position:
+      node.positionX !== null && node.positionY !== null
+        ? { x: node.positionX, y: node.positionY }
+        : undefined,
+    parentId: node.parentId,
+  }
+}
+
+function toNodePayload(node: MindMapNode, parentId = node.parentId ?? null): MindMapNodePayload {
+  return {
+    label: node.label,
+    note: node.note ?? null,
+    color: node.color ?? null,
+    collapsed: node.collapsed ?? false,
+    positionX: node.position?.x ?? null,
+    positionY: node.position?.y ?? null,
+    parentId,
+  }
+}
+
+/**
+ * Persiste uma arvore local (ids temporarios) no backend, criando pais antes
+ * dos filhos. Retorna o mapa `id local -> id do servidor`.
+ */
+async function persistTree(
+  mindMapId: string,
+  nodes: MindMapNode[]
+): Promise<Record<string, string>> {
+  const idMap: Record<string, string> = {}
+  const knownIds = new Set(nodes.map((node) => node.id))
+  const pending = [...nodes]
+
+  while (pending.length > 0) {
+    const index = pending.findIndex(
+      (node) =>
+        !node.parentId || !knownIds.has(node.parentId) || idMap[node.parentId] !== undefined
+    )
+
+    // Arvore com ciclo (nao deveria acontecer): evita loop infinito.
+    if (index === -1) break
+
+    const [node] = pending.splice(index, 1)
+    const parentId = node.parentId ? (idMap[node.parentId] ?? null) : null
+    const created = await mindMapsApi.createNode(mindMapId, toNodePayload(node, parentId))
+    idMap[node.id] = created.id
+  }
+
+  return idMap
 }
 
 export const mindmapsService = {
@@ -48,34 +98,93 @@ export const mindmapsService = {
   }) => {
     const created = await mindMapsApi.create({
       title: data.title,
-      description: data.description,
       subjectId: data.subjectId,
+      description: data.description ?? null,
     })
-    // Sem rota de MindMapNode no backend: guarda a arvore inicial (gerada por
-    // IA ou o esqueleto padrao) so' em memoria local, ver comentario acima.
-    localNodes.set(created.id, data.nodes ?? createStarterNodes(data.title))
-    return toMindMap(created)
+
+    const tree = data.nodes ?? createStarterNodes(data.title)
+    if (tree.length > 0) {
+      await persistTree(created.id, tree)
+    }
+
+    // Rebusca para devolver o mapa ja' com os nos persistidos.
+    const withNodes = await mindMapsApi.get(created.id)
+    return toMindMap(withNodes)
   },
 
   update: async (data: { id: string; title?: string; description?: string }) => {
     const updated = await mindMapsApi.updateMeta(data.id, {
-      title: data.title,
-      description: data.description,
+      ...(data.title !== undefined && { title: data.title }),
+      ...(data.description !== undefined && { description: data.description }),
     })
     return toMindMap(updated)
   },
 
-  // TODO(backend): sem rota de MindMapNode, isso so' atualiza o cache local —
-  // nao persiste de verdade no servidor.
-  updateNodes: async (data: { id: string; nodes: MindMapNode[] }) => {
-    localNodes.set(data.id, [...data.nodes])
-    const map = await mindMapsApi.get(data.id)
-    return delay({ ...toMindMap(map), updatedAt: new Date().toISOString() })
+  // Nodes — persistem no backend
+  createNode: async (mindMapId: string, data: MindMapNodePayload) => {
+    const created = await mindMapsApi.createNode(mindMapId, data)
+    return toNode(created)
+  },
+
+  updateNode: async (mindMapId: string, nodeId: string, data: Partial<MindMapNodePayload>) => {
+    const updated = await mindMapsApi.updateNode(mindMapId, nodeId, data)
+    return toNode(updated)
+  },
+
+  deleteNode: async (mindMapId: string, nodeId: string) => {
+    await mindMapsApi.deleteNode(mindMapId, nodeId)
+    return { id: nodeId }
   },
 
   remove: async (id: string) => {
     await mindMapsApi.remove(id)
-    localNodes.delete(id)
     return { id }
+  },
+
+  /**
+   * Salva a arvore do editor comparando com a versao original: remove nos
+   * apagados, cria os novos e atualiza os alterados. Retorna o mapa de ids
+   * temporarios para os ids definitivos, para o editor se sincronizar.
+   */
+  saveNodes: async (
+    mindMapId: string,
+    currentNodes: MindMapNode[],
+    originalNodes: MindMapNode[]
+  ): Promise<{ idMap: Record<string, string> }> => {
+    const originalById = new Map(originalNodes.map((node) => [node.id, node]))
+    const currentById = new Map(currentNodes.map((node) => [node.id, node]))
+
+    // 1. Remover nos que nao existem mais
+    for (const original of originalNodes) {
+      if (!currentById.has(original.id)) {
+        await mindMapsApi.deleteNode(mindMapId, original.id)
+      }
+    }
+
+    // 2. Criar os novos (pais antes dos filhos)
+    const newNodes = currentNodes.filter((node) => !originalById.has(node.id))
+    const idMap = await persistTree(mindMapId, newNodes)
+
+    // 3. Atualizar os existentes alterados
+    for (const current of currentNodes) {
+      const original = originalById.get(current.id)
+      if (!original) continue
+
+      const changed =
+        current.label !== original.label ||
+        current.note !== original.note ||
+        current.color !== original.color ||
+        current.collapsed !== original.collapsed ||
+        current.position?.x !== original.position?.x ||
+        current.position?.y !== original.position?.y ||
+        current.parentId !== original.parentId
+
+      if (changed) {
+        const parentId = current.parentId ? (idMap[current.parentId] ?? current.parentId) : null
+        await mindMapsApi.updateNode(mindMapId, current.id, toNodePayload(current, parentId))
+      }
+    }
+
+    return { idMap }
   },
 }
