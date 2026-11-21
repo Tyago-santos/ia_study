@@ -68,7 +68,9 @@
         {
           "microphonePermission": "Precisamos do microfone para gravar sua mensagem de voz para o assistente."
         }
-      ]
+      ],
+      "expo-font",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,

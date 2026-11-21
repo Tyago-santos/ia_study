@@ -64,9 +64,7 @@ export function FlashcardItem({
             label={DIFFICULTY_LABELS[flashcard.difficulty]}
             color={DIFFICULTY_COLORS[flashcard.difficulty]}
           />
-          <Pressable onPress={onRemove} hitSlop={8}>
-            <Ionicons name="trash-outline" size={16} color={colors.danger} />
-          </Pressable>
+        
         </S.CardHeaderRight>
       </S.CardHeader>
 
@@ -92,6 +90,10 @@ export function FlashcardItem({
           size={14}
           color={colors.textSecondary}
         />
+
+          <Pressable onPress={onRemove} hitSlop={8}>
+            <Ionicons name="trash-outline" size={16} color={colors.danger} />
+          </Pressable>
       </S.CardFooter>
     </S.Card>
   )

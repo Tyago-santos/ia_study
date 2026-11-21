@@ -258,11 +258,7 @@ export const MicButton = styled.Pressable<{ $recording: boolean }>`
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   /* Gravando: o botao "pulsa" de vermelho com halo proprio, sinal visivel de
      que o microfone esta' aberto. */
-  shadow-color: ${({ theme }) => theme.colors.danger};
-  shadow-offset: 0px 0px;
-  shadow-opacity: ${({ $recording }) => ($recording ? 0.6 : 0)};
-  shadow-radius: 8px;
-  elevation: 3;
+
 `
 
 export const SendButton = styled.Pressable<{ $enabled: boolean }>`
@@ -317,11 +313,6 @@ export const GenerateButton = styled.Pressable<{ $disabled: boolean }>`
   border-color: ${({ theme }) => `${theme.colors.accent}55`};
   background-color: ${({ theme }) => `${theme.colors.accent}1f`};
   opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
-  shadow-color: ${({ theme }) => theme.colors.accent};
-  shadow-offset: 0px 4px;
-  shadow-opacity: ${({ theme }) => (theme.name === 'dark' ? 0.14 : 0.1)};
-  shadow-radius: 12px;
-  elevation: 2;
 `
 
 export const GenerateText = styled.View`

@@ -52,11 +52,6 @@ export const Avatar = styled.View`
   border-width: 1px;
   border-color: ${({ theme }) => `${theme.colors.accent}33`};
 
-  shadow-color: ${({ theme }) => theme.colors.accent};
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.35;
-  shadow-radius: 10px;
-  elevation: 3;
 `
 
 export const AvatarText = styled.Text`

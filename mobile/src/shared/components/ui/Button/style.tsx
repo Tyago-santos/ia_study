@@ -32,15 +32,7 @@ export const Container = styled.Pressable<{ $variant: ButtonVariant; $disabled?:
         ? theme.colors.danger
         : theme.colors.border};
 
-  shadow-color: ${({ theme, $variant }) =>
-    $variant === 'danger' ? theme.colors.danger : theme.colors.accent};
-  shadow-offset: 0px 8px;
-  shadow-opacity: ${({ $disabled, $variant }) =>
-    $disabled || $variant === 'secondary' ? 0 : 0.4};
-  shadow-radius: 16px;
-  elevation: ${({ $disabled }) => ($disabled ? 0 : 6)};
-
-  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+};
 `
 
 /**

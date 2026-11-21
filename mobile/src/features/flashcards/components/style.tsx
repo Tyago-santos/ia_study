@@ -19,9 +19,10 @@ export const Card = styled.Pressable<{ $borderColor: string }>`
 `
 
 export const CardHeader = styled.View`
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  // align-items: center;
   justify-content: space-between;
+
   gap: ${({ theme }) => theme.spacing.sm}px;
 `
 

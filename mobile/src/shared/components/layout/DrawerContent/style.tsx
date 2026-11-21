@@ -78,11 +78,11 @@ export const Item = styled.Pressable<{ $active?: boolean }>`
 
   /* A luz so' aparece no item selecionado: e' ela que diz "voce esta' aqui"
      quando o fundo tintado nao basta sobre o card do drawer. */
-  shadow-color: ${({ theme }) => theme.colors.accent};
-  shadow-offset: 0px 4px;
-  shadow-opacity: ${({ $active }) => ($active ? 0.3 : 0)};
-  shadow-radius: 10px;
-  elevation: ${({ $active }) => ($active ? 4 : 0)};
+  // shadow-color: ${({ theme }) => theme.colors.accent};
+  // shadow-offset: 0px 4px;
+  // shadow-opacity: ${({ $active }) => ($active ? 0.3 : 0)};
+  // shadow-radius: 10px;
+  // elevation: ${({ $active }) => ($active ? 4 : 0)};
 `
 
 export const ItemLabel = styled.Text<{ $active?: boolean; $danger?: boolean }>`
